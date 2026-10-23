@@ -1,0 +1,1143 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Demo LMS luyện toán mỗi ngày: giáo viên giao bài theo trình độ, học sinh làm bài và sửa lỗi sai.">
+<title>Toán Mỗi Ngày</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Itim&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+<style>
+body{margin:0}
+/* Layout: app shell LMS sáng, khối điều hướng và thẻ bài mang màu bảng xanh, chữ phấn — sidebar trái (desktop) / thanh tab dưới (điện thoại), vùng nội dung dạng bảng điều khiển; màn làm bài toàn màn hình từng câu một */
+:root{
+  --bg:#f3f5ef; --surface:#ffffff; --surface-2:#edf1ea; --line:rgba(23,37,29,.12); --line-2:rgba(23,37,29,.26);
+  --ink:#17251d; --ink-2:#34463b; --muted:#5d6b62;
+  --primary:#23573f; --primary-2:#184330; --on-primary:#ffffff; --primary-soft:#e3efe7;
+  --success:#12913e; --success-soft:#e0f4e5;
+  --danger:#d2352b; --danger-soft:#fde8e6;
+  --warn:#b36b00; --warn-soft:#fff1da;
+  --t1:#2563c9; --t2:#b8327f; --t3:#0e8a7a; --t4:#e0661a;
+  --board:#2d4a3b; --board-2:#24402f; --wood:#a46f3e; --chalk:#f3f0e4; --chalk-y:#ffe066;
+  --band:var(--board); --hard:var(--ink); --yellow:#ffd84d; --navy:var(--ink);
+  --shadow:0 1px 2px rgba(23,37,29,.05),0 4px 14px rgba(23,37,29,.05);
+  --f-head:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-chalk:"Itim","Be Vietnam Pro",system-ui,sans-serif;
+  --f-body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+/* giao diện luôn sáng, kể cả khi máy đang ở chế độ tối */
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--f-head);margin:0;line-height:1.2;text-wrap:balance;letter-spacing:-.01em;font-weight:600}
+h1{font-size:26px}
+h2{font-size:17px}
+h3{font-size:15px}
+p{margin:0}
+button{font-family:inherit}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+.num{font-variant-numeric:tabular-nums}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.fill{fill:currentColor;stroke:none}
+.ic.sm{width:16px;height:16px}
+.ic.lg{width:26px;height:26px}
+
+/* ---------- khung app ---------- */
+.app{display:grid;grid-template-columns:252px minmax(0,1fr);min-height:100%}
+.side{position:sticky;top:0;height:100vh;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 14px;padding-left:max(14px,env(safe-area-inset-left,0px));gap:6px}
+.logo{display:flex;align-items:center;gap:10px;padding:2px 8px 18px}
+.logo .m{width:36px;height:36px;border-radius:10px;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;font-family:var(--f-head);font-weight:700;font-size:17px}
+.logo b{font-family:var(--f-head);font-size:16.5px;font-weight:700;display:block;line-height:1.1}
+.logo span{font-size:11.5px;color:var(--muted)}
+.navlbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:6px 10px}
+.nav-item{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;color:var(--ink-2);font-size:14.5px;font-weight:500;padding:10px 12px;border-radius:10px;cursor:pointer;text-align:left}
+.nav-item:hover{background:var(--surface-2)}
+.nav-item[aria-current="page"]{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.nav-item .badge{margin-left:auto}
+.badge{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--danger);color:#fff;font-size:11.5px;font-weight:700;display:inline-grid;place-items:center}
+.side .spacer{flex:1}
+.rolecard{border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.seg{display:flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:2px}
+.seg button{flex:1;border:0;background:transparent;color:var(--muted);font-size:13px;font-weight:600;padding:7px 10px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.who{display:flex;align-items:center;gap:10px;min-width:0}
+.who b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who span{font-size:12px;color:var(--muted)}
+
+.content{min-width:0;display:flex;flex-direction:column;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
+.topbar{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 20px;padding-block:28px 22px}
+.crumb{font-size:12.5px;color:var(--muted);margin-bottom:4px;display:flex;gap:6px;align-items:center}
+.topbar .r{display:flex;align-items:center;gap:10px}
+.chip-date{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.toprole{display:none}
+main{display:flex;flex-direction:column;gap:20px;padding-bottom:28px;min-width:0}
+footer.foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--muted);padding-block:8px 28px;border-top:1px solid var(--line);margin-top:auto}
+.bnav{display:none}
+
+@media (max-width:900px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{display:none}
+  .content{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .topbar{padding-block:16px 14px;align-items:center}
+  h1{font-size:22px}
+  .toprole{display:flex;align-items:center;gap:8px;width:100%}
+  .toprole .seg{flex:none}
+  .toprole select{flex:1}
+  .topbar .chip-date{display:none}
+  main{padding-bottom:20px}
+  footer.foot{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+  .bnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+  .bnav button{flex:1;border:0;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:6px 2px;cursor:pointer;position:relative;min-width:0}
+  .bnav button span.l{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .bnav button[aria-current="page"]{color:var(--primary)}
+  .bnav .badge{position:absolute;top:0;left:calc(50% + 6px);height:17px;min-width:17px;font-size:10.5px}
+}
+
+/* ---------- thành phần ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);min-width:0}
+.card-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;padding:18px 20px 0}
+.card-h p{font-size:13px;color:var(--muted);margin-top:2px}
+.card-b{padding:16px 20px 20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.row>*,.card-b>*,main>*{min-width:0;max-width:100%}
+.between{justify-content:space-between}
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:760px){.g3{grid-template-columns:minmax(0,1fr)}}
+.split{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:20px;align-items:start}
+.split.even{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+@media (max-width:1180px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:1050px){.split,.split.even{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.g4{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}.kpi{flex-direction:column;align-items:flex-start;gap:10px;padding:14px}.kpi .v{font-size:24px}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:10px;padding:9px 16px;font-size:14px;font-weight:600;cursor:pointer;background:var(--primary);color:var(--on-primary);white-space:nowrap;transition:background .12s,box-shadow .12s}
+.btn:hover{background:var(--primary-2)}
+.btn.sec{background:var(--surface);color:var(--ink);border-color:var(--line-2)}
+.btn.sec:hover{background:var(--surface-2)}
+.btn.soft{background:var(--primary-soft);color:var(--primary)}
+.btn.soft:hover{background:var(--primary-soft);box-shadow:inset 0 0 0 1px var(--primary)}
+.btn.ghost{background:transparent;color:var(--primary);padding-inline:8px}
+.btn.ghost:hover{background:var(--primary-soft)}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:8px}
+.btn.lg{padding:13px 22px;font-size:15.5px;border-radius:12px}
+.btn.danger{background:transparent;color:var(--danger);border-color:var(--line-2)}
+.btn.danger.armed{background:var(--danger);color:#fff;border-color:var(--danger)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.iconbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);display:grid;place-items:center;cursor:pointer}
+.iconbtn:hover{background:var(--surface-2)}
+:focus-visible{outline:2.5px solid var(--primary);outline-offset:2px}
+
+label.f{display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:600;color:var(--ink-2);min-width:0}
+input[type=text],input[type=date],select,textarea{font:14.5px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:9px 12px;width:100%;min-width:0}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px var(--primary-soft)}
+textarea{resize:vertical;min-height:64px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--surface-2);color:var(--ink-2)}
+.chip.ok{background:var(--success-soft);color:var(--success)}
+.chip.bad{background:var(--danger-soft);color:var(--danger)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.pri{background:var(--primary-soft);color:var(--primary)}
+.chip.topic{background:color-mix(in srgb,var(--tc) 13%,var(--surface));color:var(--tc)}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+.fchip{border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.fchip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+
+.av{--c:var(--primary);width:34px;height:34px;border-radius:50%;background:color-mix(in srgb,var(--c) 16%,var(--surface));color:var(--c);display:inline-grid;place-items:center;font-size:12.5px;font-weight:700;flex:none;font-family:var(--f-head)}
+.av.lg{width:52px;height:52px;font-size:17px}
+.av.sm{width:26px;height:26px;font-size:10.5px}
+.avstack{display:flex}
+.avstack .av{border:2px solid var(--surface);margin-left:-8px}
+.avstack .av:first-child{margin-left:0}
+
+.kpi{padding:18px 20px;display:flex;align-items:center;gap:16px}
+.kpi .t{font-size:13px;color:var(--muted);font-weight:500}
+.kpi .v{font-family:var(--f-head);font-size:28px;font-weight:600;line-height:1.15;font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:15px;color:var(--muted);font-weight:500}
+.kpi .s{font-size:12.5px;color:var(--muted)}
+.kpi .ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex:none}
+.ring{position:relative;flex:none;display:grid;place-items:center}
+.ring svg{position:absolute;inset:0}
+.ring span{position:relative;font-family:var(--f-head);font-weight:600;font-size:14px;font-variant-numeric:tabular-nums}
+.spark{display:block;margin-top:4px}
+
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--surface)}
+td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tbody tr{cursor:default}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover td{background:var(--bg)}
+td select{width:auto;padding:5px 8px;font-size:13px;border-radius:8px}
+.person{display:flex;align-items:center;gap:10px}
+.person b{font-weight:600}
+.days{display:flex;gap:4px}
+.days i{width:12px;height:12px;border-radius:4px;background:var(--surface-2)}
+.days i.ok{background:var(--success)}
+.days i.mid{background:var(--warn)}
+.days i.miss{background:transparent;box-shadow:inset 0 0 0 1.5px var(--danger)}
+
+.course{overflow:hidden;display:flex;flex-direction:column}
+.course .band{height:76px;background:var(--tc);position:relative;padding:14px 18px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.course .band::after{content:attr(data-g);position:absolute;right:12px;bottom:-14px;font-family:var(--f-head);font-size:64px;font-weight:700;opacity:.18;line-height:1}
+.course .band b{font-family:var(--f-head);font-size:16px;font-weight:600}
+.course .band span{font-size:12px;opacity:.9;font-weight:600}
+.course .cb{padding:14px 18px 18px;display:flex;flex-direction:column;gap:12px;flex:1}
+.prog{height:8px;border-radius:8px;background:var(--surface-2);overflow:hidden}
+.prog i{display:block;height:100%;border-radius:8px;background:var(--success)}
+.course.empty{border-style:dashed;box-shadow:none;align-items:center;justify-content:center;text-align:center;padding:24px;gap:10px;color:var(--muted)}
+
+.attn{display:flex;flex-direction:column}
+.attn .it{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+.attn .it:last-child{border-bottom:0}
+.attn .it .row{gap:6px;margin-top:4px}
+
+.list{display:flex;flex-direction:column}
+.li{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
+.li .grow{flex:1;min-width:0}
+.li .qt{font-weight:500;overflow-wrap:anywhere}
+.qn{width:28px;height:28px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;font-size:12.5px;font-weight:700;flex:none;font-family:var(--f-head)}
+.bank{max-height:520px;overflow:auto;margin:0 -20px;padding:0 20px}
+
+.newq{border:1.5px dashed var(--primary);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--primary-soft)}
+.note{font-size:13.5px;font-weight:500;padding:11px 14px;border-radius:10px;display:flex;gap:10px;align-items:flex-start}
+.note.ok{background:var(--success-soft);color:var(--success)}
+.note.bad{background:var(--danger-soft);color:var(--danger)}
+
+.people{display:flex;flex-direction:column;padding:8px}
+.people button{display:flex;align-items:center;gap:10px;border:0;background:transparent;border-radius:10px;padding:10px;cursor:pointer;text-align:left;color:var(--ink)}
+.people button:hover{background:var(--surface-2)}
+.people button[aria-current="true"]{background:var(--primary-soft)}
+.people .nm{flex:1;min-width:0}
+.people .nm b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.people .nm span{font-size:12px;color:var(--muted)}
+.wsplit{display:grid;grid-template-columns:280px minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:1050px){.wsplit{grid-template-columns:minmax(0,1fr)}.people{flex-direction:row;overflow-x:auto}.people button{flex:none}.people .nm span{display:none}}
+
+details.sub{border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+details.sub+details.sub{margin-top:10px}
+details.sub>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:12px}
+details.sub>summary::-webkit-details-marker{display:none}
+details.sub>summary .grow{flex:1;min-width:0}
+details.sub>summary .grow b{display:block;font-weight:600}
+details.sub>summary .chev{transition:transform .15s;color:var(--muted)}
+details.sub[open]>summary .chev{transform:rotate(90deg)}
+details.sub .body{padding:0 16px 16px;display:flex;flex-direction:column;gap:12px}
+.datebox{width:44px;text-align:center;border-radius:10px;background:var(--surface-2);padding:5px 0;flex:none;line-height:1.15}
+.datebox b{display:block;font-family:var(--f-head);font-size:17px}
+.datebox span{font-size:10.5px;color:var(--muted);font-weight:600;text-transform:uppercase}
+
+.qr{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.qr.bad{border-color:color-mix(in srgb,var(--danger) 35%,var(--line))}
+.qr .h{display:flex;gap:10px;align-items:flex-start}
+.qr .h .qt{flex:1;font-weight:600;overflow-wrap:anywhere}
+.ansl{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--ink-2)}
+.ansl .w{color:var(--danger);font-weight:700;text-decoration:line-through}
+.ansl .r{color:var(--success);font-weight:700}
+.explain{background:var(--surface-2);border-radius:10px;padding:10px 12px;font-size:13.5px;color:var(--ink-2)}
+.explain b{color:var(--ink)}
+.work{border-left:3px solid var(--line-2);padding:2px 10px;font-size:13.5px;color:var(--muted);white-space:pre-wrap}
+.work.bad{border-left-color:var(--danger)}
+
+.hbar{display:grid;grid-template-columns:120px minmax(0,1fr) 48px;gap:12px;align-items:center;font-size:13.5px}
+.hbar .tr{height:10px;border-radius:10px;background:var(--surface-2);overflow:hidden}
+.hbar .tr i{display:block;height:100%;border-radius:10px}
+.hbar .v{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.heat td{text-align:center}
+.heat td:first-child{text-align:left}
+.cell{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:84px;height:44px;border-radius:10px;font-weight:700;font-size:14px;line-height:1.1}
+.cell small{font-size:10.5px;font-weight:500;opacity:.8}
+.cell.hi{background:var(--success-soft);color:var(--success)}
+.cell.md{background:var(--warn-soft);color:var(--warn)}
+.cell.lo{background:var(--danger-soft);color:var(--danger)}
+.cell.na{background:var(--surface-2);color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:4px}
+
+/* học sinh */
+.today{overflow:hidden}
+.today .band{background:var(--tc);color:#fff;padding:22px 24px;position:relative;overflow:hidden}
+.today .band::after{content:attr(data-g);position:absolute;right:20px;top:50%;transform:translateY(-50%);font-family:var(--f-head);font-size:110px;font-weight:700;opacity:.16;line-height:1}
+.today .band .k{font-size:12.5px;font-weight:600;opacity:.92;display:flex;gap:8px;align-items:center}
+.today .band h2{font-size:24px;margin-top:6px;color:#fff}
+.today .band .meta{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:13px;opacity:.95}
+.today .band .meta span{display:inline-flex;align-items:center;gap:6px}
+.today .tb{padding:18px 24px 22px;display:flex;flex-wrap:wrap;align-items:center;gap:16px}
+.today .tb .grow{flex:1;min-width:200px}
+.streak{display:flex;align-items:center;gap:14px}
+.flame{width:48px;height:48px;border-radius:14px;background:var(--warn-soft);color:var(--t4);display:grid;place-items:center;flex:none}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.week .d{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--muted)}
+.week .c{width:34px;height:34px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;color:var(--muted)}
+.week .c.ok{background:var(--t4);color:#fff}
+.week .c.miss{background:var(--danger-soft);color:var(--danger)}
+.week .c.now{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--t4)}
+.bignum{font-family:var(--f-head);font-size:34px;font-weight:600;line-height:1}
+
+/* màn làm bài */
+.player{position:fixed;inset:0;z-index:40;background:var(--surface);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.player .ph{display:flex;align-items:center;gap:16px;padding:16px max(20px,env(safe-area-inset-right,0px)) 16px max(20px,env(safe-area-inset-left,0px));max-width:880px;width:100%;margin:0 auto}
+.pbar{flex:1;display:flex;gap:6px}
+.pbar i{flex:1;height:10px;border-radius:10px;background:var(--surface-2)}
+.pbar i.cur{background:var(--primary-soft);box-shadow:inset 0 0 0 2px var(--primary)}
+.pbar i.ok{background:var(--success)}
+.pbar i.bad{background:var(--danger)}
+.player .pc{flex:1;overflow:auto;padding:20px max(20px,env(safe-area-inset-right,0px)) 32px max(20px,env(safe-area-inset-left,0px))}
+.player .pin{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.player .qbig{font-family:var(--f-head);font-size:clamp(22px,3.4vw,30px);font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.choice{display:flex;align-items:center;gap:14px;border:2px solid var(--line-2);border-bottom-width:4px;border-radius:14px;background:var(--surface);padding:14px 16px;font-size:17px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left}
+.choice .k{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--line-2);display:grid;place-items:center;font-size:13px;color:var(--muted);flex:none}
+.choice:hover{background:var(--bg)}
+.choice[aria-pressed="true"]{border-color:var(--primary);background:var(--primary-soft);color:var(--primary)}
+.choice[aria-pressed="true"] .k{border-color:var(--primary);color:var(--primary)}
+.choice.ok{border-color:var(--success);background:var(--success-soft);color:var(--success)}
+.choice.bad{border-color:var(--danger);background:var(--danger-soft);color:var(--danger)}
+.choice:disabled{cursor:default}
+.ansbox{font:600 24px var(--f-head)!important;padding:16px 18px!important;border-radius:14px!important;border-width:2px!important;max-width:360px}
+.ansbox.ok{border-color:var(--success)!important;background:var(--success-soft)!important}
+.ansbox.bad{border-color:var(--danger)!important;background:var(--danger-soft)!important}
+.hint{font-size:13px;color:var(--muted)}
+details.wk summary{cursor:pointer;color:var(--primary);font-weight:600;font-size:14px}
+details.wk textarea{margin-top:10px}
+.pf{border-top:1px solid var(--line);background:var(--surface);padding:16px max(20px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px))}
+.pf.ok{background:var(--success-soft);border-top-color:transparent}
+.pf.bad{background:var(--danger-soft);border-top-color:transparent}
+.pf .pfi{max-width:880px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px}
+.pf .fb{display:flex;gap:14px;align-items:flex-start;flex:1;min-width:240px}
+.pf .fb .bi{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--surface)}
+.pf.ok .bi,.pf.ok h3{color:var(--success)}
+.pf.bad .bi,.pf.bad h3{color:var(--danger)}
+.pf h3{font-size:18px}
+.pf .fb p{font-size:14px;color:var(--ink-2);margin-top:3px}
+.pf .btn.lg{min-width:180px}
+.pf.ok .btn{background:var(--success);color:#fff}
+.pf.bad .btn{background:var(--danger);color:#fff}
+.endc{max-width:520px;margin:6vh auto 0;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
+.endc h2{font-size:28px}
+.endc .row{justify-content:center}
+.scrim{position:fixed;inset:0;z-index:50;background:rgba(10,14,24,.45);display:grid;place-items:center;padding:20px}
+.dialog{background:var(--surface);border-radius:18px;padding:22px;max-width:380px;width:100%;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--surface);padding:11px 18px;border-radius:12px;font-size:14px;font-weight:600;max-width:calc(100% - 32px);z-index:60;display:flex;gap:8px;align-items:center}
+@media (max-width:900px){.toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
+.emptyst{text-align:center;padding:28px 16px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:10px}
+.emptyst .ib{width:52px;height:52px;border-radius:16px;background:var(--surface-2);display:grid;place-items:center;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){
+  .toast{animation:tin .2s ease-out}
+  @keyframes tin{from{opacity:0;transform:translate(-50%,8px)}}
+  .pf.ok,.pf.bad{animation:pup .22s ease-out}
+  @keyframes pup{from{transform:translateY(12px);opacity:.6}}
+}
+
+/* ---------- lớp màu bảng xanh + phấn ---------- */
+h1,h2,h3{font-weight:700;letter-spacing:-.02em}
+.kpi .v,.bignum{font-weight:700;letter-spacing:-.02em}
+h1{position:relative;padding-bottom:6px}
+h1::after{content:"";position:absolute;left:0;bottom:0;width:56px;height:4px;border-radius:4px;background:var(--chalk-y);box-shadow:0 0 0 1px rgba(164,111,62,.25)}
+.card{border-radius:12px;border-color:var(--line);box-shadow:var(--shadow)}
+.kpi .ico,.iconbtn,.qn,.datebox,.emptyst .ib,.flame{border-radius:10px}
+.chip{border-radius:999px}
+.fchip{border-radius:999px;font-size:13px}
+input[type=text],input[type=date],select,textarea{border-radius:8px}
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 25%,transparent)}
+.btn{border-radius:8px;font-weight:700}
+.btn.cta{background:var(--chalk-y);color:var(--ink);border-color:rgba(23,37,29,.35)}
+.btn.cta:hover{background:#ffd633;box-shadow:0 3px 0 var(--wood)}
+
+.prog,.prog i,.hbar .tr,.hbar .tr i{border-radius:2px}
+.card.course,.qr,details.sub{transition:box-shadow .12s,transform .12s}
+.card.course:hover,details.sub:hover{box-shadow:0 8px 22px rgba(23,37,29,.1);transform:translateY(-2px)}
+details.sub{border-radius:12px;border-color:var(--line)}
+.qr{border-radius:10px}
+.explain,.note,.newq{border-radius:10px}
+
+/* sidebar là tấm bảng xanh có khung gỗ */
+.side{background-color:var(--board);background-image:radial-gradient(120% 80% at 15% 0%,rgba(255,255,255,.09),transparent 60%),radial-gradient(90% 70% at 100% 100%,rgba(255,255,255,.06),transparent 55%);color:var(--chalk);border-right:6px solid var(--wood)}
+.logo{flex-direction:column;align-items:flex-start;gap:6px;padding:4px 10px 22px}
+.logo .wm{font-family:var(--f-chalk);font-size:23px;color:var(--chalk);letter-spacing:.01em}
+.logo .wm b{color:var(--chalk-y);font-weight:400;margin-right:6px}
+.logo>span:last-child{font-size:11.5px;color:rgba(255,255,255,.6)}
+.navlbl{color:rgba(243,240,228,.55)}
+.nav-item{color:rgba(243,240,228,.82);border-radius:8px;position:relative}
+.nav-item:hover{background:rgba(255,255,255,.07)}
+.nav-item[aria-current="page"]{background:rgba(255,224,102,.14);color:var(--chalk-y)}
+.nav-item[aria-current="page"]::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:3px;background:var(--chalk-y)}
+.rolecard{background:var(--board-2);border-color:rgba(255,255,255,.14);border-radius:10px;color:var(--chalk)}
+.rolecard .muted{color:rgba(255,255,255,.6)}
+.rolecard .seg{background:rgba(255,255,255,.08);border-radius:8px}
+.rolecard .seg button{color:rgba(243,240,228,.75);border-radius:6px}
+.rolecard .seg button[aria-pressed="true"]{background:var(--chalk-y);color:var(--ink)}
+.rolecard .who span{color:rgba(255,255,255,.6)}
+.rolecard .av{background:rgba(255,255,255,.14);color:#fff}
+.rolecard select{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
+.rolecard select option{color:var(--ink)}
+.seg{border-radius:8px}
+.seg button{border-radius:6px}
+.seg button[aria-pressed="true"]{background:var(--board);color:var(--chalk);box-shadow:none}
+
+/* thẻ bài: tấm bảng xanh, chữ phấn, khung gỗ, sọc màu chuyên đề */
+.course .band,.today .band{background-color:var(--board);background-image:radial-gradient(120% 80% at 15% 0%,rgba(255,255,255,.09),transparent 60%),radial-gradient(90% 70% at 100% 100%,rgba(255,255,255,.06),transparent 55%);border-bottom:5px solid var(--wood);box-shadow:inset 6px 0 0 var(--tc)}
+.course .band::after,.today .band::after{color:var(--chalk);opacity:.22;font-family:var(--f-chalk)}
+.course .band span,.today .band .k{color:var(--chalk-y);opacity:1}
+.course .band b,.today .band h2{font-family:var(--f-chalk);font-weight:400;color:var(--chalk);letter-spacing:.01em}
+.course .band b{font-size:19px}
+.today .band h2{font-size:30px}
+.course{border-radius:12px}
+.course .band{height:auto;min-height:96px;gap:8px;padding-right:58px}
+.course .band b{font-size:15px;line-height:1.3}
+.course .band span{font-size:11.5px}
+.course .band::after{font-size:52px;bottom:auto;top:50%;transform:translateY(-50%)}
+.logo .wm{white-space:nowrap}
+.logo .wm b{display:inline;font-size:inherit;line-height:1.3}
+
+.course.empty{border-radius:12px}
+
+/* làm bài */
+.player .ph{border-bottom:1px solid var(--line);max-width:none}
+.pbar{gap:4px}
+.pbar i{border-radius:6px;height:10px}
+.pbar i.cur{background:var(--chalk-y);box-shadow:inset 0 0 0 1px var(--wood)}
+.choice{border-radius:12px;border-width:2px;border-bottom-width:4px;border-color:var(--line-2);transition:transform .1s}
+.choice:hover:not(:disabled){transform:translateY(-1px);background:var(--surface-2)}
+.choice .k{border-radius:8px}
+.ansbox{border-radius:12px!important}
+.pf .btn.lg{border-radius:10px}
+.dialog{border-radius:6px}
+.toast{background:var(--board);color:var(--chalk);border-left:4px solid var(--chalk-y);border-radius:10px}
+.badge{border-radius:10px}
+.week .c{border-radius:50%}
+.week .c.ok{background:var(--board);color:var(--chalk-y)}
+.week .c.now{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink)}
+.flame{background:var(--board);color:var(--chalk-y)}
+.cell{border-radius:8px}
+.days i{border-radius:3px}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="logo"><span class="wm"><b>toán</b>mỗi ngày</span><span>Luyện tập · sửa lỗi sai</span></div>
+    <div class="navlbl" id="navlbl"></div>
+    <nav id="sidenav" aria-label="Điều hướng chính"></nav>
+    <div class="spacer"></div>
+    <div class="rolecard" id="rolecard"></div>
+  </aside>
+  <div class="content">
+    <header class="topbar" id="topbar"></header>
+    <main id="main"></main>
+    <footer class="foot">
+      <span>Bản demo · học sinh và bài làm là dữ liệu mẫu, lưu trên trình duyệt này.</span>
+      <button class="btn sec sm" data-act="reset" id="reset-btn">Đặt lại dữ liệu mẫu</button>
+    </footer>
+  </div>
+  <nav class="bnav" id="bnav" aria-label="Điều hướng"></nav>
+</div>
+<div class="player" id="player" hidden></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+// ---------- tiện ích ----------
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const z = n => String(n).padStart(2, '0');
+const dkey = d => d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate());
+const addDays = (k, n) => { const [y, m, d] = k.split('-').map(Number); return dkey(new Date(y, m - 1, d + n)); };
+const TODAY = dkey(new Date());
+const fmtDate = k => { const [y, m, d] = k.split('-').map(Number); const t = new Date(y, m - 1, d); return ['CN','T2','T3','T4','T5','T6','T7'][t.getDay()] + ', ' + d + '/' + m; };
+const dec = x => (Math.round(x * 10) / 10).toFixed(1).replace('.', ',');
+const pct = x => Math.round(x * 100) + '%';
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+const TOPICS = ['Phân số', 'Số nguyên', 'Phương trình', 'Hình học'];
+const LEVELS = ['Cơ bản', 'Khá', 'Nâng cao'];
+
+// ngân hàng câu hỏi mẫu; traps = đáp án sai hay gặp, ww = cách làm sai điển hình
+const BANK = [
+  {id:'c1',level:'Cơ bản',topic:'Phân số',type:'num',text:'Tính 1/2 + 1/3',answer:'5/6',traps:['2/5','2/6'],ww:'1/2 + 1/3 = (1+1)/(2+3) = 2/5',explain:'Quy đồng mẫu 6: 3/6 + 2/6 = 5/6. Không cộng tử với tử, mẫu với mẫu.'},
+  {id:'c2',level:'Cơ bản',topic:'Phân số',type:'num',text:'Rút gọn phân số 12/18 về tối giản',answer:'2/3',traps:['6/9','4/6'],ww:'12/18 = 6/9',explain:'ƯCLN(12, 18) = 6, chia cả tử và mẫu cho 6 được 2/3. 6/9 chưa tối giản.'},
+  {id:'c3',level:'Cơ bản',topic:'Phân số',type:'num',text:'3/4 của 20 là bao nhiêu?',answer:'15',traps:['5','80/3'],ww:'20 : 4 = 5',explain:'Lấy 20 · 3/4 = 60/4 = 15. Nhớ nhân thêm với tử số 3.'},
+  {id:'c4',level:'Cơ bản',topic:'Số nguyên',type:'num',text:'Tính (−7) + 4',answer:'-3',traps:['3','-11'],ww:'7 − 4 = 3',explain:'Hai số khác dấu: lấy 7 − 4 = 3, dấu của số có giá trị tuyệt đối lớn hơn (−7), được −3.'},
+  {id:'c5',level:'Cơ bản',topic:'Số nguyên',type:'num',text:'Tính (−3) · (−5)',answer:'15',traps:['-15'],explain:'Âm nhân âm ra dương: (−3)·(−5) = 15.'},
+  {id:'c6',level:'Cơ bản',topic:'Số nguyên',type:'num',text:'Tính 12 − (−8)',answer:'20',traps:['4'],ww:'12 − 8 = 4',explain:'Trừ một số âm là cộng số đối: 12 − (−8) = 12 + 8 = 20.'},
+  {id:'c7',level:'Cơ bản',topic:'Phương trình',type:'num',text:'Tìm x: x + 7 = 12',answer:'5',traps:['19'],ww:'x = 12 + 7 = 19',explain:'Chuyển 7 sang vế phải đổi dấu: x = 12 − 7 = 5.'},
+  {id:'c8',level:'Cơ bản',topic:'Phương trình',type:'num',text:'Tìm x: 3x = 21',answer:'7',traps:['18','63'],ww:'x = 21 − 3 = 18',explain:'Chia hai vế cho 3: x = 21 : 3 = 7.'},
+  {id:'c9',level:'Cơ bản',topic:'Hình học',type:'num',text:'Chu vi hình chữ nhật dài 8 cm, rộng 5 cm là bao nhiêu cm?',answer:'26',traps:['40','13'],ww:'8 · 5 = 40',explain:'Chu vi = (dài + rộng) · 2 = (8 + 5) · 2 = 26 cm. 40 là diện tích.'},
+  {id:'c10',level:'Cơ bản',topic:'Hình học',type:'mc',text:'Tổng ba góc trong một tam giác bằng',options:['90°','180°','270°','360°'],answer:'180°',explain:'Tổng ba góc trong tam giác luôn bằng 180°.'},
+  {id:'k1',level:'Khá',topic:'Phân số',type:'num',text:'Tính 2/3 · 9/4',answer:'3/2',traps:['18/12','8/27'],ww:'2/3 · 9/4 = 18/12',explain:'2·9 / (3·4) = 18/12 = 3/2. Nhớ rút gọn kết quả cuối.'},
+  {id:'k2',level:'Khá',topic:'Phân số',type:'num',text:'Tính 5/6 − 3/4',answer:'1/12',traps:['1','2/2'],ww:'(5−3)/(6−4) = 2/2 = 1',explain:'Quy đồng mẫu 12: 10/12 − 9/12 = 1/12.'},
+  {id:'k3',level:'Khá',topic:'Số nguyên',type:'num',text:'Tính (−2)³',answer:'-8',traps:['8','-6'],ww:'(−2)³ = 8',explain:'(−2)·(−2)·(−2) = 4·(−2) = −8. Lũy thừa bậc lẻ của số âm là số âm.'},
+  {id:'k4',level:'Khá',topic:'Số nguyên',type:'num',text:'Tính −15 : 3 + (−4) · 2',answer:'-13',traps:['-3','-18'],ww:'−15 : 3 + (−4) = −5 + (−4) = −9 … ·2',explain:'Nhân chia trước: −5 + (−8) = −13.'},
+  {id:'k5',level:'Khá',topic:'Phương trình',type:'num',text:'Tìm x: 2x − 5 = 9',answer:'7',traps:['2','-7'],ww:'2x = 9 − 5 = 4 → x = 2',explain:'2x = 9 + 5 = 14, x = 7. Chuyển −5 sang vế phải thành +5.'},
+  {id:'k6',level:'Khá',topic:'Phương trình',type:'num',text:'Tìm x: 3(x − 2) = 12',answer:'6',traps:['14/3','2'],ww:'3x − 2 = 12 → x = 14/3',explain:'x − 2 = 12 : 3 = 4, x = 6. Khi phá ngoặc phải nhân 3 với cả −2.'},
+  {id:'k7',level:'Khá',topic:'Hình học',type:'num',text:'Diện tích tam giác có đáy 10 cm, chiều cao 6 cm (cm²)',answer:'30',traps:['60'],ww:'S = 10 · 6 = 60',explain:'S = đáy · cao : 2 = 10 · 6 : 2 = 30 cm².'},
+  {id:'k8',level:'Khá',topic:'Hình học',type:'mc',text:'Hai góc kề bù có tổng số đo bằng',options:['90°','180°','360°','Tùy hai góc'],answer:'180°',explain:'Hai góc kề bù tạo thành góc bẹt nên tổng bằng 180°. 90° là hai góc phụ nhau.'},
+  {id:'n1',level:'Nâng cao',topic:'Phân số',type:'num',text:'Tính 1/(1·2) + 1/(2·3) + 1/(3·4)',answer:'3/4',traps:['1/24','3/24'],explain:'Tách 1/(n(n+1)) = 1/n − 1/(n+1): tổng = 1 − 1/4 = 3/4.'},
+  {id:'n2',level:'Nâng cao',topic:'Phân số',type:'num',text:'Tìm x: x/4 = 15/20',answer:'3',traps:['75','12'],explain:'15/20 = 3/4 nên x = 3 (hoặc nhân chéo: 20x = 60).'},
+  {id:'n3',level:'Nâng cao',topic:'Số nguyên',type:'num',text:'Tính (−1) + 2 + (−3) + 4 + … + (−99) + 100',answer:'50',traps:['-50','0'],explain:'Ghép 50 cặp [(−1)+2], [(−3)+4], … mỗi cặp bằng 1, tổng = 50.'},
+  {id:'n4',level:'Nâng cao',topic:'Phương trình',type:'num',text:'Tìm x: 2(x + 3) − 3(x − 1) = 5',answer:'4',traps:['-2','-4'],ww:'2x + 6 − 3x − 3 = 5 → −x = 2 → x = −2',explain:'−3(x − 1) = −3x + 3. Ta có −x + 9 = 5, x = 4. Lỗi hay gặp: quên đổi dấu −3 · (−1).'},
+  {id:'n5',level:'Nâng cao',topic:'Phương trình',type:'mc',text:'Tập nghiệm của |x − 3| = 5 là',options:['{8}','{−2; 8}','{2; 8}','{−8; 2}'],answer:'{−2; 8}',explain:'x − 3 = 5 hoặc x − 3 = −5, nên x = 8 hoặc x = −2. Đừng bỏ trường hợp âm.'},
+  {id:'n6',level:'Nâng cao',topic:'Hình học',type:'num',text:'Hình vuông có chu vi 36 cm. Diện tích là bao nhiêu cm²?',answer:'81',traps:['324','36'],ww:'S = 36 · 9 = 324',explain:'Cạnh = 36 : 4 = 9 cm, diện tích = 9 · 9 = 81 cm².'},
+  {id:'n7',level:'Nâng cao',topic:'Hình học',type:'num',text:'Tam giác ABC có Â = 50°, B̂ = 70°. Góc ngoài tại đỉnh C bằng bao nhiêu độ?',answer:'120',traps:['60'],ww:'Ĉ = 180 − 50 − 70 = 60',explain:'Góc ngoài tại C = Â + B̂ = 120° (60° là góc trong Ĉ).'}
+];
+
+const STUDENTS = [
+  {id:'s1',name:'Nguyễn Minh An',level:'Cơ bản',skill:.72,weak:'Phân số'},
+  {id:'s2',name:'Trần Bảo Ngọc',level:'Cơ bản',skill:.62,weak:'Số nguyên'},
+  {id:'s3',name:'Lê Gia Huy',level:'Khá',skill:.78,weak:'Phương trình'},
+  {id:'s4',name:'Phạm Thu Hà',level:'Khá',skill:.72,weak:'Phân số'},
+  {id:'s5',name:'Võ Đức Thịnh',level:'Khá',skill:.8,weak:'Hình học'},
+  {id:'s6',name:'Đặng Khánh Linh',level:'Nâng cao',skill:.8,weak:'Phương trình'},
+  {id:'s7',name:'Hoàng Quốc Bảo',level:'Nâng cao',skill:.74,weak:'Số nguyên'}
+];
+
+// ---------- dữ liệu ----------
+function seed(){
+  const rnd = mulberry32(20261023);
+  const st = {v:1, students:STUDENTS.map(s => ({id:s.id,name:s.name,level:s.level})), bank:BANK.map(q => ({...q})), assignments:[], submissions:[], fixed:{}, n:1};
+  const rot = (arr, k) => arr.length ? arr.slice(k % arr.length).concat(arr.slice(0, k % arr.length)) : arr;
+  for (let i = -6; i <= 0; i++) {
+    const day = addDays(TODAY, i);
+    LEVELS.forEach((lv, li) => {
+      const pool = st.bank.filter(q => q.level === lv);
+      const topic = TOPICS[(i + 6 + li) % TOPICS.length];
+      const pick = rot(pool.filter(q => q.topic === topic), i + 6).slice(0, 2);
+      for (const q of rot(pool.filter(q => q.topic !== topic), (i + 6) * 2 + li)) { if (pick.length >= 3) break; pick.push(q); }
+      const a = {id:'a' + st.n++, date:day, level:lv, topic, title:'Luyện tập ' + topic.toLowerCase(), qids:pick.map(q => q.id)};
+      st.assignments.push(a);
+      STUDENTS.filter(s => s.level === lv).forEach(s => {
+        if (rnd() > (i === 0 ? 0.45 : 0.86)) return;
+        const answers = {};
+        a.qids.forEach(qid => {
+          const q = st.bank.find(x => x.id === qid);
+          const p = s.skill - (q.topic === s.weak ? 0.32 : 0);
+          let value = q.answer, work = '';
+          if (rnd() > p) {
+            if (q.type === 'mc') { const w = q.options.filter(o => o !== q.answer); value = w[Math.floor(rnd() * w.length)]; }
+            else value = rnd() < 0.7 ? q.traps[0] : q.traps[Math.floor(rnd() * q.traps.length)];
+            if (q.ww && value === q.traps[0] && rnd() < 0.75) work = q.ww;
+          }
+          answers[qid] = {value, work};
+        });
+        const h = 15 + Math.floor(rnd() * 6), m = Math.floor(rnd() * 60);
+        st.submissions.push({id:'b' + st.n++, aid:a.id, sid:s.id, at:day + 'T' + z(h) + ':' + z(m), answers});
+        // vài lỗi cũ đã được sửa
+        if (i < -2) a.qids.forEach(qid => { if (!isRight(st.bank.find(x => x.id === qid), answers[qid].value) && rnd() < 0.4) (st.fixed[s.id] ||= {})[qid] = true; });
+      });
+    });
+  }
+  return st;
+}
+
+const KEY = 'toan-moi-ngay-v1';
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY)); } catch (e) { S = null; }
+if (!S || S.v !== 1) S = seed();
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+const ui = {role:'teacher', sid:'s1', tab:{teacher:'today', student:'today'}, tSid:null, an:{range:'7', level:'all'}, compose:null, flash:{}, armed:null, justSubmitted:null};
+try { const u = JSON.parse(localStorage.getItem(KEY + '-ui')); if (u) { ui.role = u.role || ui.role; ui.sid = u.sid || ui.sid; } } catch (e) {}
+function saveUi(){ try { localStorage.setItem(KEY + '-ui', JSON.stringify({role:ui.role, sid:ui.sid})); } catch (e) {} }
+
+// ---------- chấm bài ----------
+function parseNum(s){
+  s = String(s ?? '').trim().replace(/[−–]/g, '-').replace(/\s/g, '').replace(',', '.');
+  if (!s) return NaN;
+  const m = s.match(/^(-?\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)$/);
+  if (m) return Number(m[1]) / Number(m[2]);
+  return /^-?\d+(\.\d+)?$/.test(s) ? Number(s) : NaN;
+}
+function isRight(q, v){
+  if (!q) return false;
+  if (q.type === 'mc') return v === q.answer;
+  const a = parseNum(v), b = parseNum(q.answer);
+  return !isNaN(a) && Math.abs(a - b) < 1e-9;
+}
+const showVal = v => (v === '' || v == null) ? '(bỏ trống)' : String(v).replace(/^-/, '−');
+const normVal = v => String(v ?? '').trim().replace(/[−–]/g, '-').replace(/\s/g, '');
+
+const Q = id => S.bank.find(q => q.id === id);
+const A = id => S.assignments.find(a => a.id === id);
+const STU = id => S.students.find(s => s.id === id);
+function scoreOf(sub){
+  const a = A(sub.aid); if (!a) return {c:0, t:0, ten:0};
+  const c = a.qids.filter(qid => isRight(Q(qid), sub.answers[qid]?.value)).length;
+  return {c, t:a.qids.length, ten:a.qids.length ? c / a.qids.length * 10 : 0};
+}
+const subsOf = sid => S.submissions.filter(b => b.sid === sid && A(b.aid)).sort((x, y) => y.at.localeCompare(x.at));
+const subFor = (aid, sid) => S.submissions.find(b => b.aid === aid && b.sid === sid);
+const todaysFor = st => S.assignments.filter(a => a.date === TODAY && a.level === st.level);
+
+// sổ lỗi: mỗi câu từng làm sai, lấy lần sai gần nhất
+function mistakes(sid){
+  const seen = new Map();
+  for (const b of subsOf(sid)) {
+    const a = A(b.aid);
+    for (const qid of a.qids) {
+      const q = Q(qid); if (!q || seen.has(qid)) continue;
+      const v = b.answers[qid]?.value;
+      if (!isRight(q, v)) seen.set(qid, {q, value:v, work:b.answers[qid]?.work, date:a.date, fixed:!!S.fixed[sid]?.[qid]});
+    }
+  }
+  return [...seen.values()];
+}
+function streakOf(sid){
+  const days = new Set(subsOf(sid).map(b => A(b.aid).date));
+  let k = days.has(TODAY) ? TODAY : addDays(TODAY, -1), n = 0;
+  while (days.has(k)) { n++; k = addDays(k, -1); }
+  return n;
+}
+
+// ---------- giao diện: tiện ích ----------
+ui.player = null; ui.review = {}; ui.bankTopic = 'all';
+const ICON = {
+  home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  users:'<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/>',
+  chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  book:'<path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M4 17a3 3 0 0 1 3-3h11"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  flame:'<path d="M12 22c4 0 7-2.7 7-7 0-3-2-5.5-3.5-7-.3 2-1.5 3-2.5 3 .5-3-1-6.5-4-9 0 3.5-4 6.5-4 12 0 4.3 3 8 7 8z"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7"/>',
+  x:'<path d="M6 6l12 12M18 6 6 18"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  play:'<path d="M7 5v14l11-7z"/>',
+  alert:'<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  retry:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
+  chev:'<path d="M9 6l6 6-6 6"/>',
+  list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
+  trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>'
+};
+const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICON[n]}</svg>`;
+const TOPIC_VAR = {'Phân số':'--t1', 'Số nguyên':'--t2', 'Phương trình':'--t3', 'Hình học':'--t4'};
+const TOPIC_GLYPH = {'Phân số':'½', 'Số nguyên':'±', 'Phương trình':'x', 'Hình học':'△'};
+const tcv = t => `--tc:var(${TOPIC_VAR[t] || '--t1'})`;
+const topicChip = t => `<span class="chip topic" style="${tcv(t)}"><span class="dot"></span>${esc(t)}</span>`;
+const AVC = ['--t1','--t2','--t3','--t4','--danger','--success','--warn'];
+function initials(n){ const p = n.trim().split(/\s+/); return (p.length > 1 ? p[p.length - 2][0] : '') + p[p.length - 1][0]; }
+function avatar(s, cls = ''){ const k = Number(String(s.id).replace(/\D/g, '')) || 0; return `<span class="av ${cls}" style="--c:var(${AVC[k % AVC.length]})" aria-hidden="true">${esc(initials(s.name))}</span>`; }
+const firstName = s => s.name.trim().split(/\s+/).pop();
+const mean = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
+const scoreCls = f => f >= 0.8 ? 'ok' : f >= 0.5 ? 'warn' : 'bad';
+function ring(frac, size = 64, stroke = 7, color = 'var(--primary)', inner = ''){
+  const r = (size - stroke) / 2, c = 2 * Math.PI * r, h = size / 2;
+  return `<div class="ring" style="width:${size}px;height:${size}px"><svg viewBox="0 0 ${size} ${size}"><circle cx="${h}" cy="${h}" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="${stroke}"/>${frac > 0 ? `<circle cx="${h}" cy="${h}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c * Math.min(frac, 1)} ${c}" transform="rotate(-90 ${h} ${h})"/>` : ''}</svg><span>${inner}</span></div>`;
+}
+function spark(vals, w = 132, h = 34, color = 'var(--danger)'){
+  const pts = vals.map((v, i) => v == null ? null : [4 + i * (w - 8) / (vals.length - 1), h - 4 - v * (h - 8)]).filter(Boolean);
+  if (pts.length < 2) return '';
+  const line = pts.map(p => p.map(n => n.toFixed(1)).join(',')).join(' ');
+  const last = pts[pts.length - 1];
+  return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">
+    <polygon points="${pts[0][0]},${h} ${line} ${last[0]},${h}" fill="${color}" opacity=".1"/>
+    <polyline points="${line}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="3.5" fill="${color}"/></svg>`;
+}
+const WD = ['CN','T2','T3','T4','T5','T6','T7'];
+const wdOf = k => { const [y, m, d] = k.split('-').map(Number); return WD[new Date(y, m - 1, d).getDay()]; };
+const last7 = () => [...Array(7)].map((_, i) => addDays(TODAY, i - 6));
+
+function toast(msg){ const t = $('#toast'); t.innerHTML = ic('check', 'sm') + esc(msg); t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 2600); }
+function go(tab){ if (ui.role === 'teacher' && ui.tab.teacher === 'compose') syncCompose(); ui.tab[ui.role] = tab; ui.armed = null; render(); window.scrollTo(0, 0); }
+
+// ---------- khung ----------
+function render(){
+  const st = STU(ui.sid) || S.students[0];
+  const T = ui.role === 'teacher';
+  const nOpen = mistakes(st.id).filter(m => !m.fixed).length;
+  const tabs = T
+    ? [['today','Tổng quan','home'],['compose','Soạn & giao bài','edit'],['work','Bài làm học sinh','users'],['analysis','Phân tích lỗi sai','chart']]
+    : [['today','Trang chủ','home'],['mistakes','Sổ lỗi sai','book',nOpen],['history','Lịch sử','clock']];
+  const cur = ui.tab[ui.role];
+  $('#navlbl').textContent = T ? 'Lớp học' : 'Học tập';
+  $('#sidenav').innerHTML = tabs.map(([k, l, i, c]) => `<button class="nav-item" data-act="tab" data-v="${k}" ${k === cur ? 'aria-current="page"' : ''}>${ic(i)}<span>${l}</span>${c ? `<span class="badge">${c}</span>` : ''}</button>`).join('');
+  $('#bnav').innerHTML = tabs.map(([k, l, i, c]) => `<button data-act="tab" data-v="${k}" ${k === cur ? 'aria-current="page"' : ''}>${ic(i)}<span class="l">${{compose:'Giao bài', work:'Bài làm', analysis:'Phân tích'}[k] || l}</span>${c ? `<span class="badge">${c}</span>` : ''}</button>`).join('');
+
+  const seg = `<div class="seg" role="group" aria-label="Xem với vai trò"><button data-act="role" data-v="teacher" aria-pressed="${T}">Giáo viên</button><button data-act="role" data-v="student" aria-pressed="${!T}">Học sinh</button></div>`;
+  const pick = id => `<select id="${id}" data-pick aria-label="Chọn học sinh">${S.students.map(s => `<option value="${s.id}" ${s.id === st.id ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select>`;
+  $('#rolecard').innerHTML = `<span class="small muted">Đang xem với vai trò</span>${seg}
+    ${T ? `<div class="who"><span class="av" style="--c:var(--primary)">GV</span><div><b>Cô giáo chủ nhiệm</b><span>${S.students.length} học sinh · 3 nhóm</span></div></div>`
+        : `<div class="who">${avatar(st)}<div style="min-width:0;flex:1">${pick('pick-side')}</div></div>`}`;
+
+  const titles = T
+    ? {today:['Lớp học','Tổng quan lớp học'], compose:['Lớp học','Soạn & giao bài'], work:['Lớp học','Bài làm học sinh'], analysis:['Lớp học','Phân tích lỗi sai']}
+    : {today:['Học tập',`Chào ${esc(firstName(st))}!`], mistakes:['Học tập','Sổ lỗi sai'], history:['Học tập','Lịch sử làm bài']};
+  const [crumb, title] = titles[cur];
+  $('#topbar').innerHTML = `<div><div class="crumb">${crumb} ${ic('chev','sm')} ${T ? 'Giáo viên' : 'Nhóm ' + st.level}</div><h1>${title}</h1></div>
+    <div class="r"><span class="chip-date">${ic('cal','sm')} ${fmtDate(TODAY)}</span></div>
+    <div class="toprole">${seg}${T ? '' : pick('pick-top')}</div>`;
+
+  const views = T ? {today:tHome, compose:tCompose, work:tWork, analysis:tAnalysis} : {today:sHome, mistakes:sMistakes, history:sHistory};
+  $('#main').innerHTML = views[cur](st);
+  renderPlayer();
+}
+
+// ---------- giáo viên ----------
+function dayRate(d){
+  let n = 0, w = 0;
+  for (const b of S.submissions) { const a = A(b.aid); if (!a || a.date !== d) continue; for (const qid of a.qids) { n++; if (!isRight(Q(qid), b.answers[qid]?.value)) w++; } }
+  return {n, w};
+}
+function weekDots(s){
+  return `<div class="days" aria-label="7 ngày gần nhất">${last7().map(d => {
+    const as = S.assignments.filter(a => a.date === d && a.level === s.level);
+    const subs = as.map(a => subFor(a.id, s.id)).filter(Boolean);
+    if (!as.length) return `<i title="${fmtDate(d)}: không có bài"></i>`;
+    if (!subs.length) return d === TODAY ? `<i title="Hôm nay: chưa nộp"></i>` : `<i class="miss" title="${fmtDate(d)}: bỏ lỡ"></i>`;
+    const f = mean(subs.map(b => { const x = scoreOf(b); return x.c / x.t; }));
+    return `<i class="${f >= 0.67 ? 'ok' : 'mid'}" title="${fmtDate(d)}: ${pct(f)} đúng"></i>`;
+  }).join('')}</div>`;
+}
+function tHome(){
+  const withWork = S.students.filter(s => todaysFor(s).length);
+  const isDone = s => todaysFor(s).every(a => subFor(a.id, s.id));
+  const done = withWork.filter(isDone).length;
+  const todaySubs = S.submissions.filter(b => A(b.aid)?.date === TODAY);
+  const avg = mean(todaySubs.map(b => scoreOf(b).ten));
+  const daily = last7().map(d => { const r = dayRate(d); return r.n ? r.w / r.n : null; });
+  const wk = last7().map(dayRate).reduce((x, r) => ({n:x.n + r.n, w:x.w + r.w}), {n:0, w:0});
+  const open = S.students.reduce((x, s) => x + mistakes(s.id).filter(m => !m.fixed).length, 0);
+  const fixedN = S.students.reduce((x, s) => x + mistakes(s.id).filter(m => m.fixed).length, 0);
+
+  const kpis = `<div class="grid g4">
+    <div class="card kpi">${ring(withWork.length ? done / withWork.length : 0, 58, 7, 'var(--success)', `${done}/${withWork.length}`)}<div><div class="t">Đã nộp hôm nay</div><div class="s">${withWork.length - done ? `${withWork.length - done} em chưa nộp` : 'Cả lớp đã nộp'}</div></div></div>
+    <div class="card kpi"><div class="ico" style="background:var(--primary-soft);color:var(--primary)">${ic('target')}</div><div><div class="t">Điểm TB hôm nay</div><div class="v">${avg == null ? '–' : dec(avg)}<small>/10</small></div></div></div>
+    <div class="card kpi" style="align-items:flex-start"><div style="flex:1;min-width:0"><div class="t">Tỉ lệ sai 7 ngày</div><div class="v">${wk.n ? pct(wk.w / wk.n) : '–'}</div>${spark(daily)}</div></div>
+    <div class="card kpi"><div class="ico" style="background:var(--danger-soft);color:var(--danger)">${ic('book')}</div><div><div class="t">Lỗi chưa sửa</div><div class="v">${open}</div><div class="s">${fixedN} lỗi học sinh đã tự sửa</div></div></div>
+  </div>`;
+
+  const courses = `<div class="card"><div class="card-h"><div><h2>Bài hôm nay</h2><p>Mỗi nhóm trình độ nhận một bài riêng</p></div><button class="btn soft sm" data-act="tab" data-v="compose">${ic('plus','sm')} Giao bài mới</button></div>
+    <div class="card-b"><div class="grid g3">${LEVELS.map(lv => {
+      const as = S.assignments.filter(a => a.date === TODAY && a.level === lv);
+      const mem = S.students.filter(s => s.level === lv);
+      if (!as.length) return `<div class="card course empty"><div class="emptyst" style="padding:8px"><div class="ib">${ic('edit')}</div><b style="color:var(--ink)">Nhóm ${lv}</b><span class="small">Chưa có bài cho hôm nay</span><button class="btn sm" data-act="compose-for" data-v="${lv}">Soạn bài</button></div></div>`;
+      const a = as[0], subs = mem.filter(s => subFor(a.id, s.id));
+      const sc = mean(subs.map(s => scoreOf(subFor(a.id, s.id)).ten));
+      return `<div class="card course" style="${tcv(a.topic)}"><div class="band" data-g="${TOPIC_GLYPH[a.topic] || '∑'}"><span>Nhóm ${lv} · ${a.topic}</span><b>${esc(a.title)}</b></div>
+        <div class="cb"><div class="row between small"><span class="muted">${subs.length}/${mem.length} đã nộp</span><span class="muted">${a.qids.length} câu${sc == null ? '' : ' · TB ' + dec(sc)}</span></div>
+          <div class="prog"><i style="width:${mem.length ? subs.length / mem.length * 100 : 0}%"></i></div>
+          <div class="row between"><div class="avstack">${subs.map(s => avatar(s, 'sm')).join('') || '<span class="small muted">Chưa có ai nộp</span>'}</div><button class="btn ghost sm" data-act="view-student" data-v="${(subs[0] || mem[0])?.id || ''}">Xem bài làm</button></div></div></div>`;
+    }).join('')}</div></div></div>`;
+
+  const rows = S.students.map(s => {
+    const as = todaysFor(s), subs = as.map(a => subFor(a.id, s.id)).filter(Boolean);
+    const sc = subs.map(scoreOf), c = sc.reduce((x, y) => x + y.c, 0), t = sc.reduce((x, y) => x + y.t, 0);
+    const open = mistakes(s.id).filter(m => !m.fixed).length;
+    const status = !as.length ? '<span class="chip">Không có bài</span>' : subs.length === as.length ? `<span class="chip ok">${ic('check','sm')} Nộp ${subs[0].at.slice(11)}</span>` : '<span class="chip warn">Chưa nộp</span>';
+    return `<tr class="click" data-act="view-student" data-v="${s.id}">
+      <td><div class="person">${avatar(s)}<div><b>${esc(s.name)}</b><div class="small muted">Chuỗi ${streakOf(s.id)} ngày</div></div></div></td>
+      <td><select data-act="set-level" data-v="${s.id}" id="lv-${s.id}" aria-label="Nhóm của ${esc(s.name)}">${LEVELS.map(l => `<option ${l === s.level ? 'selected' : ''}>${l}</option>`).join('')}</select></td>
+      <td>${status}</td>
+      <td>${t ? `<span class="chip ${scoreCls(c / t)} num">${c}/${t}</span>` : '<span class="muted">–</span>'}</td>
+      <td>${weekDots(s)}</td>
+      <td>${open ? `<span class="chip bad">${open} lỗi</span>` : '<span class="chip ok">0</span>'}</td></tr>`;
+  }).join('');
+  const table = `<div class="card"><div class="card-h"><div><h2>Học sinh</h2><p>Bấm vào một học sinh để xem bài làm. Đổi nhóm trình độ ngay trong bảng.</p></div></div>
+    <div class="card-b" style="padding-inline:8px"><div class="tbl"><table>
+      <thead><tr><th>Học sinh</th><th>Nhóm</th><th>Hôm nay</th><th>Đúng</th><th>7 ngày</th><th>Lỗi chưa sửa</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="legend" style="padding:4px 12px"><span><i style="background:var(--success)"></i>Đúng ≥ 67%</span><span><i style="background:var(--warn)"></i>Dưới 67%</span><span><i style="box-shadow:inset 0 0 0 1.5px var(--danger)"></i>Bỏ lỡ</span><span><i style="background:var(--surface-2)"></i>Không có bài</span></div></div></div>`;
+
+  const att = S.students.map(s => {
+    const why = [];
+    if (todaysFor(s).length && !todaysFor(s).every(a => subFor(a.id, s.id))) why.push('<span class="chip warn">Chưa nộp hôm nay</span>');
+    const open = mistakes(s.id).filter(m => !m.fixed).length;
+    if (open >= 3) why.push(`<span class="chip bad">${open} lỗi chưa sửa</span>`);
+    const per = {};
+    for (const b of subsOf(s.id)) { const a = A(b.aid); for (const qid of a.qids) { const q = Q(qid); if (!q) continue; const p = per[q.topic] ||= {n:0, w:0}; p.n++; if (!isRight(q, b.answers[qid]?.value)) p.w++; } }
+    const weak = Object.entries(per).filter(([, v]) => v.n >= 3 && v.w / v.n >= 0.5).sort((x, y) => y[1].w / y[1].n - x[1].w / x[1].n)[0];
+    if (weak) why.push(`<span class="chip topic" style="${tcv(weak[0])}">Yếu ${weak[0]} · sai ${pct(weak[1].w / weak[1].n)}</span>`);
+    return {s, why};
+  }).filter(x => x.why.length).sort((x, y) => y.why.length - x.why.length);
+  const attn = `<div class="card"><div class="card-h"><div><h2>Cần chú ý</h2><p>Gợi ý ai cần nhắc hoặc kèm thêm</p></div></div><div class="card-b" style="padding-top:4px">
+    ${att.length ? `<div class="attn">${att.slice(0, 6).map(x => `<div class="it">${avatar(x.s)}<div style="min-width:0"><button class="btn ghost sm" style="padding:0" data-act="view-student" data-v="${x.s.id}">${esc(x.s.name)}</button><div class="row">${x.why.join('')}</div></div></div>`).join('')}</div>` : '<div class="emptyst"><div class="ib">' + ic('check') + '</div>Lớp đang ổn, không có em nào cần chú ý.</div>'}
+  </div></div>`;
+
+  return kpis + courses + `<div class="split">${table}${attn}</div>`;
+}
+
+// ---------- soạn bài ----------
+function newCompose(level){ return {date:TODAY, level:level || LEVELS[0], topic:TOPICS[0], title:'', qids:[], newQ:null, msg:null}; }
+function syncCompose(){
+  const c = ui.compose; if (!c || !$('#c-title')) return;
+  c.date = $('#c-date').value || TODAY; c.topic = $('#c-topic').value; c.title = $('#c-title').value;
+  const q = c.newQ;
+  if (q && $('#nq-text')) {
+    q.type = $('#nq-type').value; q.text = $('#nq-text').value; q.explain = $('#nq-exp').value;
+    if ($('#nq-ans')) q.answer = $('#nq-ans').value;
+    if ($('#nq-o0')) { q.options = [0,1,2,3].map(j => $('#nq-o' + j).value); q.correct = Number($('#nq-cor').value); }
+  }
+}
+function tCompose(){
+  const c = ui.compose ||= newCompose();
+  const bank = S.bank.filter(q => q.level === c.level && (ui.bankTopic === 'all' || q.topic === ui.bankTopic));
+  const recent = S.assignments.slice().sort((x, y) => y.date.localeCompare(x.date) || Number(y.id.slice(1)) - Number(x.id.slice(1))).slice(0, 10);
+  const q = c.newQ;
+  const form = `<div class="card"><div class="card-h"><div><h2>Thông tin bài</h2><p>Bài sẽ hiện cho học sinh của nhóm đã chọn vào ngày làm</p></div></div><div class="card-b">
+      ${c.msg ? `<div class="note ${c.msg.ok ? 'ok' : 'bad'}">${ic(c.msg.ok ? 'check' : 'alert', 'sm')}<span>${esc(c.msg.text)}</span></div>` : ''}
+      <label class="f">Tên bài<input type="text" id="c-title" value="${esc(c.title)}" placeholder="Ví dụ: Cộng trừ phân số khác mẫu"></label>
+      <div class="fgrid">
+        <label class="f">Ngày làm<input type="date" id="c-date" value="${c.date}"></label>
+        <label class="f">Chuyên đề chính<select id="c-topic">${TOPICS.map(t => `<option ${t === c.topic ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+      </div>
+      <div class="f" style="font-size:12.5px;font-weight:600;color:var(--ink-2);display:flex;flex-direction:column;gap:6px">Nhóm trình độ<div class="seg" role="group" aria-label="Nhóm trình độ">${LEVELS.map(l => `<button data-act="c-level" data-v="${l}" aria-pressed="${l === c.level}">${l}</button>`).join('')}</div></div>
+    </div></div>
+    <div class="card"><div class="card-h"><div><h2>Câu hỏi trong bài <span class="chip pri num">${c.qids.length}</span></h2><p>Chọn từ ngân hàng hoặc soạn câu mới</p></div>${q ? '' : `<button class="btn soft sm" data-act="c-newq">${ic('plus','sm')} Soạn câu mới</button>`}</div><div class="card-b">
+      ${c.qids.length ? `<div class="list">${c.qids.map((id, i) => { const x = Q(id); return x ? `<div class="li"><span class="qn">${i + 1}</span><div class="grow"><div class="qt">${esc(x.text)}</div><div class="row small" style="gap:8px;margin-top:4px">${topicChip(x.topic)}<span class="muted">Đáp án: <b>${esc(showVal(x.answer))}</b></span></div></div><button class="iconbtn" data-act="c-rm" data-v="${id}" aria-label="Bỏ câu này">${ic('x','sm')}</button></div>` : ''; }).join('')}</div>`
+        : `<div class="emptyst"><div class="ib">${ic('list')}</div>Chưa có câu nào. Bấm "Thêm" ở ngân hàng câu hỏi bên cạnh.</div>`}
+      ${q ? `<div class="newq">
+        <div class="row between"><h3>Câu hỏi mới</h3><button class="btn ghost sm" data-act="c-cancelq">Huỷ</button></div>
+        <label class="f">Đề bài<textarea id="nq-text" placeholder="Nhập đề bài">${esc(q.text)}</textarea></label>
+        <div class="fgrid">
+          <label class="f">Dạng câu<select id="nq-type" data-act="c-refresh"><option value="num" ${q.type === 'num' ? 'selected' : ''}>Điền đáp số</option><option value="mc" ${q.type === 'mc' ? 'selected' : ''}>Trắc nghiệm 4 lựa chọn</option></select></label>
+          ${q.type === 'num' ? `<label class="f">Đáp số đúng<input type="text" id="nq-ans" value="${esc(q.answer)}" placeholder="vd: 5/6, -3, 2,5"></label>` : `<label class="f">Đáp án đúng<select id="nq-cor">${[0,1,2,3].map(j => `<option value="${j}" ${q.correct === j ? 'selected' : ''}>${'ABCD'[j]}</option>`).join('')}</select></label>`}
+        </div>
+        ${q.type === 'mc' ? `<div class="fgrid">${[0,1,2,3].map(j => `<label class="f">Lựa chọn ${'ABCD'[j]}<input type="text" id="nq-o${j}" value="${esc(q.options[j])}"></label>`).join('')}</div>` : ''}
+        <label class="f">Lời giải hiện cho học sinh khi làm sai<textarea id="nq-exp">${esc(q.explain)}</textarea></label>
+        <div><button class="btn" data-act="c-saveq">${ic('plus','sm')} Thêm vào bài và ngân hàng</button></div>
+      </div>` : ''}
+      <div class="row between" style="border-top:1px solid var(--line);padding-top:14px"><span class="small muted">Giao cho nhóm <b style="color:var(--ink)">${c.level}</b> · ${fmtDate(c.date)}</span><button class="btn cta" data-act="c-save">${ic('arrow','sm')} Giao bài</button></div>
+    </div></div>`;
+  const bankCard = `<div class="card"><div class="card-h"><div><h2>Ngân hàng câu hỏi</h2><p>Nhóm ${c.level} · ${bank.length} câu</p></div></div><div class="card-b">
+      <div class="row" style="gap:6px"><button class="fchip" data-act="bank-topic" data-v="all" aria-pressed="${ui.bankTopic === 'all'}">Tất cả</button>${TOPICS.map(t => `<button class="fchip" data-act="bank-topic" data-v="${t}" aria-pressed="${ui.bankTopic === t}">${t}</button>`).join('')}</div>
+      <div class="bank list">${bank.map(x => { const inn = c.qids.includes(x.id); return `<div class="li"><div class="grow"><div class="qt">${esc(x.text)}</div><div class="row small" style="gap:8px;margin-top:4px">${topicChip(x.topic)}<span class="muted">${x.type === 'mc' ? 'Trắc nghiệm' : 'Điền số'}</span></div></div>${inn ? `<span class="chip ok">${ic('check','sm')} Đã thêm</span>` : `<button class="btn sec sm" data-act="c-add" data-v="${x.id}">${ic('plus','sm')} Thêm</button>`}</div>`; }).join('') || '<div class="emptyst">Chưa có câu nào ở chuyên đề này.</div>'}</div>
+    </div></div>`;
+  const hist = `<div class="card"><div class="card-h"><div><h2>Bài đã giao</h2><p>10 bài gần nhất</p></div></div><div class="card-b" style="padding-inline:8px"><div class="tbl"><table>
+    <thead><tr><th>Ngày</th><th>Tên bài</th><th>Nhóm</th><th>Số câu</th><th>Đã nộp</th><th></th></tr></thead>
+    <tbody>${recent.map(a => { const n = S.students.filter(s => s.level === a.level).length, d = S.submissions.filter(b => b.aid === a.id).length; return `<tr>
+      <td class="num">${fmtDate(a.date)}</td><td><div class="person"><b>${esc(a.title)}</b></div></td><td><span class="chip">${a.level}</span></td><td class="num">${a.qids.length}</td>
+      <td><div class="row" style="gap:8px;flex-wrap:nowrap"><div class="prog" style="width:64px"><i style="width:${n ? d / n * 100 : 0}%"></i></div><span class="num small">${d}/${n}</span></div></td>
+      <td><button class="btn danger sm ${ui.armed === a.id ? 'armed' : ''}" data-act="del-a" data-v="${a.id}">${ui.armed === a.id ? 'Bấm lần nữa để xoá' : ic('trash','sm')}</button></td></tr>`; }).join('')}</tbody></table></div></div></div>`;
+  return `<div class="split"><div style="display:flex;flex-direction:column;gap:20px;min-width:0">${form}</div>${bankCard}</div>${hist}`;
+}
+function saveNewQ(){
+  syncCompose();
+  const c = ui.compose, q = c.newQ;
+  const fail = t => { c.msg = {ok:false, text:t}; render(); };
+  if (!q.text.trim()) return fail('Câu hỏi mới chưa có đề bài.');
+  if (q.type === 'num' && isNaN(parseNum(q.answer))) return fail('Đáp số phải là số, ví dụ 5, -3, 2,5 hoặc 5/6.');
+  if (q.type === 'mc' && q.options.some(o => !o.trim())) return fail('Điền đủ 4 lựa chọn A, B, C, D.');
+  const nq = {id:'q' + S.n++, level:c.level, topic:c.topic, type:q.type, text:q.text.trim(), explain:q.explain.trim(), traps:[]};
+  if (q.type === 'mc') { nq.options = q.options.map(o => o.trim()); nq.answer = nq.options[q.correct]; } else nq.answer = q.answer.trim();
+  S.bank.push(nq); c.qids.push(nq.id); c.newQ = null; c.msg = {ok:true, text:'Đã thêm câu hỏi mới vào bài và ngân hàng câu hỏi.'};
+  save(); render();
+}
+function saveCompose(){
+  syncCompose();
+  const c = ui.compose;
+  const fail = t => { c.msg = {ok:false, text:t}; render(); window.scrollTo(0, 0); };
+  if (!c.title.trim()) return fail('Nhập tên bài trước khi giao.');
+  if (!c.qids.length) return fail('Bài cần ít nhất một câu hỏi.');
+  S.assignments.push({id:'a' + S.n++, date:c.date, level:c.level, topic:c.topic, title:c.title.trim(), qids:[...c.qids]});
+  save();
+  const t = c.title.trim();
+  ui.compose = newCompose(c.level);
+  ui.compose.msg = {ok:true, text:`Đã giao "${t}" (${c.qids.length} câu) cho nhóm ${c.level}, ngày ${fmtDate(c.date)}.`};
+  render(); window.scrollTo(0, 0);
+}
+
+// ---------- bài làm ----------
+function subDetail(b, teacher){
+  const a = A(b.aid);
+  return a.qids.map((qid, i) => {
+    const q = Q(qid); if (!q) return '';
+    const ans = b.answers[qid] || {}, ok = isRight(q, ans.value), fixed = S.fixed[b.sid]?.[qid];
+    return `<div class="qr ${ok ? '' : 'bad'}">
+      <div class="h"><span class="qn">${i + 1}</span><span class="qt">${esc(q.text)}</span>${ok ? `<span class="chip ok">${ic('check','sm')} Đúng</span>` : `<span class="chip bad">${ic('x','sm')} Sai</span>`}</div>
+      <div class="ansl"><span>${teacher ? 'Học sinh' : 'Em'} trả lời: <span class="${ok ? 'r' : 'w'}">${esc(showVal(ans.value))}</span></span>${ok ? '' : `<span>Đáp án: <span class="r">${esc(showVal(q.answer))}</span></span>`}${!ok && teacher ? (fixed ? `<span class="chip ok">Đã tự sửa</span>` : `<span class="chip warn">Chưa sửa</span>`) : ''}</div>
+      ${ans.work ? `<div class="work ${ok ? '' : 'bad'}">Cách làm: ${esc(ans.work)}</div>` : ''}
+      ${!ok && q.explain ? `<div class="explain"><b>Lời giải:</b> ${esc(q.explain)}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+function subRow(b, open, teacher){
+  const a = A(b.aid), sc = scoreOf(b), [, m, d] = a.date.split('-');
+  return `<details class="sub" ${open ? 'open' : ''}><summary>
+    <div class="datebox"><b>${Number(d)}</b><span>${wdOf(a.date)}</span></div>
+    <div class="grow"><b>${esc(a.title)}</b><div class="row small" style="gap:8px;margin-top:3px">${topicChip(a.topic)}<span class="muted">Nộp ${b.at.slice(11)} · ${Number(d)}/${Number(m)}</span></div></div>
+    <span class="chip ${scoreCls(sc.c / sc.t)} num">${sc.c}/${sc.t} · ${dec(sc.ten)}</span>${ic('chev','chev')}</summary>
+    <div class="body">${subDetail(b, teacher)}</div></details>`;
+}
+function tWork(){
+  const sid = ui.tSid || S.students[0].id, st = STU(sid), subs = subsOf(sid);
+  const missed = S.assignments.filter(a => a.level === st.level && a.date < TODAY && !subFor(a.id, sid)).length;
+  const avg = mean(subs.map(b => scoreOf(b).ten));
+  const open = mistakes(sid).filter(m => !m.fixed).length;
+  return `<div class="wsplit">
+    <div class="card"><div class="people">${S.students.map(s => { const l = subsOf(s.id)[0]; const sc = l && scoreOf(l); return `<button data-act="pick-work" data-v="${s.id}" aria-current="${s.id === sid}">${avatar(s)}<span class="nm"><b>${esc(s.name)}</b><span>${s.level}${sc ? ' · gần nhất ' + sc.c + '/' + sc.t : ''}</span></span></button>`; }).join('')}</div></div>
+    <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+      <div class="card"><div class="card-b" style="padding-top:20px"><div class="row" style="gap:16px">${avatar(st, 'lg')}<div style="flex:1;min-width:180px"><h2>${esc(st.name)}</h2><div class="small muted">Nhóm ${st.level} · chuỗi ${streakOf(sid)} ngày</div></div>
+        <div class="row" style="gap:24px">
+          <div><div class="small muted">Bài đã nộp</div><div class="bignum" style="font-size:24px">${subs.length}</div></div>
+          <div><div class="small muted">Bỏ lỡ</div><div class="bignum" style="font-size:24px">${missed}</div></div>
+          <div><div class="small muted">Điểm TB</div><div class="bignum" style="font-size:24px">${avg == null ? '–' : dec(avg)}</div></div>
+          <div><div class="small muted">Lỗi chưa sửa</div><div class="bignum" style="font-size:24px;color:${open ? 'var(--danger)' : 'inherit'}">${open}</div></div>
+        </div></div></div></div>
+      <div>${subs.length ? subs.map((b, i) => subRow(b, i === 0, true)).join('') : `<div class="card"><div class="emptyst"><div class="ib">${ic('list')}</div>Học sinh này chưa nộp bài nào.</div></div>`}</div>
+    </div></div>`;
+}
+
+// ---------- phân tích ----------
+function analysisData(){
+  const from = ui.an.range === 'all' ? '0000' : addDays(TODAY, -Number(ui.an.range) + 1);
+  const qs = {}, topics = {}, per = {};
+  for (const b of S.submissions) {
+    const a = A(b.aid); if (!a || a.date < from) continue;
+    if (!STU(b.sid)) continue;
+    if (ui.an.level !== 'all' && a.level !== ui.an.level) continue;
+    for (const qid of a.qids) {
+      const q = Q(qid); if (!q) continue;
+      const v = b.answers[qid]?.value, ok = isRight(q, v);
+      const s = qs[qid] ||= {q, n:0, w:0, vals:{}, who:new Set()};
+      s.n++; if (!ok) { s.w++; s.vals[normVal(v)] = (s.vals[normVal(v)] || 0) + 1; s.who.add(b.sid); }
+      const t = topics[q.topic] ||= {n:0, w:0}; t.n++; if (!ok) t.w++;
+      const p = (per[b.sid] ||= {}); const pt = p[q.topic] ||= {n:0, w:0}; pt.n++; if (!ok) pt.w++;
+    }
+  }
+  return {qs:Object.values(qs), topics, per};
+}
+function tAnalysis(){
+  const d = analysisData();
+  const hard = d.qs.filter(s => s.w > 0).sort((x, y) => y.w / y.n - x.w / x.n || y.w - x.w).slice(0, 6);
+  const total = d.qs.reduce((x, s) => x + s.n, 0), wrong = d.qs.reduce((x, s) => x + s.w, 0);
+  const studs = S.students.filter(s => d.per[s.id]);
+  const filters = `<div class="row between">
+    <div class="row" style="gap:6px">${[['3','3 ngày'],['7','7 ngày'],['all','Tất cả']].map(([v, l]) => `<button class="fchip" data-act="an-range" data-v="${v}" aria-pressed="${ui.an.range === v}">${l}</button>`).join('')}</div>
+    <div class="row" style="gap:6px"><button class="fchip" data-act="an-level" data-v="all" aria-pressed="${ui.an.level === 'all'}">Cả lớp</button>${LEVELS.map(l => `<button class="fchip" data-act="an-level" data-v="${l}" aria-pressed="${ui.an.level === l}">${l}</button>`).join('')}</div></div>`;
+  const kp = `<div class="grid g4">
+    <div class="card kpi"><div class="ico" style="background:var(--primary-soft);color:var(--primary)">${ic('list')}</div><div><div class="t">Lượt trả lời</div><div class="v">${total}</div></div></div>
+    <div class="card kpi">${ring(total ? 1 - wrong / total : 0, 58, 7, 'var(--success)', total ? pct(1 - wrong / total) : '–')}<div><div class="t">Tỉ lệ đúng</div><div class="s">${wrong} lượt sai</div></div></div>
+    <div class="card kpi"><div class="ico" style="background:var(--danger-soft);color:var(--danger)">${ic('alert')}</div><div><div class="t">Câu có người sai</div><div class="v">${d.qs.filter(s => s.w).length}<small>/${d.qs.length}</small></div></div></div>
+    <div class="card kpi"><div class="ico" style="background:var(--warn-soft);color:var(--warn)">${ic('users')}</div><div><div class="t">Học sinh có bài</div><div class="v">${studs.length}</div></div></div></div>`;
+  const tp = `<div class="card"><div class="card-h"><div><h2>Tỉ lệ sai theo chuyên đề</h2><p>Chuyên đề nào lớp đang hổng nhiều nhất</p></div></div><div class="card-b">
+    ${TOPICS.filter(t => d.topics[t]).sort((x, y) => d.topics[y].w / d.topics[y].n - d.topics[x].w / d.topics[x].n).map(t => { const r = d.topics[t].w / d.topics[t].n; return `<div class="hbar"><span>${t}</span><div class="tr"><i style="width:${r * 100}%;background:var(${TOPIC_VAR[t]})"></i></div><span class="v">${pct(r)}</span></div>`; }).join('') || '<div class="emptyst">Chưa có bài làm trong khoảng này.</div>'}
+  </div></div>`;
+  const heat = `<div class="card"><div class="card-h"><div><h2>Bản đồ năng lực</h2><p>Tỉ lệ làm đúng của từng học sinh theo chuyên đề</p></div></div><div class="card-b" style="padding-inline:8px">
+    <div class="tbl"><table class="heat"><thead><tr><th>Học sinh</th>${TOPICS.map(t => `<th style="text-align:center">${t}</th>`).join('')}</tr></thead><tbody>
+    ${studs.map(s => `<tr><td><div class="person">${avatar(s, 'sm')}<b>${esc(s.name)}</b></div></td>${TOPICS.map(t => { const p = d.per[s.id][t]; if (!p) return '<td><span class="cell na">–</span></td>'; const r = 1 - p.w / p.n; return `<td><span class="cell ${r >= 0.8 ? 'hi' : r >= 0.5 ? 'md' : 'lo'}">${pct(r)}<small>${p.n - p.w}/${p.n} câu</small></span></td>`; }).join('')}</tr>`).join('')}
+    </tbody></table></div>
+    <div class="legend" style="padding:0 12px"><span><i style="background:var(--success-soft);box-shadow:inset 0 0 0 1px var(--success)"></i>Vững (≥ 80%)</span><span><i style="background:var(--warn-soft);box-shadow:inset 0 0 0 1px var(--warn)"></i>Chưa chắc (50–79%)</span><span><i style="background:var(--danger-soft);box-shadow:inset 0 0 0 1px var(--danger)"></i>Cần ôn (&lt; 50%)</span></div>
+  </div></div>`;
+  const hq = `<div class="card"><div class="card-h"><div><h2>Câu sai nhiều nhất</h2><p>Kèm đáp án sai phổ biến để biết học sinh hiểu nhầm ở đâu</p></div>
+    ${ui.an.level !== 'all' && hard.length ? `<button class="btn sm" data-act="reassign">${ic('retry','sm')} Giao lại ${Math.min(4, hard.length)} câu này</button>` : '<span class="small muted">Chọn một nhóm để giao lại các câu này</span>'}</div><div class="card-b">
+    ${hard.length ? hard.map((s, i) => { const top = Object.entries(s.vals).sort((x, y) => y[1] - x[1])[0]; const r = s.w / s.n; return `<div class="qr">
+      <div class="h"><span class="qn">${i + 1}</span><span class="qt">${esc(s.q.text)}</span><span class="chip bad num">${pct(r)} sai</span></div>
+      <div class="row small" style="gap:8px">${topicChip(s.q.topic)}<span class="chip">${s.q.level}</span><span class="muted">${s.w}/${s.n} lượt sai</span></div>
+      <div class="ansl"><span>Đáp án đúng: <span class="r">${esc(showVal(s.q.answer))}</span></span>${top ? `<span>Sai phổ biến: <span class="w" style="text-decoration:none">${esc(showVal(top[0]))}</span> (${top[1]} lần)</span>` : ''}</div>
+      ${s.q.ww ? `<div class="work bad">Cách làm sai hay gặp: ${esc(s.q.ww)}</div>` : ''}
+      <div class="row" style="gap:6px"><span class="small muted">Học sinh sai:</span>${[...s.who].map(id => STU(id)).filter(Boolean).map(x => `<span class="chip">${esc(x.name)}</span>`).join('')}</div>
+    </div>`; }).join('') : '<div class="emptyst">Không có câu sai nào trong khoảng này.</div>'}
+  </div></div>`;
+  return filters + kp + `<div class="split even">${tp}${heat}</div>` + hq;
+}
+
+// ---------- học sinh ----------
+function sHome(st){
+  const as = todaysFor(st), streak = streakOf(st.id), ms = mistakes(st.id), open = ms.filter(m => !m.fixed);
+  const todayCards = as.length ? as.map(a => {
+    const b = subFor(a.id, st.id), sc = b && scoreOf(b);
+    const wrongIds = b ? a.qids.filter(qid => !isRight(Q(qid), b.answers[qid]?.value) && !S.fixed[st.id]?.[qid]) : [];
+    return `<div class="card today" style="${tcv(a.topic)}">
+      <div class="band" data-g="${TOPIC_GLYPH[a.topic] || '∑'}"><div class="k">${ic('cal','sm')} Bài hôm nay · ${a.topic}</div><h2>${esc(a.title)}</h2>
+        <div class="meta"><span>${ic('list','sm')} ${a.qids.length} câu</span><span>${ic('clock','sm')} khoảng ${a.qids.length * 2} phút</span><span>${ic('alert','sm')} Nộp trước 23:59 hôm nay</span></div></div>
+      <div class="tb">${b ? `${ring(sc.c / sc.t, 72, 8, sc.c === sc.t ? 'var(--success)' : 'var(--warn)', `${sc.c}/${sc.t}`)}
+          <div class="grow"><h3>${sc.c === sc.t ? 'Xuất sắc, em đúng hết!' : `Em đúng ${sc.c}/${sc.t} câu · ${dec(sc.ten)} điểm`}</h3><p class="small muted">Đã nộp lúc ${b.at.slice(11)}${wrongIds.length ? ` · còn ${wrongIds.length} câu cần sửa` : ''}</p></div>
+          <div class="row">${wrongIds.length ? `<button class="btn" data-act="retry" data-v="${wrongIds.join(',')}">${ic('retry','sm')} Sửa ${wrongIds.length} câu sai</button>` : ''}<button class="btn sec" data-act="review" data-v="${a.id}">${ui.review[a.id] ? 'Ẩn bài làm' : 'Xem lại bài'}</button></div>`
+        : `<div class="grow"><h3>Sẵn sàng chưa?</h3><p class="small muted">Làm từng câu, có đáp án và lời giải ngay sau mỗi câu.</p></div><button class="btn cta lg" data-act="start" data-v="${a.id}">${ic('play','fill sm')} Bắt đầu làm bài</button>`}</div>
+      ${b && ui.review[a.id] ? `<div class="card-b" style="border-top:1px solid var(--line);padding-top:18px">${subDetail(b, false)}</div>` : ''}
+    </div>`;
+  }).join('') : `<div class="card"><div class="emptyst"><div class="ib">${ic('cal')}</div><b style="color:var(--ink)">Hôm nay chưa có bài</b>Thầy cô chưa giao bài cho nhóm của em. Trong lúc chờ, em ôn lại Sổ lỗi sai nhé.</div></div>`;
+
+  const days = new Set(subsOf(st.id).map(b => A(b.aid).date));
+  const had = new Set(S.assignments.filter(a => a.level === st.level).map(a => a.date));
+  const streakCard = `<div class="card"><div class="card-b" style="padding-top:20px">
+    <div class="streak"><div class="flame">${ic('flame','fill lg')}</div><div><div class="bignum">${streak} ngày</div><div class="small muted">chuỗi làm bài liên tiếp</div></div></div>
+    <div class="week">${last7().map(d => { const ok = days.has(d), miss = !ok && d < TODAY && had.has(d); return `<div class="d"><span class="c ${ok ? 'ok' : miss ? 'miss' : ''} ${d === TODAY ? 'now' : ''}" title="${fmtDate(d)}">${ok ? ic('check','sm') : miss ? ic('x','sm') : ''}</span>${wdOf(d)}</div>`; }).join('')}</div>
+    <p class="small muted">${days.has(TODAY) ? 'Hôm nay em đã giữ được chuỗi. Hẹn gặp lại ngày mai!' : 'Làm bài hôm nay để giữ chuỗi ngày nhé.'}</p>
+  </div></div>`;
+  const mcard = `<div class="card"><div class="card-h"><h2>Sổ lỗi sai</h2><button class="btn ghost sm" data-act="tab" data-v="mistakes">Xem tất cả ${ic('arrow','sm')}</button></div><div class="card-b">
+    <div class="row" style="gap:16px">${ring(ms.length ? (ms.length - open.length) / ms.length : 0, 64, 7, 'var(--success)', `${ms.length - open.length}/${ms.length}`)}<div style="flex:1"><div><b>${open.length ? `Còn ${open.length} câu cần làm lại` : 'Em đã sửa hết lỗi sai'}</b></div><div class="small muted">Làm đúng lại thì câu đó được tính là đã sửa</div></div></div>
+    ${open.length ? `<button class="btn soft" data-act="retry" data-v="${open.map(m => m.q.id).join(',')}">${ic('retry','sm')} Luyện lại ${open.length} câu</button>` : ''}
+  </div></div>`;
+  const per = {};
+  for (const b of subsOf(st.id)) { const a = A(b.aid); for (const qid of a.qids) { const q = Q(qid); if (!q) continue; const p = per[q.topic] ||= {n:0, c:0}; p.n++; if (isRight(q, b.answers[qid]?.value) || S.fixed[st.id]?.[qid]) p.c++; } }
+  const mastery = `<div class="card"><div class="card-h"><div><h2>Mức thành thạo</h2><p>Tính cả các câu em đã sửa lại đúng</p></div></div><div class="card-b">
+    ${TOPICS.map(t => { const p = per[t]; const r = p ? p.c / p.n : 0; return `<div class="hbar"><span class="row" style="gap:8px;flex-wrap:nowrap"><span class="chip topic" style="${tcv(t)};padding:0;width:8px;height:8px"></span>${t}</span><div class="tr"><i style="width:${r * 100}%;background:var(${TOPIC_VAR[t]})"></i></div><span class="v">${p ? pct(r) : '–'}</span></div>`; }).join('')}
+  </div></div>`;
+  return `<div class="split"><div style="display:flex;flex-direction:column;gap:20px;min-width:0">${todayCards}${mastery}</div><div style="display:flex;flex-direction:column;gap:20px;min-width:0">${streakCard}${mcard}</div></div>`;
+}
+function sMistakes(st){
+  const ms = mistakes(st.id), open = ms.filter(m => !m.fixed), done = ms.filter(m => m.fixed);
+  if (!ms.length) return `<div class="card"><div class="emptyst"><div class="ib">${ic('book')}</div><b style="color:var(--ink)">Sổ lỗi sai đang trống</b>Câu nào em làm sai sẽ được ghi vào đây để em làm lại.</div></div>`;
+  const head = `<div class="card"><div class="card-b" style="padding-top:20px"><div class="row" style="gap:18px">
+    ${ring(ms.length ? done.length / ms.length : 0, 76, 8, 'var(--success)', pct(done.length / ms.length))}
+    <div style="flex:1;min-width:200px"><h2>${open.length ? `Còn ${open.length} câu cần làm lại` : 'Em đã sửa hết lỗi sai!'}</h2><p class="small muted">Đã sửa ${done.length}/${ms.length} câu. Làm lại đúng một câu thì câu đó được đánh dấu đã sửa.</p></div>
+    ${open.length ? `<button class="btn cta lg" data-act="retry" data-v="${open.map(m => m.q.id).join(',')}">${ic('play','fill sm')} Luyện lại tất cả</button>` : ''}</div></div></div>`;
+  const groups = TOPICS.map(t => [t, open.filter(m => m.q.topic === t)]).filter(([, l]) => l.length);
+  const body = groups.map(([t, l]) => `<div class="card"><div class="card-h"><div class="row" style="gap:10px">${topicChip(t)}<span class="small muted">${l.length} câu</span></div></div><div class="card-b" style="padding-top:8px"><div class="list">
+    ${l.map(m => `<div class="li"><div class="grow"><div class="qt">${esc(m.q.text)}</div><div class="ansl" style="margin-top:4px"><span>Lần trước: <span class="w">${esc(showVal(m.value))}</span></span><span class="muted">sai ngày ${fmtDate(m.date)}</span></div></div><button class="btn sec sm" data-act="retry" data-v="${m.q.id}">${ic('retry','sm')} Làm lại</button></div>`).join('')}
+  </div></div></div>`).join('');
+  const fixed = done.length ? `<details class="sub"><summary><div class="grow"><b>Các câu đã sửa (${done.length})</b></div>${ic('chev','chev')}</summary><div class="body"><div class="list">${done.map(m => `<div class="li"><span class="chip ok">${ic('check','sm')}</span><div class="grow"><div class="qt">${esc(m.q.text)}</div></div>${topicChip(m.q.topic)}</div>`).join('')}</div></div></details>` : '';
+  return head + body + fixed;
+}
+function sHistory(st){
+  const subs = subsOf(st.id), avg = mean(subs.map(b => scoreOf(b).ten));
+  const missed = S.assignments.filter(a => a.level === st.level && a.date < TODAY && !subFor(a.id, st.id)).length;
+  return `<div class="grid g4">
+    <div class="card kpi"><div class="ico" style="background:var(--primary-soft);color:var(--primary)">${ic('list')}</div><div><div class="t">Bài đã nộp</div><div class="v">${subs.length}</div></div></div>
+    <div class="card kpi"><div class="ico" style="background:var(--success-soft);color:var(--success)">${ic('trophy')}</div><div><div class="t">Điểm trung bình</div><div class="v">${avg == null ? '–' : dec(avg)}<small>/10</small></div></div></div>
+    <div class="card kpi"><div class="ico" style="background:var(--warn-soft);color:var(--t4)">${ic('flame','fill')}</div><div><div class="t">Chuỗi ngày</div><div class="v">${streakOf(st.id)}</div></div></div>
+    <div class="card kpi"><div class="ico" style="background:var(--danger-soft);color:var(--danger)">${ic('x')}</div><div><div class="t">Bài bỏ lỡ</div><div class="v">${missed}</div></div></div></div>
+    <div>${subs.length ? subs.map(b => subRow(b, false, false)).join('') : `<div class="card"><div class="emptyst"><div class="ib">${ic('clock')}</div>Em chưa nộp bài nào.</div></div>`}</div>`;
+}
+
+// ---------- màn làm bài ----------
+function startPlayer(mode, qids, aid){
+  ui.player = {mode, aid, qids, i:0, answers:{}, works:{}, checked:false, res:[], exit:false, done:false};
+  render();
+}
+function renderPlayer(){
+  const el = $('#player'), p = ui.player;
+  document.body.style.overflow = p ? 'hidden' : '';
+  if (!p) { el.hidden = true; el.innerHTML = ''; return; }
+  el.hidden = false;
+  const n = p.qids.length;
+  const bar = `<div class="pbar" aria-label="Tiến độ">${p.qids.map((_, i) => `<i class="${i < p.res.length ? (p.res[i] ? 'ok' : 'bad') : i === p.i && !p.done ? 'cur' : ''}"></i>`).join('')}</div>`;
+  const head = `<div class="ph"><button class="iconbtn" data-act="p-close" aria-label="Thoát">${ic('x')}</button>${bar}<span class="num small" style="font-weight:700">${Math.min(p.i + 1, n)}/${n}</span></div>`;
+  if (p.done) {
+    const c = p.res.filter(Boolean).length;
+    el.innerHTML = head + `<div class="pc"><div class="endc">
+      ${ring(c / n, 132, 12, c === n ? 'var(--success)' : 'var(--warn)', `<span style="font-size:28px">${c}/${n}</span>`)}
+      ${p.mode === 'assign'
+        ? `<h2>${c === n ? 'Tuyệt vời, đúng hết!' : 'Đã nộp bài!'}</h2><p class="muted">Em làm đúng ${c}/${n} câu, được ${dec(c / n * 10)} điểm.${c < n ? ` ${n - c} câu sai đã vào Sổ lỗi sai để em làm lại.` : ''} Chuỗi ngày của em giờ là ${streakOf(ui.sid)} ngày.</p>
+           <div class="row">${c < n ? `<button class="btn lg" data-act="p-retry-now">${ic('retry','sm')} Sửa ngay ${n - c} câu sai</button>` : ''}<button class="btn sec lg" data-act="p-finish">Về trang chủ</button></div>`
+        : `<h2>${c === n ? 'Em đã sửa hết!' : `Đã sửa ${c}/${n} câu`}</h2><p class="muted">${c === n ? 'Các câu này đã được đánh dấu là đã sửa.' : 'Những câu chưa đúng vẫn nằm trong Sổ lỗi sai. Đọc kỹ lời giải rồi thử lại sau nhé.'}</p>
+           <div class="row"><button class="btn lg" data-act="p-finish">Xong</button></div>`}
+    </div></div>`;
+    return;
+  }
+  const qid = p.qids[p.i], q = Q(qid), val = p.answers[qid] ?? '', ok = p.checked && isRight(q, val);
+  const st = p.checked ? (ok ? 'ok' : 'bad') : '';
+  const input = q.type === 'mc'
+    ? `<div class="choices">${q.options.map((o, j) => { let cls = ''; if (p.checked) { if (o === q.answer) cls = 'ok'; else if (o === val) cls = 'bad'; } return `<button class="choice ${cls}" data-act="p-pick" data-v="${j}" aria-pressed="${o === val}" ${p.checked ? 'disabled' : ''}><span class="k">${'ABCD'[j]}</span>${esc(o)}</button>`; }).join('')}</div>`
+    : `<div><input type="text" class="ansbox ${st}" id="p-input" value="${esc(val)}" placeholder="Nhập đáp số" autocomplete="off" ${p.checked ? 'disabled' : ''}><div class="hint" style="margin-top:8px">Có thể nhập số nguyên, số thập phân (2,5) hoặc phân số (5/6).</div></div>`;
+  const body = `<div class="pc"><div class="pin">
+    <div class="row">${topicChip(q.topic)}<span class="small muted">${p.mode === 'assign' ? esc(A(p.aid)?.title || '') : 'Luyện lại lỗi sai'}</span></div>
+    <div class="qbig">${esc(q.text)}</div>${input}
+    ${p.mode === 'assign' ? `<details class="wk" ${p.works[qid] ? 'open' : ''}><summary>Ghi cách làm (không bắt buộc)</summary><textarea id="p-work" rows="3" placeholder="Viết các bước em làm để thầy cô xem em sai ở đâu" ${p.checked ? 'disabled' : ''}>${esc(p.works[qid] || '')}</textarea></details>` : ''}
+  </div></div>`;
+  const last = p.i === n - 1;
+  const foot = p.checked
+    ? `<div class="pf ${st}"><div class="pfi"><div class="fb"><span class="bi">${ic(ok ? 'check' : 'x', 'lg')}</span><div><h3>${ok ? ['Chính xác!', 'Đúng rồi!', 'Làm tốt lắm!'][p.i % 3] : 'Chưa đúng'}</h3>${ok ? '' : `<p>Đáp án đúng: <b>${esc(showVal(q.answer))}</b></p>`}${!ok && q.explain ? `<p>${esc(q.explain)}</p>` : ''}</div></div>
+        <button class="btn lg" data-act="p-next" id="p-next">${last ? (p.mode === 'assign' ? 'Nộp bài' : 'Xem kết quả') : 'Tiếp tục'}</button></div></div>`
+    : `<div class="pf"><div class="pfi"><span class="small muted">${p.mode === 'assign' ? 'Mỗi câu chỉ được trả lời một lần' : 'Làm đúng thì câu này được tính là đã sửa'}</span><button class="btn cta lg" data-act="p-check" id="p-check" ${String(val).trim() ? '' : 'disabled'}>Kiểm tra</button></div></div>`;
+  const dlg = p.exit ? `<div class="scrim"><div class="dialog"><h3>Thoát khỏi bài?</h3><p class="muted">${p.mode === 'assign' ? 'Bài chưa được nộp, câu trả lời của em sẽ không được lưu.' : 'Những câu em đã làm đúng vẫn được tính là đã sửa.'}</p><div class="row" style="justify-content:flex-end"><button class="btn sec" data-act="p-stay">Làm tiếp</button><button class="btn" style="background:var(--danger);color:#fff" data-act="p-quit">Thoát</button></div></div></div>` : '';
+  el.innerHTML = head + body + foot + dlg;
+  if (!p.checked && !p.exit) { const inp = $('#p-input'); if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); } }
+  else if (p.checked) $('#p-next')?.focus();
+}
+function pCheck(){
+  const p = ui.player, qid = p.qids[p.i], q = Q(qid);
+  if (!String(p.answers[qid] ?? '').trim() || p.checked) return;
+  p.checked = true;
+  const ok = isRight(q, p.answers[qid]);
+  p.res.push(ok);
+  if (p.mode === 'retry' && ok) { (S.fixed[ui.sid] ||= {})[qid] = true; save(); }
+  render();
+}
+function pNext(){
+  const p = ui.player;
+  if (p.i < p.qids.length - 1) { p.i++; p.checked = false; render(); return; }
+  if (p.mode === 'assign') {
+    const now = new Date(), answers = {};
+    p.qids.forEach(qid => answers[qid] = {value:String(p.answers[qid] ?? '').trim(), work:(p.works[qid] || '').trim()});
+    S.submissions.push({id:'b' + S.n++, aid:p.aid, sid:ui.sid, at:TODAY + 'T' + z(now.getHours()) + ':' + z(now.getMinutes()), answers});
+    save();
+  }
+  p.done = true; render();
+}
+
+// ---------- sự kiện ----------
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el || el.tagName === 'SELECT' || el.disabled) return;
+  const act = el.dataset.act, v = el.dataset.v;
+  if (act !== 'del-a' && act !== 'reset') ui.armed = null;
+  const p = ui.player;
+  switch (act) {
+    case 'role': ui.role = v; saveUi(); go(ui.tab[v]); break;
+    case 'tab': go(v); break;
+    case 'view-student': if (v) { ui.tSid = v; go('work'); } break;
+    case 'pick-work': ui.tSid = v; render(); break;
+    case 'compose-for': ui.compose = newCompose(v); go('compose'); break;
+    case 'c-level': syncCompose(); ui.compose.level = v; ui.compose.msg = null; render(); break;
+    case 'c-add': syncCompose(); ui.compose.qids.push(v); ui.compose.msg = null; render(); break;
+    case 'c-rm': syncCompose(); ui.compose.qids = ui.compose.qids.filter(x => x !== v); render(); break;
+    case 'c-newq': syncCompose(); ui.compose.newQ = {type:'num', text:'', answer:'', options:['','','',''], correct:0, explain:''}; ui.compose.msg = null; render(); break;
+    case 'c-cancelq': syncCompose(); ui.compose.newQ = null; render(); break;
+    case 'c-saveq': saveNewQ(); break;
+    case 'c-save': saveCompose(); break;
+    case 'bank-topic': syncCompose(); ui.bankTopic = v; render(); break;
+    case 'del-a':
+      if (ui.armed !== v) { ui.armed = v; render(); return; }
+      S.assignments = S.assignments.filter(a => a.id !== v); S.submissions = S.submissions.filter(b => b.aid !== v);
+      ui.armed = null; save(); render(); toast('Đã xoá bài.'); break;
+    case 'an-range': ui.an.range = v; render(); break;
+    case 'an-level': ui.an.level = v; render(); break;
+    case 'reassign': {
+      const ids = analysisData().qs.filter(s => s.w > 0).sort((x, y) => y.w / y.n - x.w / x.n || y.w - x.w).slice(0, 4).map(s => s.q.id);
+      ui.compose = {...newCompose(ui.an.level), date:addDays(TODAY, 1), title:'Ôn lại các câu hay sai', qids:ids, topic:Q(ids[0])?.topic || TOPICS[0]};
+      go('compose'); break;
+    }
+    case 'review': ui.review[v] = !ui.review[v]; render(); break;
+    case 'start': { const a = A(v); if (a && !subFor(a.id, ui.sid)) startPlayer('assign', [...a.qids], a.id); break; }
+    case 'retry': startPlayer('retry', v.split(',').filter(id => Q(id)), null); break;
+    case 'p-pick': if (p && !p.checked) { const q = Q(p.qids[p.i]); p.answers[q.id] = q.options[Number(v)]; render(); } break;
+    case 'p-check': pCheck(); break;
+    case 'p-next': pNext(); break;
+    case 'p-close': if (p.done) { ui.player = null; render(); } else { p.exit = true; render(); } break;
+    case 'p-stay': p.exit = false; render(); break;
+    case 'p-quit': ui.player = null; render(); break;
+    case 'p-finish': ui.player = null; render(); window.scrollTo(0, 0); break;
+    case 'p-retry-now': { const ids = p.qids.filter((_, i) => !p.res[i]); startPlayer('retry', ids, null); break; }
+    case 'reset':
+      if (ui.armed !== 'reset') { ui.armed = 'reset'; el.textContent = 'Bấm lần nữa để đặt lại'; return; }
+      S = seed(); save(); ui.armed = null; ui.compose = null; ui.player = null; ui.review = {}; el.textContent = 'Đặt lại dữ liệu mẫu'; render(); toast('Đã đặt lại dữ liệu mẫu.'); break;
+  }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.matches('[data-pick]')) { ui.sid = t.value; ui.review = {}; saveUi(); render(); }
+  else if (t.dataset.act === 'set-level') { STU(t.dataset.v).level = t.value; save(); render(); toast('Đã chuyển sang nhóm ' + t.value + '.'); }
+  else if (t.dataset.act === 'c-refresh') { syncCompose(); render(); }
+});
+document.addEventListener('input', e => {
+  const p = ui.player; if (!p) return;
+  const qid = p.qids[p.i];
+  if (e.target.id === 'p-input') { p.answers[qid] = e.target.value; const b = $('#p-check'); if (b) b.disabled = !e.target.value.trim(); }
+  else if (e.target.id === 'p-work') p.works[qid] = e.target.value;
+});
+document.addEventListener('keydown', e => {
+  const p = ui.player; if (!p || p.done || p.exit) return;
+  if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'BUTTON') { e.preventDefault(); p.checked ? pNext() : pCheck(); }
+  else if (e.key === 'Escape') { p.exit = true; render(); }
+});
+document.addEventListener('submit', e => e.preventDefault());
+
+render();
+</script>
+</body>
+</html>
