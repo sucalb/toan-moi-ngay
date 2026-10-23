@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Demo LMS luyện toán mỗi ngày: giáo viên giao bài theo trình độ, học sinh làm bài và sửa lỗi sai.">
+<meta name="description" content="Demo LMS luyện Toán 12 mỗi ngày: giáo viên giao bài theo trình độ, học sinh làm bài và sửa lỗi sai.">
 <title>Toán Mỗi Ngày</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -135,7 +135,7 @@ footer.foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;a
 :focus-visible{outline:2.5px solid var(--primary);outline-offset:2px}
 
 label.f{display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:600;color:var(--ink-2);min-width:0}
-input[type=text],input[type=date],select,textarea{font:14.5px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:9px 12px;width:100%;min-width:0}
+input[type=text],input[type=password],input[type=date],select,textarea{font:14.5px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:9px 12px;width:100%;min-width:0}
 input:focus,select:focus,textarea:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px var(--primary-soft)}
 textarea{resize:vertical;min-height:64px}
 .fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
@@ -349,7 +349,7 @@ h1::after{content:"";position:absolute;left:0;bottom:0;width:56px;height:4px;bor
 .kpi .ico,.iconbtn,.qn,.datebox,.emptyst .ib,.flame{border-radius:10px}
 .chip{border-radius:999px}
 .fchip{border-radius:999px;font-size:13px}
-input[type=text],input[type=date],select,textarea{border-radius:8px}
+input[type=text],input[type=password],input[type=date],select,textarea{border-radius:8px}
 input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 25%,transparent)}
 .btn{border-radius:8px;font-weight:700}
 .btn.cta{background:var(--chalk-y);color:var(--ink);border-color:rgba(23,37,29,.35)}
@@ -422,6 +422,46 @@ details.sub{border-radius:12px;border-color:var(--line)}
 .flame{background:var(--board);color:var(--chalk-y)}
 .cell{border-radius:8px}
 .days i{border-radius:3px}
+
+/* đăng nhập */
+.login{min-height:100%;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);background:var(--bg)}
+.login .board{background-color:var(--board);background-image:radial-gradient(120% 80% at 15% 0%,rgba(255,255,255,.09),transparent 60%),radial-gradient(90% 70% at 100% 100%,rgba(255,255,255,.06),transparent 55%);color:var(--chalk);border-right:8px solid var(--wood);display:flex;flex-direction:column;justify-content:space-between;gap:28px;padding:40px max(40px,env(safe-area-inset-left,0px)) 40px 48px}
+.login .board .logo{padding:0}
+.login .lead{display:flex;flex-direction:column;gap:14px;max-width:30em}
+.login .lead h1{font-family:var(--f-chalk);font-weight:400;font-size:clamp(34px,4.4vw,56px);line-height:1.15;color:var(--chalk);padding-bottom:12px}
+.login .lead p{font-size:16px;color:rgba(243,240,228,.82)}
+.login .formula{font-family:var(--f-chalk);font-size:21px;line-height:1.9;color:rgba(243,240,228,.5)}
+.login .formside{display:grid;place-items:center;padding:32px max(20px,env(safe-area-inset-right,0px)) 32px 20px}
+#login-form{width:100%;max-width:380px;display:flex;flex-direction:column;gap:16px}
+#login-form h2{font-size:24px}
+.demo{border:1.5px dashed var(--line-2);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.demo .btn{justify-content:flex-start;white-space:normal;text-align:left}
+.demo .btn .cred{margin-left:auto}
+.cred{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;background:var(--surface-2);padding:3px 8px;border-radius:6px;white-space:nowrap;font-weight:500}
+.rolecard .who b{color:var(--chalk)}
+.rolecard .logout{background:rgba(255,255,255,.1);color:var(--chalk);border-color:transparent;justify-content:center}
+.rolecard .logout:hover{background:rgba(255,255,255,.18)}
+.toprole .who{flex:1;min-width:0}
+.toprole .who span{font-size:12px;color:var(--muted)}
+@media (max-width:820px){
+  .login{grid-template-columns:minmax(0,1fr)}
+  .login .board{border-right:0;border-bottom:6px solid var(--wood);padding:28px max(20px,env(safe-area-inset-right,0px)) 28px max(20px,env(safe-area-inset-left,0px))}
+  .login .formula{display:none}
+}
+/* câu đúng/sai */
+.tfl{display:flex;flex-direction:column;gap:10px}
+.tfrow{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:12px;align-items:center;border:2px solid var(--line-2);border-radius:12px;padding:12px 14px;background:var(--surface)}
+.tfrow.ok{border-color:var(--success);background:var(--success-soft)}
+.tfrow.bad{border-color:var(--danger);background:var(--danger-soft)}
+.tfk{font-weight:800;color:var(--muted)}
+.tft{font-size:16px;font-weight:500;overflow-wrap:anywhere}
+.tfb{display:flex;gap:6px}
+.tfb button{border:1.5px solid var(--line-2);background:var(--surface);border-radius:8px;padding:7px 14px;font-weight:700;font-size:13.5px;cursor:pointer;color:var(--ink-2)}
+.tfb button[aria-pressed="true"]{background:var(--board);color:var(--chalk);border-color:var(--board)}
+.tfb button:disabled{cursor:default}
+.tfa{grid-column:2 / -1;font-size:13px;font-weight:700;color:var(--danger)}
+.tfs{margin:6px 0 0;padding-left:22px;list-style:lower-alpha;font-size:13.5px;font-weight:500;color:var(--ink-2);display:flex;flex-direction:column;gap:2px}
+@media (max-width:520px){.tfrow{grid-template-columns:22px minmax(0,1fr)}.tfb{grid-column:2}}
 </style>
 
 </head>
@@ -444,6 +484,7 @@ details.sub{border-radius:12px;border-color:var(--line)}
   </div>
   <nav class="bnav" id="bnav" aria-label="Điều hướng"></nav>
 </div>
+<div class="login" id="login" hidden></div>
 <div class="player" id="player" hidden></div>
 <div class="toast" id="toast" hidden></div>
 
@@ -460,52 +501,59 @@ const dec = x => (Math.round(x * 10) / 10).toFixed(1).replace('.', ',');
 const pct = x => Math.round(x * 100) + '%';
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 
-const TOPICS = ['Phân số', 'Số nguyên', 'Phương trình', 'Hình học'];
-const LEVELS = ['Cơ bản', 'Khá', 'Nâng cao'];
+const TOPICS = ['Đạo hàm', 'Tích phân', 'Oxyz', 'Xác suất'];
+const TOPIC_FULL = {'Đạo hàm':'Ứng dụng đạo hàm', 'Tích phân':'Nguyên hàm và tích phân', 'Oxyz':'Tọa độ trong không gian Oxyz', 'Xác suất':'Xác suất có điều kiện'};
+const LEVELS = ['Cơ bản', 'Khá', 'Giỏi'];
 
-// ngân hàng câu hỏi mẫu; traps = đáp án sai hay gặp, ww = cách làm sai điển hình
+// ngân hàng câu hỏi mẫu Toán 12, theo 3 dạng của đề tốt nghiệp THPT:
+// mc = trắc nghiệm 4 lựa chọn, tf = đúng/sai 4 ý (answer là chuỗi Đ/S), num = trả lời ngắn
+// traps = đáp án sai hay gặp, ww = cách làm sai điển hình
 const BANK = [
-  {id:'c1',level:'Cơ bản',topic:'Phân số',type:'num',text:'Tính 1/2 + 1/3',answer:'5/6',traps:['2/5','2/6'],ww:'1/2 + 1/3 = (1+1)/(2+3) = 2/5',explain:'Quy đồng mẫu 6: 3/6 + 2/6 = 5/6. Không cộng tử với tử, mẫu với mẫu.'},
-  {id:'c2',level:'Cơ bản',topic:'Phân số',type:'num',text:'Rút gọn phân số 12/18 về tối giản',answer:'2/3',traps:['6/9','4/6'],ww:'12/18 = 6/9',explain:'ƯCLN(12, 18) = 6, chia cả tử và mẫu cho 6 được 2/3. 6/9 chưa tối giản.'},
-  {id:'c3',level:'Cơ bản',topic:'Phân số',type:'num',text:'3/4 của 20 là bao nhiêu?',answer:'15',traps:['5','80/3'],ww:'20 : 4 = 5',explain:'Lấy 20 · 3/4 = 60/4 = 15. Nhớ nhân thêm với tử số 3.'},
-  {id:'c4',level:'Cơ bản',topic:'Số nguyên',type:'num',text:'Tính (−7) + 4',answer:'-3',traps:['3','-11'],ww:'7 − 4 = 3',explain:'Hai số khác dấu: lấy 7 − 4 = 3, dấu của số có giá trị tuyệt đối lớn hơn (−7), được −3.'},
-  {id:'c5',level:'Cơ bản',topic:'Số nguyên',type:'num',text:'Tính (−3) · (−5)',answer:'15',traps:['-15'],explain:'Âm nhân âm ra dương: (−3)·(−5) = 15.'},
-  {id:'c6',level:'Cơ bản',topic:'Số nguyên',type:'num',text:'Tính 12 − (−8)',answer:'20',traps:['4'],ww:'12 − 8 = 4',explain:'Trừ một số âm là cộng số đối: 12 − (−8) = 12 + 8 = 20.'},
-  {id:'c7',level:'Cơ bản',topic:'Phương trình',type:'num',text:'Tìm x: x + 7 = 12',answer:'5',traps:['19'],ww:'x = 12 + 7 = 19',explain:'Chuyển 7 sang vế phải đổi dấu: x = 12 − 7 = 5.'},
-  {id:'c8',level:'Cơ bản',topic:'Phương trình',type:'num',text:'Tìm x: 3x = 21',answer:'7',traps:['18','63'],ww:'x = 21 − 3 = 18',explain:'Chia hai vế cho 3: x = 21 : 3 = 7.'},
-  {id:'c9',level:'Cơ bản',topic:'Hình học',type:'num',text:'Chu vi hình chữ nhật dài 8 cm, rộng 5 cm là bao nhiêu cm?',answer:'26',traps:['40','13'],ww:'8 · 5 = 40',explain:'Chu vi = (dài + rộng) · 2 = (8 + 5) · 2 = 26 cm. 40 là diện tích.'},
-  {id:'c10',level:'Cơ bản',topic:'Hình học',type:'mc',text:'Tổng ba góc trong một tam giác bằng',options:['90°','180°','270°','360°'],answer:'180°',explain:'Tổng ba góc trong tam giác luôn bằng 180°.'},
-  {id:'k1',level:'Khá',topic:'Phân số',type:'num',text:'Tính 2/3 · 9/4',answer:'3/2',traps:['18/12','8/27'],ww:'2/3 · 9/4 = 18/12',explain:'2·9 / (3·4) = 18/12 = 3/2. Nhớ rút gọn kết quả cuối.'},
-  {id:'k2',level:'Khá',topic:'Phân số',type:'num',text:'Tính 5/6 − 3/4',answer:'1/12',traps:['1','2/2'],ww:'(5−3)/(6−4) = 2/2 = 1',explain:'Quy đồng mẫu 12: 10/12 − 9/12 = 1/12.'},
-  {id:'k3',level:'Khá',topic:'Số nguyên',type:'num',text:'Tính (−2)³',answer:'-8',traps:['8','-6'],ww:'(−2)³ = 8',explain:'(−2)·(−2)·(−2) = 4·(−2) = −8. Lũy thừa bậc lẻ của số âm là số âm.'},
-  {id:'k4',level:'Khá',topic:'Số nguyên',type:'num',text:'Tính −15 : 3 + (−4) · 2',answer:'-13',traps:['-3','-18'],ww:'−15 : 3 + (−4) = −5 + (−4) = −9 … ·2',explain:'Nhân chia trước: −5 + (−8) = −13.'},
-  {id:'k5',level:'Khá',topic:'Phương trình',type:'num',text:'Tìm x: 2x − 5 = 9',answer:'7',traps:['2','-7'],ww:'2x = 9 − 5 = 4 → x = 2',explain:'2x = 9 + 5 = 14, x = 7. Chuyển −5 sang vế phải thành +5.'},
-  {id:'k6',level:'Khá',topic:'Phương trình',type:'num',text:'Tìm x: 3(x − 2) = 12',answer:'6',traps:['14/3','2'],ww:'3x − 2 = 12 → x = 14/3',explain:'x − 2 = 12 : 3 = 4, x = 6. Khi phá ngoặc phải nhân 3 với cả −2.'},
-  {id:'k7',level:'Khá',topic:'Hình học',type:'num',text:'Diện tích tam giác có đáy 10 cm, chiều cao 6 cm (cm²)',answer:'30',traps:['60'],ww:'S = 10 · 6 = 60',explain:'S = đáy · cao : 2 = 10 · 6 : 2 = 30 cm².'},
-  {id:'k8',level:'Khá',topic:'Hình học',type:'mc',text:'Hai góc kề bù có tổng số đo bằng',options:['90°','180°','360°','Tùy hai góc'],answer:'180°',explain:'Hai góc kề bù tạo thành góc bẹt nên tổng bằng 180°. 90° là hai góc phụ nhau.'},
-  {id:'n1',level:'Nâng cao',topic:'Phân số',type:'num',text:'Tính 1/(1·2) + 1/(2·3) + 1/(3·4)',answer:'3/4',traps:['1/24','3/24'],explain:'Tách 1/(n(n+1)) = 1/n − 1/(n+1): tổng = 1 − 1/4 = 3/4.'},
-  {id:'n2',level:'Nâng cao',topic:'Phân số',type:'num',text:'Tìm x: x/4 = 15/20',answer:'3',traps:['75','12'],explain:'15/20 = 3/4 nên x = 3 (hoặc nhân chéo: 20x = 60).'},
-  {id:'n3',level:'Nâng cao',topic:'Số nguyên',type:'num',text:'Tính (−1) + 2 + (−3) + 4 + … + (−99) + 100',answer:'50',traps:['-50','0'],explain:'Ghép 50 cặp [(−1)+2], [(−3)+4], … mỗi cặp bằng 1, tổng = 50.'},
-  {id:'n4',level:'Nâng cao',topic:'Phương trình',type:'num',text:'Tìm x: 2(x + 3) − 3(x − 1) = 5',answer:'4',traps:['-2','-4'],ww:'2x + 6 − 3x − 3 = 5 → −x = 2 → x = −2',explain:'−3(x − 1) = −3x + 3. Ta có −x + 9 = 5, x = 4. Lỗi hay gặp: quên đổi dấu −3 · (−1).'},
-  {id:'n5',level:'Nâng cao',topic:'Phương trình',type:'mc',text:'Tập nghiệm của |x − 3| = 5 là',options:['{8}','{−2; 8}','{2; 8}','{−8; 2}'],answer:'{−2; 8}',explain:'x − 3 = 5 hoặc x − 3 = −5, nên x = 8 hoặc x = −2. Đừng bỏ trường hợp âm.'},
-  {id:'n6',level:'Nâng cao',topic:'Hình học',type:'num',text:'Hình vuông có chu vi 36 cm. Diện tích là bao nhiêu cm²?',answer:'81',traps:['324','36'],ww:'S = 36 · 9 = 324',explain:'Cạnh = 36 : 4 = 9 cm, diện tích = 9 · 9 = 81 cm².'},
-  {id:'n7',level:'Nâng cao',topic:'Hình học',type:'num',text:'Tam giác ABC có Â = 50°, B̂ = 70°. Góc ngoài tại đỉnh C bằng bao nhiêu độ?',answer:'120',traps:['60'],ww:'Ĉ = 180 − 50 − 70 = 60',explain:'Góc ngoài tại C = Â + B̂ = 120° (60° là góc trong Ĉ).'}
+  {id:'c1',level:'Cơ bản',topic:'Đạo hàm',type:'num',text:'Cho hàm số y = x³ − 3x + 2. Giá trị cực đại của hàm số bằng bao nhiêu?',answer:'4',traps:['-1','0'],ww:'y′ = 0 ⇒ x = −1 nên giá trị cực đại là −1',explain:'y′ = 3x² − 3 = 0 ⇔ x = ±1. y′ đổi dấu từ + sang − tại x = −1 nên giá trị cực đại là y(−1) = 4. Đề hỏi giá trị cực đại (y), không phải điểm cực đại (x).'},
+  {id:'c2',level:'Cơ bản',topic:'Đạo hàm',type:'mc',text:'Hàm số y = x³ − 3x² nghịch biến trên khoảng nào?',options:['(−∞; 0)','(0; 2)','(2; +∞)','(−∞; +∞)'],answer:'(0; 2)',explain:'y′ = 3x² − 6x = 3x(x − 2) < 0 ⇔ 0 < x < 2.'},
+  {id:'c3',level:'Cơ bản',topic:'Đạo hàm',type:'num',text:'Đồ thị hàm số y = (2x + 1)/(x − 1) có tiệm cận ngang y = a. Tìm a.',answer:'2',traps:['1','-1/2'],ww:'Cho mẫu x − 1 = 0 ⇒ tiệm cận y = 1',explain:'Khi x → ±∞, y → 2/1 = 2 nên tiệm cận ngang là y = 2. Đường x = 1 là tiệm cận đứng.'},
+  {id:'c4',level:'Cơ bản',topic:'Tích phân',type:'num',text:'Tính ∫₀¹ 2x dx.',answer:'1',traps:['2','0'],ww:'∫₀¹ 2x dx = 2 (nhầm lấy luôn hệ số)',explain:'Một nguyên hàm của 2x là x², nên tích phân bằng 1² − 0² = 1.'},
+  {id:'c5',level:'Cơ bản',topic:'Tích phân',type:'num',text:'Tính ∫₁² 3x² dx.',answer:'7',traps:['8','9'],ww:'∫₁² 3x² dx = x³ tại x = 2 = 8',explain:'∫₁² 3x² dx = x³ |₁² = 8 − 1 = 7. Nhớ trừ giá trị tại cận dưới.'},
+  {id:'c6',level:'Cơ bản',topic:'Tích phân',type:'mc',text:'Một nguyên hàm của hàm số f(x) = cos x là',options:['sin x','−sin x','cos x','−cos x'],answer:'sin x',explain:'(sin x)′ = cos x nên sin x là một nguyên hàm của cos x.'},
+  {id:'c7',level:'Cơ bản',topic:'Oxyz',type:'num',text:'Trong không gian Oxyz, cho A(1; 2; 3) và B(3; 0; −1). Tính tổng các tọa độ của trung điểm I của AB.',answer:'4',traps:['8'],ww:'I = (1 + 3; 2 + 0; 3 − 1) = (4; 2; 2), tổng bằng 8',explain:'I = ((1 + 3)/2; (2 + 0)/2; (3 − 1)/2) = (2; 1; 1), tổng các tọa độ bằng 4. Nhớ chia 2.'},
+  {id:'c8',level:'Cơ bản',topic:'Oxyz',type:'num',text:'Cho vectơ a = (1; −2; 2). Tính độ dài |a|.',answer:'3',traps:['1','9'],ww:'|a| = 1 − 2 + 2 = 1',explain:'|a| = √(1² + (−2)² + 2²) = √9 = 3.'},
+  {id:'c9',level:'Cơ bản',topic:'Oxyz',type:'mc',text:'Mặt phẳng (P): 2x − y + 3z − 5 = 0 có một vectơ pháp tuyến là',options:['(2; −1; 3)','(2; 1; 3)','(−1; 3; −5)','(2; −1; −5)'],answer:'(2; −1; 3)',explain:'Mặt phẳng ax + by + cz + d = 0 có vectơ pháp tuyến (a; b; c) = (2; −1; 3).'},
+  {id:'c10',level:'Cơ bản',topic:'Xác suất',type:'num',text:'Hộp có 3 bi đỏ và 2 bi xanh. Lấy ngẫu nhiên 1 viên. Tính xác suất lấy được bi xanh.',answer:'2/5',traps:['2/3','1/2'],ww:'P = 2/3 (chia số bi xanh cho số bi đỏ)',explain:'Có 5 viên, 2 viên xanh nên P = 2/5 = 0,4.'},
+  {id:'c11',level:'Cơ bản',topic:'Xác suất',type:'tf',text:'Gieo một con xúc xắc cân đối. Gọi A: “ra mặt chẵn”, B: “ra mặt lớn hơn 3”.',statements:['P(A) = 1/2','P(B) = 1/3','P(A ∩ B) = 1/3','P(A | B) = 2/3'],answer:'ĐSĐĐ',traps:[],explain:'A = {2; 4; 6}, B = {4; 5; 6}, A ∩ B = {4; 6}. P(A) = 1/2, P(B) = 1/2, P(A ∩ B) = 1/3, P(A | B) = (1/3)/(1/2) = 2/3.'},
+  {id:'k1',level:'Khá',topic:'Đạo hàm',type:'num',text:'Tìm giá trị lớn nhất của hàm số y = x³ − 3x + 1 trên đoạn [0; 2].',answer:'3',traps:['-1','1'],ww:'y′ = 0 ⇒ x = 1, y(1) = −1 ⇒ GTLN = −1',explain:'y′ = 0 ⇔ x = 1 thuộc [0; 2]. So sánh y(0) = 1, y(1) = −1, y(2) = 3 ⇒ GTLN là 3. Đừng quên hai đầu mút.'},
+  {id:'k2',level:'Khá',topic:'Đạo hàm',type:'tf',text:'Cho hàm số y = x⁴ − 2x² + 1.',statements:['Hàm số có 3 điểm cực trị','Giá trị cực tiểu của hàm số bằng 0','Hàm số đồng biến trên khoảng (0; 1)','Đồ thị hàm số đi qua điểm (2; 9)'],answer:'ĐĐSĐ',traps:[],explain:'y′ = 4x(x² − 1) = 0 ⇔ x = 0; ±1 nên có 3 cực trị. y(±1) = 0 là giá trị cực tiểu. Trên (0; 1), y′ < 0 nên hàm nghịch biến. y(2) = 16 − 8 + 1 = 9.'},
+  {id:'k3',level:'Khá',topic:'Đạo hàm',type:'mc',text:'Tiệm cận đứng của đồ thị hàm số y = (x + 1)/(x − 2) là',options:['x = 2','x = −1','y = 1','x = 1'],answer:'x = 2',explain:'Mẫu bằng 0 tại x = 2 và tử khác 0 tại đó, nên x = 2 là tiệm cận đứng. y = 1 là tiệm cận ngang.'},
+  {id:'k4',level:'Khá',topic:'Tích phân',type:'num',text:'Tính ∫₀^π sin x dx.',answer:'2',traps:['-2','0'],ww:'∫₀^π sin x dx = cos π − cos 0 = −2',explain:'Nguyên hàm của sin x là −cos x: −cos π − (−cos 0) = 1 + 1 = 2. Lỗi hay gặp là quên dấu trừ.'},
+  {id:'k5',level:'Khá',topic:'Tích phân',type:'num',text:'Tính diện tích hình phẳng giới hạn bởi y = x², y = 0, x = 0, x = 3.',answer:'9',traps:['27','3'],ww:'S = 3³ = 27',explain:'S = ∫₀³ x² dx = x³/3 |₀³ = 27/3 = 9. Nhớ chia 3 khi lấy nguyên hàm.'},
+  {id:'k6',level:'Khá',topic:'Tích phân',type:'tf',text:'Cho ∫₀² f(x) dx = 4 và ∫₀² g(x) dx = 1.',statements:['∫₀² [f(x) + g(x)] dx = 5','∫₀² 2f(x) dx = 6','∫₂⁰ f(x) dx = −4','∫₀² f(x)·g(x) dx = 4'],answer:'ĐSĐS',traps:[],explain:'Tích phân của tổng bằng tổng các tích phân: 4 + 1 = 5. ∫2f = 2·4 = 8. Đổi cận thì đổi dấu: −4. Không có quy tắc tích phân của tích bằng tích các tích phân.'},
+  {id:'k7',level:'Khá',topic:'Oxyz',type:'num',text:'Tính khoảng cách từ M(1; 2; 3) đến mặt phẳng (P): 2x + y − 2z + 3 = 0.',answer:'1/3',traps:['1','3'],ww:'d = |2 + 2 − 6 + 3| = 1',explain:'d = |2·1 + 2 − 2·3 + 3| / √(4 + 1 + 4) = 1/3. Nhớ chia cho độ dài vectơ pháp tuyến.'},
+  {id:'k8',level:'Khá',topic:'Oxyz',type:'mc',text:'Mặt cầu (S): (x − 1)² + (y + 2)² + z² = 9 có tâm và bán kính là',options:['I(1; −2; 0), R = 3','I(−1; 2; 0), R = 3','I(1; −2; 0), R = 9','I(−1; 2; 0), R = 9'],answer:'I(1; −2; 0), R = 3',explain:'(x − a)² + (y − b)² + (z − c)² = R² có tâm I(a; b; c). Ở đây I(1; −2; 0), R = √9 = 3.'},
+  {id:'k9',level:'Khá',topic:'Xác suất',type:'num',text:'Lớp có 20 nam và 15 nữ. Chọn ngẫu nhiên 2 bạn. Tính xác suất chọn được 2 bạn nữ (làm tròn đến hàng phần trăm).',answer:'0,18',traps:['0,43','0,19'],ww:'P = 15/35 ≈ 0,43',explain:'P = C(15, 2) / C(35, 2) = 105/595 ≈ 0,18.'},
+  {id:'k10',level:'Khá',topic:'Xác suất',type:'tf',text:'Cho hai biến cố A, B với P(A) = 0,5; P(B) = 0,4; P(A ∩ B) = 0,2.',statements:['A và B độc lập','P(A ∪ B) = 0,9','P(A | B) = 0,5','P(B | A) = 0,5'],answer:'ĐSĐS',traps:[],explain:'P(A)·P(B) = 0,2 = P(A ∩ B) nên A, B độc lập. P(A ∪ B) = 0,5 + 0,4 − 0,2 = 0,7. P(A | B) = 0,2/0,4 = 0,5. P(B | A) = 0,2/0,5 = 0,4.'},
+  {id:'n1',level:'Giỏi',topic:'Đạo hàm',type:'num',text:'Có bao nhiêu giá trị nguyên của m để hàm số y = x³ − 3mx² + 3(m + 2)x đồng biến trên ℝ?',answer:'4',traps:['2','3'],ww:'Δ′ < 0 ⇒ −1 < m < 2 ⇒ có 2 giá trị',explain:'y′ = 3x² − 6mx + 3(m + 2) ≥ 0 ∀x ⇔ Δ′ = 9m² − 9(m + 2) ≤ 0 ⇔ −1 ≤ m ≤ 2 ⇒ m ∈ {−1; 0; 1; 2}. Lưu ý dấu “≤”.'},
+  {id:'n2',level:'Giỏi',topic:'Đạo hàm',type:'num',text:'Từ tấm tôn hình vuông cạnh 12 cm, cắt ở bốn góc bốn hình vuông bằng nhau cạnh x rồi gấp thành hộp không nắp. Thể tích lớn nhất của hộp là bao nhiêu cm³?',answer:'128',traps:['108','96'],ww:'Chọn x = 3 ⇒ V = 3·6² = 108',explain:'V = x(12 − 2x)², V′ = (12 − 2x)(12 − 6x) = 0 ⇒ x = 2 (vì 0 < x < 6). V(2) = 2·8² = 128.'},
+  {id:'n3',level:'Giỏi',topic:'Tích phân',type:'num',text:'Tính ∫₀¹ x·eˣ dx.',answer:'1',traps:['e','e − 1'],ww:'Đặt u = x, dv = eˣdx ⇒ x·eˣ |₀¹ = e',explain:'Từng phần: x·eˣ |₀¹ − ∫₀¹ eˣ dx = e − (e − 1) = 1.'},
+  {id:'n4',level:'Giỏi',topic:'Tích phân',type:'num',text:'Quay hình phẳng giới hạn bởi y = √x, y = 0, x = 4 quanh trục Ox được khối tròn xoay có thể tích aπ. Tìm a.',answer:'8',traps:['16/3','16'],ww:'V = π∫₀⁴ √x dx = 16π/3',explain:'V = π∫₀⁴ (√x)² dx = π∫₀⁴ x dx = 8π nên a = 8. Nhớ bình phương hàm số.'},
+  {id:'n5',level:'Giỏi',topic:'Oxyz',type:'num',text:'Cho A(1; 0; 0), B(0; 2; 0), C(0; 0; 3). Tính khoảng cách từ gốc O đến mặt phẳng (ABC) (làm tròn đến hàng phần trăm).',answer:'0,86',traps:['6','1'],ww:'(ABC): 6x + 3y + 2z − 6 = 0 ⇒ d = 6',explain:'(ABC): x/1 + y/2 + z/3 = 1 ⇔ 6x + 3y + 2z − 6 = 0. d = 6/√(36 + 9 + 4) = 6/7 ≈ 0,86.'},
+  {id:'n6',level:'Giỏi',topic:'Oxyz',type:'tf',text:'Cho mặt cầu (S): x² + y² + z² − 2x + 4y − 4 = 0 và mặt phẳng (P): 2x − y + 2z + 2 = 0.',statements:['(S) có tâm I(1; −2; 0)','(S) có bán kính R = 9','Khoảng cách từ I đến (P) bằng 2','(P) cắt (S) theo đường tròn có bán kính √5'],answer:'ĐSĐĐ',traps:[],explain:'Tâm I(1; −2; 0), R² = 1 + 4 + 4 = 9 ⇒ R = 3. d(I, (P)) = |2 + 2 + 2|/3 = 2 < R. Bán kính đường tròn giao tuyến r = √(9 − 4) = √5.'},
+  {id:'n7',level:'Giỏi',topic:'Xác suất',type:'num',text:'Tỉ lệ mắc bệnh X là 2%. Xét nghiệm cho kết quả dương tính ở 95% người bệnh và 10% người không bệnh. Một người có kết quả dương tính. Tính xác suất người đó thật sự mắc bệnh (làm tròn đến hàng phần trăm).',answer:'0,16',traps:['0,95','0,02'],ww:'P = 95% vì xét nghiệm đúng 95%',explain:'Công thức Bayes: P = 0,02·0,95 / (0,02·0,95 + 0,98·0,1) = 0,019/0,117 ≈ 0,16. Không nhầm P(dương tính | bệnh) với P(bệnh | dương tính).'},
+  {id:'n8',level:'Giỏi',topic:'Xác suất',type:'mc',text:'Hộp I có 3 bi đỏ, 2 bi xanh; hộp II có 4 bi đỏ, 1 bi xanh. Chọn ngẫu nhiên một hộp rồi lấy ra 1 viên. Xác suất lấy được bi đỏ là',options:['0,7','0,6','0,8','7/5'],answer:'0,7',explain:'Xác suất toàn phần: P = 0,5·3/5 + 0,5·4/5 = 0,3 + 0,4 = 0,7.'}
 ];
 
 const STUDENTS = [
-  {id:'s1',name:'Nguyễn Minh An',level:'Cơ bản',skill:.72,weak:'Phân số'},
-  {id:'s2',name:'Trần Bảo Ngọc',level:'Cơ bản',skill:.62,weak:'Số nguyên'},
-  {id:'s3',name:'Lê Gia Huy',level:'Khá',skill:.78,weak:'Phương trình'},
-  {id:'s4',name:'Phạm Thu Hà',level:'Khá',skill:.72,weak:'Phân số'},
-  {id:'s5',name:'Võ Đức Thịnh',level:'Khá',skill:.8,weak:'Hình học'},
-  {id:'s6',name:'Đặng Khánh Linh',level:'Nâng cao',skill:.8,weak:'Phương trình'},
-  {id:'s7',name:'Hoàng Quốc Bảo',level:'Nâng cao',skill:.74,weak:'Số nguyên'}
+  {id:'s1',name:'Nguyễn Minh An',level:'Cơ bản',skill:.72,weak:'Tích phân',user:'hs01',pass:'an2k8m'},
+  {id:'s2',name:'Trần Bảo Ngọc',level:'Cơ bản',skill:.62,weak:'Oxyz',user:'hs02',pass:'ng4p7t'},
+  {id:'s3',name:'Lê Gia Huy',level:'Khá',skill:.78,weak:'Đạo hàm',user:'hs03',pass:'hu9x3c'},
+  {id:'s4',name:'Phạm Thu Hà',level:'Khá',skill:.72,weak:'Xác suất',user:'hs04',pass:'ha5r2w'},
+  {id:'s5',name:'Võ Đức Thịnh',level:'Khá',skill:.8,weak:'Oxyz',user:'hs05',pass:'th8m6q'},
+  {id:'s6',name:'Đặng Khánh Linh',level:'Giỏi',skill:.8,weak:'Xác suất',user:'hs06',pass:'li3v9k'},
+  {id:'s7',name:'Hoàng Quốc Bảo',level:'Giỏi',skill:.74,weak:'Tích phân',user:'hs07',pass:'ba7e4n'}
 ];
 
 // ---------- dữ liệu ----------
 function seed(){
   const rnd = mulberry32(20261023);
-  const st = {v:1, students:STUDENTS.map(s => ({id:s.id,name:s.name,level:s.level})), bank:BANK.map(q => ({...q})), assignments:[], submissions:[], fixed:{}, n:1};
+  const st = {v:2, teacher:{name:'Giáo viên Toán', user:'giaovien', pass:'123456'}, students:STUDENTS.map(s => ({id:s.id,name:s.name,level:s.level,user:s.user,pass:s.pass})), bank:BANK.map(q => ({...q})), assignments:[], submissions:[], fixed:{}, n:1};
   const rot = (arr, k) => arr.length ? arr.slice(k % arr.length).concat(arr.slice(0, k % arr.length)) : arr;
   for (let i = -6; i <= 0; i++) {
     const day = addDays(TODAY, i);
@@ -514,7 +562,7 @@ function seed(){
       const topic = TOPICS[(i + 6 + li) % TOPICS.length];
       const pick = rot(pool.filter(q => q.topic === topic), i + 6).slice(0, 2);
       for (const q of rot(pool.filter(q => q.topic !== topic), (i + 6) * 2 + li)) { if (pick.length >= 3) break; pick.push(q); }
-      const a = {id:'a' + st.n++, date:day, level:lv, topic, title:'Luyện tập ' + topic.toLowerCase(), qids:pick.map(q => q.id)};
+      const a = {id:'a' + st.n++, date:day, level:lv, topic, title:TOPIC_FULL[topic], qids:pick.map(q => q.id)};
       st.assignments.push(a);
       STUDENTS.filter(s => s.level === lv).forEach(s => {
         if (rnd() > (i === 0 ? 0.45 : 0.86)) return;
@@ -525,6 +573,7 @@ function seed(){
           let value = q.answer, work = '';
           if (rnd() > p) {
             if (q.type === 'mc') { const w = q.options.filter(o => o !== q.answer); value = w[Math.floor(rnd() * w.length)]; }
+            else if (q.type === 'tf') { const k = Math.floor(rnd() * 4); value = [...q.answer].map((c, j) => j === k ? (c === 'Đ' ? 'S' : 'Đ') : c).join(''); }
             else value = rnd() < 0.7 ? q.traps[0] : q.traps[Math.floor(rnd() * q.traps.length)];
             if (q.ww && value === q.traps[0] && rnd() < 0.75) work = q.ww;
           }
@@ -543,7 +592,7 @@ function seed(){
 const KEY = 'toan-moi-ngay-v1';
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)); } catch (e) { S = null; }
-if (!S || S.v !== 1) S = seed();
+if (!S || S.v !== 2) S = seed();
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 
 const ui = {role:'teacher', sid:'s1', tab:{teacher:'today', student:'today'}, tSid:null, an:{range:'7', level:'all'}, compose:null, flash:{}, armed:null, justSubmitted:null};
@@ -560,11 +609,11 @@ function parseNum(s){
 }
 function isRight(q, v){
   if (!q) return false;
-  if (q.type === 'mc') return v === q.answer;
+  if (q.type === 'mc' || q.type === 'tf') return v === q.answer;
   const a = parseNum(v), b = parseNum(q.answer);
   return !isNaN(a) && Math.abs(a - b) < 1e-9;
 }
-const showVal = v => (v === '' || v == null) ? '(bỏ trống)' : String(v).replace(/^-/, '−');
+const showVal = v => (v === '' || v == null) ? '(bỏ trống)' : /^[ĐS_]{4}$/.test(v) ? [...v].map((c, i) => 'abcd'[i] + ') ' + (c === 'Đ' ? 'Đúng' : c === 'S' ? 'Sai' : '?')).join(' · ') : String(v).replace(/^-/, '−');
 const normVal = v => String(v ?? '').trim().replace(/[−–]/g, '-').replace(/\s/g, '');
 
 const Q = id => S.bank.find(q => q.id === id);
@@ -621,11 +670,16 @@ const ICON = {
   retry:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
   chev:'<path d="M9 6l6 6-6 6"/>',
   list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
+  key:'<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M16 7l3 3M14 9l2 2"/>',
+  logout:'<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l-5-5 5-5M5 12h11"/>',
   trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>'
 };
 const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICON[n]}</svg>`;
-const TOPIC_VAR = {'Phân số':'--t1', 'Số nguyên':'--t2', 'Phương trình':'--t3', 'Hình học':'--t4'};
-const TOPIC_GLYPH = {'Phân số':'½', 'Số nguyên':'±', 'Phương trình':'x', 'Hình học':'△'};
+const TOPIC_VAR = {'Đạo hàm':'--t1', 'Tích phân':'--t2', 'Oxyz':'--t3', 'Xác suất':'--t4'};
+const TOPIC_GLYPH = {'Đạo hàm':'f′', 'Tích phân':'∫', 'Oxyz':'→', 'Xác suất':'%'};
+const TYPE_LABEL = {mc:'Trắc nghiệm', tf:'Đúng/Sai', num:'Trả lời ngắn'};
+const tfList = q => q.type === 'tf' ? `<ol class="tfs">${q.statements.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : '';
+const answered = (q, v) => q.type === 'tf' ? /^[ĐS]{4}$/.test(v || '') : !!String(v ?? '').trim();
 const tcv = t => `--tc:var(${TOPIC_VAR[t] || '--t1'})`;
 const topicChip = t => `<span class="chip topic" style="${tcv(t)}"><span class="dot"></span>${esc(t)}</span>`;
 const AVC = ['--t1','--t2','--t3','--t4','--danger','--success','--warn'];
@@ -653,36 +707,41 @@ const wdOf = k => { const [y, m, d] = k.split('-').map(Number); return WD[new Da
 const last7 = () => [...Array(7)].map((_, i) => addDays(TODAY, i - 6));
 
 function toast(msg){ const t = $('#toast'); t.innerHTML = ic('check', 'sm') + esc(msg); t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 2600); }
-function go(tab){ if (ui.role === 'teacher' && ui.tab.teacher === 'compose') syncCompose(); ui.tab[ui.role] = tab; ui.armed = null; render(); window.scrollTo(0, 0); }
+function go(tab){ if (ui.role === 'teacher' && ui.tab.teacher === 'compose') syncCompose(); ui.tab[ui.role] = tab; ui.armed = null; ui.accMsg = null; render(); window.scrollTo(0, 0); }
 
 // ---------- khung ----------
+let AUTH = null;
+try { AUTH = JSON.parse(localStorage.getItem(KEY + '-auth')); } catch (e) {}
+function setAuth(a){ AUTH = a; try { a ? localStorage.setItem(KEY + '-auth', JSON.stringify(a)) : localStorage.removeItem(KEY + '-auth'); } catch (e) {} }
 function render(){
+  if (AUTH && AUTH.role === 'student' && !STU(AUTH.sid)) setAuth(null);
+  const lg = $('#login');
+  if (!AUTH) { $('.app').hidden = true; lg.hidden = false; lg.innerHTML = loginHtml(); ui.player = null; renderPlayer(); return; }
+  $('.app').hidden = false; lg.hidden = true; lg.innerHTML = '';
+  ui.role = AUTH.role; if (AUTH.role === 'student') ui.sid = AUTH.sid;
   const st = STU(ui.sid) || S.students[0];
   const T = ui.role === 'teacher';
   const nOpen = mistakes(st.id).filter(m => !m.fixed).length;
   const tabs = T
-    ? [['today','Tổng quan','home'],['compose','Soạn & giao bài','edit'],['work','Bài làm học sinh','users'],['analysis','Phân tích lỗi sai','chart']]
+    ? [['today','Tổng quan','home'],['compose','Soạn & giao bài','edit'],['work','Bài làm học sinh','users'],['analysis','Phân tích lỗi sai','chart'],['accounts','Tài khoản học sinh','key']]
     : [['today','Trang chủ','home'],['mistakes','Sổ lỗi sai','book',nOpen],['history','Lịch sử','clock']];
   const cur = ui.tab[ui.role];
   $('#navlbl').textContent = T ? 'Lớp học' : 'Học tập';
   $('#sidenav').innerHTML = tabs.map(([k, l, i, c]) => `<button class="nav-item" data-act="tab" data-v="${k}" ${k === cur ? 'aria-current="page"' : ''}>${ic(i)}<span>${l}</span>${c ? `<span class="badge">${c}</span>` : ''}</button>`).join('');
-  $('#bnav').innerHTML = tabs.map(([k, l, i, c]) => `<button data-act="tab" data-v="${k}" ${k === cur ? 'aria-current="page"' : ''}>${ic(i)}<span class="l">${{compose:'Giao bài', work:'Bài làm', analysis:'Phân tích'}[k] || l}</span>${c ? `<span class="badge">${c}</span>` : ''}</button>`).join('');
+  $('#bnav').innerHTML = tabs.map(([k, l, i, c]) => `<button data-act="tab" data-v="${k}" ${k === cur ? 'aria-current="page"' : ''}>${ic(i)}<span class="l">${{compose:'Giao bài', work:'Bài làm', analysis:'Phân tích', accounts:'Tài khoản'}[k] || l}</span>${c ? `<span class="badge">${c}</span>` : ''}</button>`).join('');
 
-  const seg = `<div class="seg" role="group" aria-label="Xem với vai trò"><button data-act="role" data-v="teacher" aria-pressed="${T}">Giáo viên</button><button data-act="role" data-v="student" aria-pressed="${!T}">Học sinh</button></div>`;
-  const pick = id => `<select id="${id}" data-pick aria-label="Chọn học sinh">${S.students.map(s => `<option value="${s.id}" ${s.id === st.id ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select>`;
-  $('#rolecard').innerHTML = `<span class="small muted">Đang xem với vai trò</span>${seg}
-    ${T ? `<div class="who"><span class="av" style="--c:var(--primary)">GV</span><div><b>Cô giáo chủ nhiệm</b><span>${S.students.length} học sinh · 3 nhóm</span></div></div>`
-        : `<div class="who">${avatar(st)}<div style="min-width:0;flex:1">${pick('pick-side')}</div></div>`}`;
+  const me = T ? {av:'<span class="av" style="--c:var(--primary)">GV</span>', name:S.teacher.name, sub:'Giáo viên · Lớp 12A1'} : {av:avatar(st), name:st.name, sub:'Lớp 12A1 · nhóm ' + st.level};
+  $('#rolecard').innerHTML = `<div class="who">${me.av}<div style="min-width:0;flex:1"><b>${esc(me.name)}</b><span>${me.sub}</span></div></div><button class="btn sm logout" data-act="logout">${ic('logout','sm')} Đăng xuất</button>`;
 
   const titles = T
-    ? {today:['Lớp học','Tổng quan lớp học'], compose:['Lớp học','Soạn & giao bài'], work:['Lớp học','Bài làm học sinh'], analysis:['Lớp học','Phân tích lỗi sai']}
-    : {today:['Học tập',`Chào ${esc(firstName(st))}!`], mistakes:['Học tập','Sổ lỗi sai'], history:['Học tập','Lịch sử làm bài']};
+    ? {today:['Lớp 12A1','Tổng quan lớp học'], compose:['Lớp 12A1','Soạn & giao bài'], work:['Lớp 12A1','Bài làm học sinh'], analysis:['Lớp 12A1','Phân tích lỗi sai'], accounts:['Lớp 12A1','Tài khoản học sinh']}
+    : {today:['Toán 12',`Chào ${esc(firstName(st))}!`], mistakes:['Toán 12','Sổ lỗi sai'], history:['Toán 12','Lịch sử làm bài']};
   const [crumb, title] = titles[cur];
   $('#topbar').innerHTML = `<div><div class="crumb">${crumb} ${ic('chev','sm')} ${T ? 'Giáo viên' : 'Nhóm ' + st.level}</div><h1>${title}</h1></div>
     <div class="r"><span class="chip-date">${ic('cal','sm')} ${fmtDate(TODAY)}</span></div>
-    <div class="toprole">${seg}${T ? '' : pick('pick-top')}</div>`;
+    <div class="toprole"><div class="who">${me.av}<div style="min-width:0;flex:1"><b>${esc(me.name)}</b><span>${me.sub}</span></div></div><button class="iconbtn" data-act="logout" aria-label="Đăng xuất">${ic('logout','sm')}</button></div>`;
 
-  const views = T ? {today:tHome, compose:tCompose, work:tWork, analysis:tAnalysis} : {today:sHome, mistakes:sMistakes, history:sHistory};
+  const views = T ? {today:tHome, compose:tCompose, work:tWork, analysis:tAnalysis, accounts:tAccounts} : {today:sHome, mistakes:sMistakes, history:sHistory};
   $('#main').innerHTML = views[cur](st);
   renderPlayer();
 }
@@ -776,6 +835,7 @@ function syncCompose(){
   const c = ui.compose; if (!c || !$('#c-title')) return;
   c.date = $('#c-date').value || TODAY; c.topic = $('#c-topic').value; c.title = $('#c-title').value;
   const q = c.newQ;
+  if (q && $('#nq-s0')) { q.statements = [0,1,2,3].map(j => $('#nq-s' + j).value); q.tfans = [0,1,2,3].map(j => $('#nq-t' + j).value); }
   if (q && $('#nq-text')) {
     q.type = $('#nq-type').value; q.text = $('#nq-text').value; q.explain = $('#nq-exp').value;
     if ($('#nq-ans')) q.answer = $('#nq-ans').value;
@@ -801,11 +861,12 @@ function tCompose(){
         : `<div class="emptyst"><div class="ib">${ic('list')}</div>Chưa có câu nào. Bấm "Thêm" ở ngân hàng câu hỏi bên cạnh.</div>`}
       ${q ? `<div class="newq">
         <div class="row between"><h3>Câu hỏi mới</h3><button class="btn ghost sm" data-act="c-cancelq">Huỷ</button></div>
-        <label class="f">Đề bài<textarea id="nq-text" placeholder="Nhập đề bài">${esc(q.text)}</textarea></label>
+        <label class="f">${q.type === 'tf' ? 'Phần dẫn chung' : 'Đề bài'}<textarea id="nq-text" placeholder="Nhập đề bài">${esc(q.text)}</textarea></label>
         <div class="fgrid">
-          <label class="f">Dạng câu<select id="nq-type" data-act="c-refresh"><option value="num" ${q.type === 'num' ? 'selected' : ''}>Điền đáp số</option><option value="mc" ${q.type === 'mc' ? 'selected' : ''}>Trắc nghiệm 4 lựa chọn</option></select></label>
-          ${q.type === 'num' ? `<label class="f">Đáp số đúng<input type="text" id="nq-ans" value="${esc(q.answer)}" placeholder="vd: 5/6, -3, 2,5"></label>` : `<label class="f">Đáp án đúng<select id="nq-cor">${[0,1,2,3].map(j => `<option value="${j}" ${q.correct === j ? 'selected' : ''}>${'ABCD'[j]}</option>`).join('')}</select></label>`}
+          <label class="f">Dạng câu<select id="nq-type" data-act="c-refresh"><option value="num" ${q.type === 'num' ? 'selected' : ''}>Trả lời ngắn</option><option value="mc" ${q.type === 'mc' ? 'selected' : ''}>Trắc nghiệm 4 lựa chọn</option><option value="tf" ${q.type === 'tf' ? 'selected' : ''}>Đúng/Sai (4 ý)</option></select></label>
+          ${q.type === 'num' ? `<label class="f">Đáp số đúng<input type="text" id="nq-ans" value="${esc(q.answer)}" placeholder="vd: 0,18 hoặc -3 hoặc 1/3"></label>` : q.type === 'tf' ? '' : `<label class="f">Đáp án đúng<select id="nq-cor">${[0,1,2,3].map(j => `<option value="${j}" ${q.correct === j ? 'selected' : ''}>${'ABCD'[j]}</option>`).join('')}</select></label>`}
         </div>
+        ${q.type === 'tf' ? `<div style="display:flex;flex-direction:column;gap:8px">${[0,1,2,3].map(j => `<div class="row" style="flex-wrap:nowrap;gap:8px"><span class="qn">${'abcd'[j]}</span><input type="text" id="nq-s${j}" value="${esc(q.statements[j])}" placeholder="Mệnh đề ${'abcd'[j]}" aria-label="Mệnh đề ${'abcd'[j]}"><select id="nq-t${j}" style="width:auto" aria-label="Đáp án ý ${'abcd'[j]}">${['Đ','S'].map(c => `<option value="${c}" ${q.tfans[j] === c ? 'selected' : ''}>${c === 'Đ' ? 'Đúng' : 'Sai'}</option>`).join('')}</select></div>`).join('')}</div>` : ''}
         ${q.type === 'mc' ? `<div class="fgrid">${[0,1,2,3].map(j => `<label class="f">Lựa chọn ${'ABCD'[j]}<input type="text" id="nq-o${j}" value="${esc(q.options[j])}"></label>`).join('')}</div>` : ''}
         <label class="f">Lời giải hiện cho học sinh khi làm sai<textarea id="nq-exp">${esc(q.explain)}</textarea></label>
         <div><button class="btn" data-act="c-saveq">${ic('plus','sm')} Thêm vào bài và ngân hàng</button></div>
@@ -814,7 +875,7 @@ function tCompose(){
     </div></div>`;
   const bankCard = `<div class="card"><div class="card-h"><div><h2>Ngân hàng câu hỏi</h2><p>Nhóm ${c.level} · ${bank.length} câu</p></div></div><div class="card-b">
       <div class="row" style="gap:6px"><button class="fchip" data-act="bank-topic" data-v="all" aria-pressed="${ui.bankTopic === 'all'}">Tất cả</button>${TOPICS.map(t => `<button class="fchip" data-act="bank-topic" data-v="${t}" aria-pressed="${ui.bankTopic === t}">${t}</button>`).join('')}</div>
-      <div class="bank list">${bank.map(x => { const inn = c.qids.includes(x.id); return `<div class="li"><div class="grow"><div class="qt">${esc(x.text)}</div><div class="row small" style="gap:8px;margin-top:4px">${topicChip(x.topic)}<span class="muted">${x.type === 'mc' ? 'Trắc nghiệm' : 'Điền số'}</span></div></div>${inn ? `<span class="chip ok">${ic('check','sm')} Đã thêm</span>` : `<button class="btn sec sm" data-act="c-add" data-v="${x.id}">${ic('plus','sm')} Thêm</button>`}</div>`; }).join('') || '<div class="emptyst">Chưa có câu nào ở chuyên đề này.</div>'}</div>
+      <div class="bank list">${bank.map(x => { const inn = c.qids.includes(x.id); return `<div class="li"><div class="grow"><div class="qt">${esc(x.text)}</div><div class="row small" style="gap:8px;margin-top:4px">${topicChip(x.topic)}<span class="muted">${TYPE_LABEL[x.type]}</span></div></div>${inn ? `<span class="chip ok">${ic('check','sm')} Đã thêm</span>` : `<button class="btn sec sm" data-act="c-add" data-v="${x.id}">${ic('plus','sm')} Thêm</button>`}</div>`; }).join('') || '<div class="emptyst">Chưa có câu nào ở chuyên đề này.</div>'}</div>
     </div></div>`;
   const hist = `<div class="card"><div class="card-h"><div><h2>Bài đã giao</h2><p>10 bài gần nhất</p></div></div><div class="card-b" style="padding-inline:8px"><div class="tbl"><table>
     <thead><tr><th>Ngày</th><th>Tên bài</th><th>Nhóm</th><th>Số câu</th><th>Đã nộp</th><th></th></tr></thead>
@@ -831,8 +892,11 @@ function saveNewQ(){
   if (!q.text.trim()) return fail('Câu hỏi mới chưa có đề bài.');
   if (q.type === 'num' && isNaN(parseNum(q.answer))) return fail('Đáp số phải là số, ví dụ 5, -3, 2,5 hoặc 5/6.');
   if (q.type === 'mc' && q.options.some(o => !o.trim())) return fail('Điền đủ 4 lựa chọn A, B, C, D.');
+  if (q.type === 'tf' && q.statements.some(o => !o.trim())) return fail('Điền đủ 4 mệnh đề a, b, c, d.');
   const nq = {id:'q' + S.n++, level:c.level, topic:c.topic, type:q.type, text:q.text.trim(), explain:q.explain.trim(), traps:[]};
-  if (q.type === 'mc') { nq.options = q.options.map(o => o.trim()); nq.answer = nq.options[q.correct]; } else nq.answer = q.answer.trim();
+  if (q.type === 'mc') { nq.options = q.options.map(o => o.trim()); nq.answer = nq.options[q.correct]; }
+  else if (q.type === 'tf') { nq.statements = q.statements.map(o => o.trim()); nq.answer = q.tfans.join(''); }
+  else nq.answer = q.answer.trim();
   S.bank.push(nq); c.qids.push(nq.id); c.newQ = null; c.msg = {ok:true, text:'Đã thêm câu hỏi mới vào bài và ngân hàng câu hỏi.'};
   save(); render();
 }
@@ -857,7 +921,7 @@ function subDetail(b, teacher){
     const q = Q(qid); if (!q) return '';
     const ans = b.answers[qid] || {}, ok = isRight(q, ans.value), fixed = S.fixed[b.sid]?.[qid];
     return `<div class="qr ${ok ? '' : 'bad'}">
-      <div class="h"><span class="qn">${i + 1}</span><span class="qt">${esc(q.text)}</span>${ok ? `<span class="chip ok">${ic('check','sm')} Đúng</span>` : `<span class="chip bad">${ic('x','sm')} Sai</span>`}</div>
+      <div class="h"><span class="qn">${i + 1}</span><span class="qt">${esc(q.text)}${tfList(q)}</span>${ok ? `<span class="chip ok">${ic('check','sm')} Đúng</span>` : `<span class="chip bad">${ic('x','sm')} Sai</span>`}</div>
       <div class="ansl"><span>${teacher ? 'Học sinh' : 'Em'} trả lời: <span class="${ok ? 'r' : 'w'}">${esc(showVal(ans.value))}</span></span>${ok ? '' : `<span>Đáp án: <span class="r">${esc(showVal(q.answer))}</span></span>`}${!ok && teacher ? (fixed ? `<span class="chip ok">Đã tự sửa</span>` : `<span class="chip warn">Chưa sửa</span>`) : ''}</div>
       ${ans.work ? `<div class="work ${ok ? '' : 'bad'}">Cách làm: ${esc(ans.work)}</div>` : ''}
       ${!ok && q.explain ? `<div class="explain"><b>Lời giải:</b> ${esc(q.explain)}</div>` : ''}
@@ -935,7 +999,7 @@ function tAnalysis(){
   const hq = `<div class="card"><div class="card-h"><div><h2>Câu sai nhiều nhất</h2><p>Kèm đáp án sai phổ biến để biết học sinh hiểu nhầm ở đâu</p></div>
     ${ui.an.level !== 'all' && hard.length ? `<button class="btn sm" data-act="reassign">${ic('retry','sm')} Giao lại ${Math.min(4, hard.length)} câu này</button>` : '<span class="small muted">Chọn một nhóm để giao lại các câu này</span>'}</div><div class="card-b">
     ${hard.length ? hard.map((s, i) => { const top = Object.entries(s.vals).sort((x, y) => y[1] - x[1])[0]; const r = s.w / s.n; return `<div class="qr">
-      <div class="h"><span class="qn">${i + 1}</span><span class="qt">${esc(s.q.text)}</span><span class="chip bad num">${pct(r)} sai</span></div>
+      <div class="h"><span class="qn">${i + 1}</span><span class="qt">${esc(s.q.text)}${tfList(s.q)}</span><span class="chip bad num">${pct(r)} sai</span></div>
       <div class="row small" style="gap:8px">${topicChip(s.q.topic)}<span class="chip">${s.q.level}</span><span class="muted">${s.w}/${s.n} lượt sai</span></div>
       <div class="ansl"><span>Đáp án đúng: <span class="r">${esc(showVal(s.q.answer))}</span></span>${top ? `<span>Sai phổ biến: <span class="w" style="text-decoration:none">${esc(showVal(top[0]))}</span> (${top[1]} lần)</span>` : ''}</div>
       ${s.q.ww ? `<div class="work bad">Cách làm sai hay gặp: ${esc(s.q.ww)}</div>` : ''}
@@ -953,7 +1017,7 @@ function sHome(st){
     const wrongIds = b ? a.qids.filter(qid => !isRight(Q(qid), b.answers[qid]?.value) && !S.fixed[st.id]?.[qid]) : [];
     return `<div class="card today" style="${tcv(a.topic)}">
       <div class="band" data-g="${TOPIC_GLYPH[a.topic] || '∑'}"><div class="k">${ic('cal','sm')} Bài hôm nay · ${a.topic}</div><h2>${esc(a.title)}</h2>
-        <div class="meta"><span>${ic('list','sm')} ${a.qids.length} câu</span><span>${ic('clock','sm')} khoảng ${a.qids.length * 2} phút</span><span>${ic('alert','sm')} Nộp trước 23:59 hôm nay</span></div></div>
+        <div class="meta"><span>${ic('list','sm')} ${a.qids.length} câu</span><span>${ic('clock','sm')} khoảng ${a.qids.length * 3} phút</span><span>${ic('alert','sm')} Nộp trước 23:59 hôm nay</span></div></div>
       <div class="tb">${b ? `${ring(sc.c / sc.t, 72, 8, sc.c === sc.t ? 'var(--success)' : 'var(--warn)', `${sc.c}/${sc.t}`)}
           <div class="grow"><h3>${sc.c === sc.t ? 'Xuất sắc, em đúng hết!' : `Em đúng ${sc.c}/${sc.t} câu · ${dec(sc.ten)} điểm`}</h3><p class="small muted">Đã nộp lúc ${b.at.slice(11)}${wrongIds.length ? ` · còn ${wrongIds.length} câu cần sửa` : ''}</p></div>
           <div class="row">${wrongIds.length ? `<button class="btn" data-act="retry" data-v="${wrongIds.join(',')}">${ic('retry','sm')} Sửa ${wrongIds.length} câu sai</button>` : ''}<button class="btn sec" data-act="review" data-v="${a.id}">${ui.review[a.id] ? 'Ẩn bài làm' : 'Xem lại bài'}</button></div>`
@@ -989,7 +1053,7 @@ function sMistakes(st){
     ${open.length ? `<button class="btn cta lg" data-act="retry" data-v="${open.map(m => m.q.id).join(',')}">${ic('play','fill sm')} Luyện lại tất cả</button>` : ''}</div></div></div>`;
   const groups = TOPICS.map(t => [t, open.filter(m => m.q.topic === t)]).filter(([, l]) => l.length);
   const body = groups.map(([t, l]) => `<div class="card"><div class="card-h"><div class="row" style="gap:10px">${topicChip(t)}<span class="small muted">${l.length} câu</span></div></div><div class="card-b" style="padding-top:8px"><div class="list">
-    ${l.map(m => `<div class="li"><div class="grow"><div class="qt">${esc(m.q.text)}</div><div class="ansl" style="margin-top:4px"><span>Lần trước: <span class="w">${esc(showVal(m.value))}</span></span><span class="muted">sai ngày ${fmtDate(m.date)}</span></div></div><button class="btn sec sm" data-act="retry" data-v="${m.q.id}">${ic('retry','sm')} Làm lại</button></div>`).join('')}
+    ${l.map(m => `<div class="li"><div class="grow"><div class="qt">${esc(m.q.text)}${tfList(m.q)}</div><div class="ansl" style="margin-top:4px"><span>Lần trước: <span class="w">${esc(showVal(m.value))}</span></span><span class="muted">sai ngày ${fmtDate(m.date)}</span></div></div><button class="btn sec sm" data-act="retry" data-v="${m.q.id}">${ic('retry','sm')} Làm lại</button></div>`).join('')}
   </div></div></div>`).join('');
   const fixed = done.length ? `<details class="sub"><summary><div class="grow"><b>Các câu đã sửa (${done.length})</b></div>${ic('chev','chev')}</summary><div class="body"><div class="list">${done.map(m => `<div class="li"><span class="chip ok">${ic('check','sm')}</span><div class="grow"><div class="qt">${esc(m.q.text)}</div></div>${topicChip(m.q.topic)}</div>`).join('')}</div></div></details>` : '';
   return head + body + fixed;
@@ -1032,7 +1096,9 @@ function renderPlayer(){
   }
   const qid = p.qids[p.i], q = Q(qid), val = p.answers[qid] ?? '', ok = p.checked && isRight(q, val);
   const st = p.checked ? (ok ? 'ok' : 'bad') : '';
-  const input = q.type === 'mc'
+  const input = q.type === 'tf'
+    ? `<div class="tfl">${q.statements.map((x, j) => { const cur = (val || '____')[j], right = q.answer[j]; return `<div class="tfrow ${p.checked ? (cur === right ? 'ok' : 'bad') : ''}"><span class="tfk">${'abcd'[j]})</span><span class="tft">${esc(x)}</span><div class="tfb" role="group" aria-label="Ý ${'abcd'[j]}">${['Đ','S'].map(c => `<button data-act="p-tf" data-v="${j}${c}" aria-pressed="${cur === c}" ${p.checked ? 'disabled' : ''}>${c === 'Đ' ? 'Đúng' : 'Sai'}</button>`).join('')}</div>${p.checked && cur !== right ? `<span class="tfa">Đáp án: ${right === 'Đ' ? 'Đúng' : 'Sai'}</span>` : ''}</div>`; }).join('')}<div class="hint">Chọn Đúng hoặc Sai cho cả 4 ý rồi bấm Kiểm tra.</div></div>`
+    : q.type === 'mc'
     ? `<div class="choices">${q.options.map((o, j) => { let cls = ''; if (p.checked) { if (o === q.answer) cls = 'ok'; else if (o === val) cls = 'bad'; } return `<button class="choice ${cls}" data-act="p-pick" data-v="${j}" aria-pressed="${o === val}" ${p.checked ? 'disabled' : ''}><span class="k">${'ABCD'[j]}</span>${esc(o)}</button>`; }).join('')}</div>`
     : `<div><input type="text" class="ansbox ${st}" id="p-input" value="${esc(val)}" placeholder="Nhập đáp số" autocomplete="off" ${p.checked ? 'disabled' : ''}><div class="hint" style="margin-top:8px">Có thể nhập số nguyên, số thập phân (2,5) hoặc phân số (5/6).</div></div>`;
   const body = `<div class="pc"><div class="pin">
@@ -1042,9 +1108,9 @@ function renderPlayer(){
   </div></div>`;
   const last = p.i === n - 1;
   const foot = p.checked
-    ? `<div class="pf ${st}"><div class="pfi"><div class="fb"><span class="bi">${ic(ok ? 'check' : 'x', 'lg')}</span><div><h3>${ok ? ['Chính xác!', 'Đúng rồi!', 'Làm tốt lắm!'][p.i % 3] : 'Chưa đúng'}</h3>${ok ? '' : `<p>Đáp án đúng: <b>${esc(showVal(q.answer))}</b></p>`}${!ok && q.explain ? `<p>${esc(q.explain)}</p>` : ''}</div></div>
+    ? `<div class="pf ${st}"><div class="pfi"><div class="fb"><span class="bi">${ic(ok ? 'check' : 'x', 'lg')}</span><div><h3>${ok ? ['Chính xác!', 'Đúng rồi!', 'Làm tốt lắm!'][p.i % 3] : 'Chưa đúng'}</h3>${ok ? '' : q.type === 'tf' ? `<p>Em đúng ${[...q.answer].filter((c, j) => c === val[j]).length}/4 ý. Xem đáp án từng ý ở trên.</p>` : `<p>Đáp án đúng: <b>${esc(showVal(q.answer))}</b></p>`}${!ok && q.explain ? `<p>${esc(q.explain)}</p>` : ''}</div></div>
         <button class="btn lg" data-act="p-next" id="p-next">${last ? (p.mode === 'assign' ? 'Nộp bài' : 'Xem kết quả') : 'Tiếp tục'}</button></div></div>`
-    : `<div class="pf"><div class="pfi"><span class="small muted">${p.mode === 'assign' ? 'Mỗi câu chỉ được trả lời một lần' : 'Làm đúng thì câu này được tính là đã sửa'}</span><button class="btn cta lg" data-act="p-check" id="p-check" ${String(val).trim() ? '' : 'disabled'}>Kiểm tra</button></div></div>`;
+    : `<div class="pf"><div class="pfi"><span class="small muted">${p.mode === 'assign' ? 'Mỗi câu chỉ được trả lời một lần' : 'Làm đúng thì câu này được tính là đã sửa'}</span><button class="btn cta lg" data-act="p-check" id="p-check" ${answered(q, val) ? '' : 'disabled'}>Kiểm tra</button></div></div>`;
   const dlg = p.exit ? `<div class="scrim"><div class="dialog"><h3>Thoát khỏi bài?</h3><p class="muted">${p.mode === 'assign' ? 'Bài chưa được nộp, câu trả lời của em sẽ không được lưu.' : 'Những câu em đã làm đúng vẫn được tính là đã sửa.'}</p><div class="row" style="justify-content:flex-end"><button class="btn sec" data-act="p-stay">Làm tiếp</button><button class="btn" style="background:var(--danger);color:#fff" data-act="p-quit">Thoát</button></div></div></div>` : '';
   el.innerHTML = head + body + foot + dlg;
   if (!p.checked && !p.exit) { const inp = $('#p-input'); if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); } }
@@ -1052,7 +1118,7 @@ function renderPlayer(){
 }
 function pCheck(){
   const p = ui.player, qid = p.qids[p.i], q = Q(qid);
-  if (!String(p.answers[qid] ?? '').trim() || p.checked) return;
+  if (!answered(q, p.answers[qid]) || p.checked) return;
   p.checked = true;
   const ok = isRight(q, p.answers[qid]);
   p.res.push(ok);
@@ -1071,11 +1137,78 @@ function pNext(){
   p.done = true; render();
 }
 
+// ---------- đăng nhập & tài khoản ----------
+function loginHtml(){
+  const s0 = S.students[0];
+  return `<div class="board">
+    <div class="logo"><span class="wm"><b>toán</b>mỗi ngày</span><span>Luyện Toán 12</span></div>
+    <div class="lead"><h1>Mỗi ngày vài bài,<br>sửa hết lỗi sai.</h1><p>Luyện Toán 12 theo từng chuyên đề và trình độ. Có lời giải ngay sau mỗi câu và sổ lỗi sai riêng cho từng em.</p></div>
+    <div class="formula" aria-hidden="true">y′ = 3x² − 3 = 0 ⇔ x = ±1<br>∫₀^π sin x dx = 2<br>P(A | B) = P(A ∩ B) / P(B)</div>
+  </div>
+  <div class="formside"><form id="login-form" autocomplete="off" novalidate>
+    <div><h2>Đăng nhập</h2><p class="small muted" style="margin-top:4px">Học sinh dùng tài khoản do giáo viên cấp.</p></div>
+    ${ui.loginErr ? `<div class="note bad">${ic('alert','sm')}<span>${esc(ui.loginErr)}</span></div>` : ''}
+    <label class="f">Tên đăng nhập<input type="text" id="lg-user" autocapitalize="off" spellcheck="false" placeholder="vd: hs01"></label>
+    <label class="f">Mật khẩu<input type="password" id="lg-pass"></label>
+    <button class="btn cta lg" type="submit">Đăng nhập</button>
+    <div class="demo"><span class="small muted">Vào nhanh bằng tài khoản dùng thử (dữ liệu mẫu)</span>
+      <button type="button" class="btn sec" data-act="demo-login" data-v="teacher">${ic('users','sm')}<span>Giáo viên</span><span class="cred">${esc(S.teacher.user)} / ${esc(S.teacher.pass)}</span></button>
+      ${s0 ? `<button type="button" class="btn sec" data-act="demo-login" data-v="${s0.id}">${ic('book','sm')}<span>Học sinh ${esc(firstName(s0))}</span><span class="cred">${esc(s0.user)} / ${esc(s0.pass)}</span></button>` : ''}
+    </div>
+  </form></div>`;
+}
+function doLogin(){
+  const u = $('#lg-user').value.trim().toLowerCase(), pw = $('#lg-pass').value;
+  const st = S.students.find(s => s.user.toLowerCase() === u && s.pass === pw);
+  if (u === S.teacher.user && pw === S.teacher.pass) setAuth({role:'teacher'});
+  else if (st) setAuth({role:'student', sid:st.id});
+  else { ui.loginErr = 'Sai tên đăng nhập hoặc mật khẩu. Kiểm tra lại hoặc hỏi giáo viên.'; render(); $('#lg-user').value = u; return; }
+  ui.loginErr = null; ui.tab = {teacher:'today', student:'today'}; render(); window.scrollTo(0, 0);
+}
+function genPass(){ const a = 'abcdefghjkmnpqrstuvwxyz23456789'; let x = ''; for (let i = 0; i < 6; i++) x += a[Math.floor(Math.random() * a.length)]; return x; }
+function nextUser(){ const n = S.students.reduce((m, s) => Math.max(m, Number(String(s.user).replace(/\D/g, '')) || 0), 0) + 1; return 'hs' + String(n).padStart(2, '0'); }
+function addStudents(names, level){ const out = []; for (const nm of names) { const x = {id:'s' + S.n++, name:nm, level, user:nextUser(), pass:genPass()}; S.students.push(x); out.push(x); } save(); return out; }
+function copyAccounts(list){
+  const url = location.href.split('#')[0];
+  const text = `Trang luyện toán: ${url}\n` + list.map(s => `${s.name} | Tên đăng nhập: ${s.user} | Mật khẩu: ${s.pass}`).join('\n');
+  try { navigator.clipboard.writeText(text).then(() => toast(list.length > 1 ? `Đã sao chép ${list.length} tài khoản.` : 'Đã sao chép tài khoản.'), () => toast('Trình duyệt chặn sao chép, hãy bôi đen và copy thủ công.')); }
+  catch (e) { toast('Trình duyệt chặn sao chép, hãy bôi đen và copy thủ công.'); }
+}
+function tAccounts(){
+  const last = s => { const b = subsOf(s.id)[0]; return b ? fmtDate(A(b.aid).date) : 'Chưa làm bài'; };
+  const lvOpts = sel => LEVELS.map(l => `<option ${l === sel ? 'selected' : ''}>${l}</option>`).join('');
+  const m = ui.accMsg;
+  const msg = !m ? '' : !m.ok ? `<div class="note bad">${ic('alert','sm')}<span>${esc(m.text)}</span></div>`
+    : m.list ? `<div class="note ok">${ic('check','sm')}<span>Đã tạo ${m.list.length} tài khoản: ${m.list.map(x => `<b>${esc(x.name)}</b> (${esc(x.user)} / ${esc(x.pass)})`).join(', ')}</span></div>`
+    : `<div class="note ok">${ic('check','sm')}<span>${esc(m.text)}</span></div>`;
+  return `${msg}<div class="split even">
+    <div class="card"><div class="card-h"><div><h2>Thêm một học sinh</h2><p>Tên đăng nhập và mật khẩu được tạo tự động</p></div></div><div class="card-b">
+      <label class="f">Họ và tên<input type="text" id="acc-name" placeholder="vd: Nguyễn Văn Bình"></label>
+      <label class="f">Nhóm trình độ<select id="acc-level">${lvOpts('Khá')}</select></label>
+      <div><button class="btn" data-act="acc-add">${ic('plus','sm')} Tạo tài khoản</button></div></div></div>
+    <div class="card"><div class="card-h"><div><h2>Thêm cả lớp</h2><p>Dán danh sách từ Excel, mỗi dòng một họ tên</p></div></div><div class="card-b">
+      <label class="f">Danh sách học sinh<textarea id="acc-bulk" rows="4" placeholder="Trần Thị Mai&#10;Lê Văn Nam&#10;Phan Hoài Thương"></textarea></label>
+      <div class="row between" style="align-items:flex-end"><label class="f" style="flex:1;max-width:220px">Nhóm trình độ<select id="acc-bulk-level">${lvOpts('Khá')}</select></label><button class="btn sec" data-act="acc-bulk">${ic('users','sm')} Tạo tất cả</button></div></div></div>
+  </div>
+  <div class="card"><div class="card-h"><div><h2>Tài khoản học sinh <span class="chip pri num">${S.students.length}</span></h2><p>Mỗi em một tài khoản riêng. Gửi tên đăng nhập và mật khẩu cho từng em.</p></div><button class="btn soft sm" data-act="acc-copy" data-v="all">${ic('list','sm')} Sao chép cả danh sách</button></div>
+    <div class="card-b" style="padding-inline:8px"><div class="tbl"><table>
+      <thead><tr><th>Học sinh</th><th>Nhóm</th><th>Tên đăng nhập</th><th>Mật khẩu</th><th>Làm bài gần nhất</th><th></th></tr></thead>
+      <tbody>${S.students.map(s => `<tr>
+        <td><div class="person">${avatar(s)}<b>${esc(s.name)}</b></div></td>
+        <td><select data-act="set-level" data-v="${s.id}" id="acc-lv-${s.id}" aria-label="Nhóm của ${esc(s.name)}">${lvOpts(s.level)}</select></td>
+        <td><span class="cred">${esc(s.user)}</span></td><td><span class="cred">${esc(s.pass)}</span></td>
+        <td class="small muted">${last(s)}</td>
+        <td><div class="row" style="flex-wrap:nowrap;gap:6px"><button class="btn sec sm" data-act="acc-copy" data-v="${s.id}">Sao chép</button><button class="btn sec sm" data-act="acc-reset" data-v="${s.id}">Đổi mật khẩu</button><button class="btn danger sm ${ui.armed === 'del-' + s.id ? 'armed' : ''}" data-act="acc-del" data-v="${s.id}" aria-label="Xoá tài khoản ${esc(s.name)}">${ui.armed === 'del-' + s.id ? 'Bấm lần nữa để xoá' : ic('trash','sm')}</button></div></td>
+      </tr>`).join('')}</tbody></table></div>
+      <p class="small muted" style="padding:2px 12px 0">Bản demo lưu tài khoản ngay trong trình duyệt để xem thử. Bản chính thức sẽ lưu trên máy chủ và mã hoá mật khẩu.</p>
+    </div></div>`;
+}
+
 // ---------- sự kiện ----------
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-act]'); if (!el || el.tagName === 'SELECT' || el.disabled) return;
   const act = el.dataset.act, v = el.dataset.v;
-  if (act !== 'del-a' && act !== 'reset') ui.armed = null;
+  if (act !== 'del-a' && act !== 'reset' && act !== 'acc-del') ui.armed = null;
   const p = ui.player;
   switch (act) {
     case 'role': ui.role = v; saveUi(); go(ui.tab[v]); break;
@@ -1086,7 +1219,7 @@ document.addEventListener('click', e => {
     case 'c-level': syncCompose(); ui.compose.level = v; ui.compose.msg = null; render(); break;
     case 'c-add': syncCompose(); ui.compose.qids.push(v); ui.compose.msg = null; render(); break;
     case 'c-rm': syncCompose(); ui.compose.qids = ui.compose.qids.filter(x => x !== v); render(); break;
-    case 'c-newq': syncCompose(); ui.compose.newQ = {type:'num', text:'', answer:'', options:['','','',''], correct:0, explain:''}; ui.compose.msg = null; render(); break;
+    case 'c-newq': syncCompose(); ui.compose.newQ = {type:'num', text:'', answer:'', options:['','','',''], correct:0, statements:['','','',''], tfans:['Đ','Đ','Đ','Đ'], explain:''}; ui.compose.msg = null; render(); break;
     case 'c-cancelq': syncCompose(); ui.compose.newQ = null; render(); break;
     case 'c-saveq': saveNewQ(); break;
     case 'c-save': saveCompose(); break;
@@ -1107,6 +1240,17 @@ document.addEventListener('click', e => {
     case 'retry': startPlayer('retry', v.split(',').filter(id => Q(id)), null); break;
     case 'p-pick': if (p && !p.checked) { const q = Q(p.qids[p.i]); p.answers[q.id] = q.options[Number(v)]; render(); } break;
     case 'p-check': pCheck(); break;
+    case 'p-tf': if (p && !p.checked) { const qid = p.qids[p.i], a = (p.answers[qid] || '____').split(''); a[Number(v[0])] = v.slice(1); p.answers[qid] = a.join(''); render(); } break;
+    case 'logout': setAuth(null); ui.player = null; ui.loginErr = null; ui.compose = null; ui.review = {}; render(); window.scrollTo(0, 0); break;
+    case 'demo-login': setAuth(v === 'teacher' ? {role:'teacher'} : {role:'student', sid:v}); ui.tab = {teacher:'today', student:'today'}; render(); window.scrollTo(0, 0); break;
+    case 'acc-add': { const n = $('#acc-name').value.trim(); if (!n) { ui.accMsg = {ok:false, text:'Nhập họ tên học sinh.'}; render(); break; } const made = addStudents([n], $('#acc-level').value); ui.accMsg = {ok:true, list:made}; render(); break; }
+    case 'acc-bulk': { const names = $('#acc-bulk').value.split(/\n/).map(x => x.trim()).filter(Boolean); if (!names.length) { ui.accMsg = {ok:false, text:'Dán danh sách họ tên, mỗi dòng một em.'}; render(); break; } const made = addStudents(names, $('#acc-bulk-level').value); ui.accMsg = {ok:true, list:made}; render(); break; }
+    case 'acc-reset': { const x = STU(v); x.pass = genPass(); save(); ui.accMsg = {ok:true, text:`Đã đổi mật khẩu cho ${x.name}: ${x.pass}`}; render(); break; }
+    case 'acc-del':
+      if (ui.armed !== 'del-' + v) { ui.armed = 'del-' + v; render(); return; }
+      { const x = STU(v); S.students = S.students.filter(s => s.id !== v); S.submissions = S.submissions.filter(b => b.sid !== v); delete S.fixed[v]; if (ui.tSid === v) ui.tSid = null; ui.armed = null; save(); render(); toast('Đã xoá tài khoản ' + x.name + '.'); }
+      break;
+    case 'acc-copy': copyAccounts(v === 'all' ? S.students : [STU(v)]); break;
     case 'p-next': pNext(); break;
     case 'p-close': if (p.done) { ui.player = null; render(); } else { p.exit = true; render(); } break;
     case 'p-stay': p.exit = false; render(); break;
@@ -1115,7 +1259,7 @@ document.addEventListener('click', e => {
     case 'p-retry-now': { const ids = p.qids.filter((_, i) => !p.res[i]); startPlayer('retry', ids, null); break; }
     case 'reset':
       if (ui.armed !== 'reset') { ui.armed = 'reset'; el.textContent = 'Bấm lần nữa để đặt lại'; return; }
-      S = seed(); save(); ui.armed = null; ui.compose = null; ui.player = null; ui.review = {}; el.textContent = 'Đặt lại dữ liệu mẫu'; render(); toast('Đã đặt lại dữ liệu mẫu.'); break;
+      S = seed(); save(); ui.armed = null; ui.compose = null; ui.player = null; ui.review = {}; ui.accMsg = null; if (AUTH && AUTH.role === 'student' && !STU(AUTH.sid)) setAuth(null); el.textContent = 'Đặt lại dữ liệu mẫu'; render(); toast('Đã đặt lại dữ liệu mẫu.'); break;
   }
 });
 document.addEventListener('change', e => {
@@ -1135,7 +1279,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'BUTTON') { e.preventDefault(); p.checked ? pNext() : pCheck(); }
   else if (e.key === 'Escape') { p.exit = true; render(); }
 });
-document.addEventListener('submit', e => e.preventDefault());
+document.addEventListener('submit', e => { e.preventDefault(); if (e.target.id === 'login-form') doLogin(); });
 
 render();
 </script>
