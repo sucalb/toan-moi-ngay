@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Demo LMS luyện Toán 12 mỗi ngày: giáo viên giao bài theo trình độ, học sinh làm bài và sửa lỗi sai.">
+<meta name="description" content="Demo LMS luyện Toán 10, 11, 12 mỗi ngày: giáo viên giao bài theo khối và trình độ, học sinh làm bài và sửa lỗi sai.">
 <title>Toán Mỗi Ngày</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -397,7 +397,7 @@ details.sub{border-radius:12px;border-color:var(--line)}
 .course .band{height:auto;min-height:96px;gap:8px;padding-right:58px}
 .course .band b{font-size:15px;line-height:1.3}
 .course .band span{font-size:11.5px}
-.course .band::after{font-size:52px;bottom:auto;top:50%;transform:translateY(-50%)}
+.course .band::after{font-size:40px;bottom:auto;top:50%;transform:translateY(-50%)}
 .logo .wm{white-space:nowrap}
 .logo .wm b{display:inline;font-size:inherit;line-height:1.3}
 
@@ -474,6 +474,10 @@ details.sub{border-radius:12px;border-color:var(--line)}
 code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;background:var(--surface-2);padding:1px 5px;border-radius:5px}
 mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
 .qbig mjx-container{font-size:105%}
+
+.gradeseg{background:var(--surface);border:1px solid var(--line);flex:none}
+.gradeseg button{padding:7px 12px}
+@media (max-width:900px){.topbar .r{width:100%}.gradeseg{width:100%}}
 </style>
 <script>
 window.MathJax = {tex:{inlineMath:[['$','$']]}, svg:{fontCache:'global'}, options:{skipHtmlTags:['script','noscript','style','textarea','pre','code','input']},
@@ -518,11 +522,15 @@ const dec = x => (Math.round(x * 10) / 10).toFixed(1).replace('.', ',');
 const pct = x => Math.round(x * 100) + '%';
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 
-const TOPICS = ['Đạo hàm', 'Tích phân', 'Oxyz', 'Xác suất'];
-const TOPIC_FULL = {'Đạo hàm':'Ứng dụng đạo hàm', 'Tích phân':'Nguyên hàm và tích phân', 'Oxyz':'Tọa độ trong không gian Oxyz', 'Xác suất':'Xác suất có điều kiện'};
+const GRADES = [10, 11, 12];
+const TOPICS_BY_GRADE = {10:['Tập hợp', 'Hàm số bậc hai', 'Vectơ', 'Hệ thức lượng'], 11:['Lượng giác', 'Cấp số', 'Mũ – Logarit', 'Giới hạn'], 12:['Đạo hàm', 'Tích phân', 'Oxyz', 'Xác suất']};
+let TOPICS = TOPICS_BY_GRADE[11];   // chuyên đề của khối đang xem, đặt lại mỗi lần render
+const TOPIC_FULL = {'Tập hợp':'Mệnh đề và tập hợp', 'Hàm số bậc hai':'Hàm số bậc hai và đồ thị', 'Vectơ':'Vectơ và tọa độ', 'Hệ thức lượng':'Hệ thức lượng trong tam giác',
+  'Lượng giác':'Hàm số và phương trình lượng giác', 'Cấp số':'Dãy số, cấp số cộng, cấp số nhân', 'Mũ – Logarit':'Hàm số mũ và logarit', 'Giới hạn':'Giới hạn và hàm số liên tục',
+  'Đạo hàm':'Ứng dụng đạo hàm', 'Tích phân':'Nguyên hàm và tích phân', 'Oxyz':'Tọa độ trong không gian Oxyz', 'Xác suất':'Xác suất có điều kiện'};
 const LEVELS = ['Cơ bản', 'Khá', 'Giỏi'];
 
-// ngân hàng câu hỏi mẫu Toán 12, theo 3 dạng của đề tốt nghiệp THPT:
+// ngân hàng câu hỏi mẫu (câu không ghi grade là lớp 12), theo 3 dạng của đề tốt nghiệp THPT:
 // mc = trắc nghiệm 4 lựa chọn, tf = đúng/sai 4 ý (answer là chuỗi Đ/S), num = trả lời ngắn
 // traps = đáp án sai hay gặp, ww = cách làm sai điển hình
 // đồ thị y = x³ − 3x vẽ sẵn bằng SVG để minh họa câu hỏi có hình
@@ -570,34 +578,75 @@ const BANK = [
   {id:'n5',level:'Giỏi',topic:'Oxyz',type:'num',text:'Cho A(1; 0; 0), B(0; 2; 0), C(0; 0; 3). Tính khoảng cách từ gốc O đến mặt phẳng (ABC) (làm tròn đến hàng phần trăm).',answer:'0,86',traps:['6','1'],ww:'(ABC): 6x + 3y + 2z − 6 = 0 ⇒ d = 6',explain:'(ABC): x/1 + y/2 + z/3 = 1 ⇔ 6x + 3y + 2z − 6 = 0. d = 6/√(36 + 9 + 4) = 6/7 ≈ 0,86.'},
   {id:'n6',level:'Giỏi',topic:'Oxyz',type:'tf',text:'Cho mặt cầu (S): x² + y² + z² − 2x + 4y − 4 = 0 và mặt phẳng (P): 2x − y + 2z + 2 = 0.',statements:['(S) có tâm I(1; −2; 0)','(S) có bán kính R = 9','Khoảng cách từ I đến (P) bằng 2','(P) cắt (S) theo đường tròn có bán kính √5'],answer:'ĐSĐĐ',traps:[],explain:'Tâm I(1; −2; 0), R² = 1 + 4 + 4 = 9 ⇒ R = 3. d(I, (P)) = |2 + 2 + 2|/3 = 2 < R. Bán kính đường tròn giao tuyến r = √(9 − 4) = √5.'},
   {id:'n7',level:'Giỏi',topic:'Xác suất',type:'num',text:'Tỉ lệ mắc bệnh X là 2%. Xét nghiệm cho kết quả dương tính ở 95% người bệnh và 10% người không bệnh. Một người có kết quả dương tính. Tính xác suất người đó thật sự mắc bệnh (làm tròn đến hàng phần trăm).',answer:'0,16',traps:['0,95','0,02'],ww:'P = 95% vì xét nghiệm đúng 95%',explain:'Công thức Bayes: P = 0,02·0,95 / (0,02·0,95 + 0,98·0,1) = 0,019/0,117 ≈ 0,16. Không nhầm P(dương tính | bệnh) với P(bệnh | dương tính).'},
-  {id:'n8',level:'Giỏi',topic:'Xác suất',type:'mc',text:'Hộp I có 3 bi đỏ, 2 bi xanh; hộp II có 4 bi đỏ, 1 bi xanh. Chọn ngẫu nhiên một hộp rồi lấy ra 1 viên. Xác suất lấy được bi đỏ là',options:['0,7','0,6','0,8','7/5'],answer:'0,7',explain:'Xác suất toàn phần: P = 0,5·3/5 + 0,5·4/5 = 0,3 + 0,4 = 0,7.'}
+  {id:'n8',level:'Giỏi',topic:'Xác suất',type:'mc',text:'Hộp I có 3 bi đỏ, 2 bi xanh; hộp II có 4 bi đỏ, 1 bi xanh. Chọn ngẫu nhiên một hộp rồi lấy ra 1 viên. Xác suất lấy được bi đỏ là',options:['0,7','0,6','0,8','7/5'],answer:'0,7',explain:'Xác suất toàn phần: P = 0,5·3/5 + 0,5·4/5 = 0,3 + 0,4 = 0,7.'},
+  // ----- lớp 11 -----
+  {id:'e1',grade:11,level:'Cơ bản',topic:'Lượng giác',type:'num',text:'Đổi $60^\\circ$ sang radian ta được $\\dfrac{\\pi}{a}$. Tìm $a$.',answer:'3',traps:['6','60'],ww:'$60^\\circ = \\dfrac{\\pi}{6}$',explain:'$60^\\circ = 60 \\cdot \\dfrac{\\pi}{180} = \\dfrac{\\pi}{3}$ nên $a = 3$.'},
+  {id:'e2',grade:11,level:'Cơ bản',topic:'Lượng giác',type:'mc',text:'Giá trị của $\\cos\\dfrac{\\pi}{3}$ là',options:['$\\dfrac{1}{2}$','$\\dfrac{\\sqrt{3}}{2}$','$\\dfrac{\\sqrt{2}}{2}$','$1$'],answer:'$\\dfrac{1}{2}$',explain:'$\\dfrac{\\pi}{3} = 60^\\circ$ và $\\cos 60^\\circ = \\dfrac{1}{2}$. Giá trị $\\dfrac{\\sqrt{3}}{2}$ là $\\sin 60^\\circ$.'},
+  {id:'e3',grade:11,level:'Cơ bản',topic:'Cấp số',type:'num',text:'Cấp số cộng $(u_n)$ có $u_1 = 3$ và công sai $d = 2$. Tính $u_{10}$.',answer:'21',traps:['23','20'],ww:'$u_{10} = 3 + 10 \\cdot 2 = 23$',explain:'$u_n = u_1 + (n-1)d$ nên $u_{10} = 3 + 9 \\cdot 2 = 21$. Nhớ nhân với $n - 1$.'},
+  {id:'e4',grade:11,level:'Cơ bản',topic:'Cấp số',type:'num',text:'Cấp số nhân $(u_n)$ có $u_1 = 2$ và công bội $q = 3$. Tính $u_4$.',answer:'54',traps:['162','18'],ww:'$u_4 = 2 \\cdot 3^4 = 162$',explain:'$u_n = u_1 q^{n-1}$ nên $u_4 = 2 \\cdot 3^3 = 54$.'},
+  {id:'e5',grade:11,level:'Cơ bản',topic:'Mũ – Logarit',type:'num',text:'Tính $\\log_2 32$.',answer:'5',traps:['16','6'],ww:'$\\log_2 32 = 32 : 2 = 16$',explain:'$2^5 = 32$ nên $\\log_2 32 = 5$.'},
+  {id:'e6',grade:11,level:'Cơ bản',topic:'Mũ – Logarit',type:'mc',text:'Với $a > 0$, biểu thức $a^3 \\cdot a^2$ bằng',options:['$a^5$','$a^6$','$a$','$2a^5$'],answer:'$a^5$',explain:'Nhân hai lũy thừa cùng cơ số thì cộng số mũ: $a^{3+2} = a^5$.'},
+  {id:'e7',grade:11,level:'Cơ bản',topic:'Giới hạn',type:'num',text:'Tính $\\displaystyle\\lim_{x \\to 2} (x^2 + 3x)$.',answer:'10',traps:['4','6'],explain:'Hàm đa thức liên tục nên thay $x = 2$: $4 + 6 = 10$.'},
+  {id:'e8',grade:11,level:'Cơ bản',topic:'Giới hạn',type:'num',text:'Tính $\\displaystyle\\lim \\dfrac{2n + 1}{n + 3}$.',answer:'2',traps:['1/3','1'],ww:'Thay $n = 0$ được $\\dfrac{1}{3}$',explain:'Chia cả tử và mẫu cho $n$: $\\dfrac{2 + \\frac{1}{n}}{1 + \\frac{3}{n}} \\to \\dfrac{2}{1} = 2$.'},
+  {id:'e9',grade:11,level:'Khá',topic:'Lượng giác',type:'num',text:'Phương trình $\\sin x = \\dfrac{1}{2}$ có bao nhiêu nghiệm thuộc đoạn $[0;\\,2\\pi]$?',answer:'2',traps:['1','4'],ww:'Chỉ lấy nghiệm $x = \\dfrac{\\pi}{6}$',explain:'$\\sin x = \\dfrac{1}{2} \\Leftrightarrow x = \\dfrac{\\pi}{6} + k2\\pi$ hoặc $x = \\dfrac{5\\pi}{6} + k2\\pi$. Trên $[0;\\,2\\pi]$ có 2 nghiệm.'},
+  {id:'e10',grade:11,level:'Khá',topic:'Lượng giác',type:'tf',text:'Cho $\\sin\\alpha = \\dfrac{3}{5}$ với $\\dfrac{\\pi}{2} < \\alpha < \\pi$.',statements:['$\\cos\\alpha = \\dfrac{4}{5}$','$\\tan\\alpha = -\\dfrac{3}{4}$','$\\sin 2\\alpha = -\\dfrac{24}{25}$','$\\cos 2\\alpha = \\dfrac{7}{25}$'],answer:'SĐĐĐ',traps:[],explain:'$\\alpha$ ở góc phần tư thứ hai nên $\\cos\\alpha = -\\dfrac{4}{5}$, $\\tan\\alpha = -\\dfrac{3}{4}$. $\\sin 2\\alpha = 2\\sin\\alpha\\cos\\alpha = -\\dfrac{24}{25}$, $\\cos 2\\alpha = 1 - 2\\sin^2\\alpha = \\dfrac{7}{25}$.'},
+  {id:'e11',grade:11,level:'Khá',topic:'Cấp số',type:'num',text:'Tính tổng 10 số hạng đầu của cấp số cộng có $u_1 = 2$ và $d = 3$.',answer:'155',traps:['310','145'],ww:'$S_{10} = 10 \\cdot (2 + 29) = 310$',explain:'$u_{10} = 2 + 9 \\cdot 3 = 29$, $S_{10} = \\dfrac{10\\,(u_1 + u_{10})}{2} = \\dfrac{10 \\cdot 31}{2} = 155$.'},
+  {id:'e12',grade:11,level:'Khá',topic:'Cấp số',type:'mc',text:'Cấp số nhân $(u_n)$ có $u_2 = 6$ và $u_5 = 48$. Công bội $q$ bằng',options:['$2$','$3$','$8$','$-2$'],answer:'$2$',explain:'$\\dfrac{u_5}{u_2} = q^3 = 8$ nên $q = 2$.'},
+  {id:'e13',grade:11,level:'Khá',topic:'Mũ – Logarit',type:'num',text:'Giải phương trình $2^{x+1} = 16$.',answer:'3',traps:['7','4'],ww:'$x + 1 = 16 : 2 = 8$ nên $x = 7$',explain:'$16 = 2^4$ nên $x + 1 = 4$, $x = 3$.'},
+  {id:'e14',grade:11,level:'Khá',topic:'Mũ – Logarit',type:'num',text:'Tính $\\log_3 54 - \\log_3 2$.',answer:'3',traps:['27','52'],ww:'$\\log_3 54 - \\log_3 2 = \\log_3 27 = 27$',explain:'$\\log_3 54 - \\log_3 2 = \\log_3 \\dfrac{54}{2} = \\log_3 27 = 3$.'},
+  {id:'e15',grade:11,level:'Khá',topic:'Giới hạn',type:'num',text:'Tính $\\displaystyle\\lim_{x \\to 1} \\dfrac{x^2 - 1}{x - 1}$.',answer:'2',traps:['0','1'],ww:'Thay $x = 1$ được $\\dfrac{0}{0} = 0$',explain:'Rút gọn $\\dfrac{(x-1)(x+1)}{x-1} = x + 1$, giới hạn bằng $1 + 1 = 2$. Dạng $\\dfrac{0}{0}$ là vô định, không bằng 0.'},
+  {id:'e16',grade:11,level:'Khá',topic:'Giới hạn',type:'tf',text:'Cho dãy số $u_n = \\dfrac{3n - 1}{n + 2}$.',statements:['$u_1 = \\dfrac{2}{3}$','$\\lim u_n = 3$','$(u_n)$ là dãy số tăng','$u_n > 3$ với mọi $n$'],answer:'ĐĐĐS',traps:[],explain:'$u_1 = \\dfrac{2}{3}$. $u_n = 3 - \\dfrac{7}{n+2}$ nên dãy tăng và tiến tới 3, nhưng luôn nhỏ hơn 3.'},
+  {id:'e17',grade:11,level:'Giỏi',topic:'Lượng giác',type:'num',text:'Tìm giá trị lớn nhất của hàm số $y = 3\\sin x + 4\\cos x$.',answer:'5',traps:['7','1'],ww:'$\\max y = 3 + 4 = 7$',explain:'$y = 5\\sin(x + \\varphi)$ với $5 = \\sqrt{3^2 + 4^2}$, nên GTLN là 5. Không cộng 3 + 4 vì $\\sin x$ và $\\cos x$ không cùng bằng 1.'},
+  {id:'e18',grade:11,level:'Giỏi',topic:'Lượng giác',type:'num',text:'Phương trình $\\cos 2x + \\cos x = 0$ có bao nhiêu nghiệm thuộc đoạn $[0;\\,\\pi]$?',answer:'2',traps:['1','3'],explain:'$2\\cos^2 x + \\cos x - 1 = 0 \\Leftrightarrow \\cos x = \\dfrac{1}{2}$ hoặc $\\cos x = -1$. Trên $[0;\\,\\pi]$: $x = \\dfrac{\\pi}{3}$ và $x = \\pi$.'},
+  {id:'e19',grade:11,level:'Giỏi',topic:'Cấp số',type:'num',text:'Gửi 100 triệu đồng, lãi suất 6%/năm, lãi nhập gốc. Sau 3 năm số tiền là bao nhiêu triệu đồng (làm tròn đến hàng phần mười)?',answer:'119,1',traps:['118','118,0'],ww:'Lãi đơn: $100 + 3 \\cdot 6 = 118$',explain:'Số tiền sau mỗi năm lập cấp số nhân công bội $1{,}06$: $100 \\cdot 1{,}06^3 \\approx 119{,}1$ triệu đồng.'},
+  {id:'e20',grade:11,level:'Giỏi',topic:'Cấp số',type:'mc',text:'Tổng $S = 1 + \\dfrac{1}{2} + \\dfrac{1}{4} + \\dfrac{1}{8} + \\cdots$ bằng',options:['$2$','$1$','$\\dfrac{3}{2}$','$+\\infty$'],answer:'$2$',explain:'Cấp số nhân lùi vô hạn: $S = \\dfrac{u_1}{1 - q} = \\dfrac{1}{1 - \\frac{1}{2}} = 2$.'},
+  {id:'e21',grade:11,level:'Giỏi',topic:'Mũ – Logarit',type:'num',text:'Có bao nhiêu số nguyên $x$ thỏa mãn $\\log_2 (x - 1) < 3$?',answer:'7',traps:['8','9'],ww:'Lấy cả $x = 9$ nên có 8 số',explain:'Điều kiện $x > 1$, và $x - 1 < 2^3 = 8$ nên $1 < x < 9$, có 7 số nguyên từ 2 đến 8.'},
+  {id:'e22',grade:11,level:'Giỏi',topic:'Mũ – Logarit',type:'tf',text:'Cho hàm số $y = \\log_{0{,}5} x$.',statements:['Tập xác định là $(0;\\,+\\infty)$','Hàm số đồng biến trên tập xác định','Đồ thị đi qua điểm $(1;\\,0)$','$\\log_{0{,}5} 4 = -2$'],answer:'ĐSĐĐ',traps:[],explain:'Cơ số $0{,}5 < 1$ nên hàm nghịch biến. $\\log_{0{,}5} 1 = 0$ và $0{,}5^{-2} = 4$.'},
+  {id:'e23',grade:11,level:'Giỏi',topic:'Giới hạn',type:'num',text:'Tính $\\displaystyle\\lim_{x \\to +\\infty} \\left(\\sqrt{x^2 + 4x} - x\\right)$.',answer:'2',traps:['0','4'],ww:'$\\sqrt{x^2 + 4x} \\approx x$ nên giới hạn bằng 0',explain:'Nhân liên hợp: $\\dfrac{4x}{\\sqrt{x^2 + 4x} + x} = \\dfrac{4}{\\sqrt{1 + \\frac{4}{x}} + 1} \\to 2$.'},
+  {id:'e24',grade:11,level:'Giỏi',topic:'Giới hạn',type:'num',text:'Tìm $m$ để hàm số $f(x) = \\begin{cases} \\dfrac{x^2 - 4}{x - 2} & \\text{khi } x \\ne 2 \\\\ m & \\text{khi } x = 2 \\end{cases}$ liên tục tại $x = 2$.',answer:'4',traps:['0','2'],ww:'Thay $x = 2$ vào $\\dfrac{x^2 - 4}{x - 2}$ được 0',explain:'$\\displaystyle\\lim_{x \\to 2} \\dfrac{x^2 - 4}{x - 2} = \\lim_{x \\to 2} (x + 2) = 4$, nên cần $m = 4$.'},
+  // ----- lớp 10 -----
+  {id:'t1',grade:10,level:'Cơ bản',topic:'Tập hợp',type:'mc',text:'Cho $A = \\{1;\\,2;\\,3\\}$ và $B = \\{2;\\,3;\\,4\\}$. Tập $A \\cap B$ là',options:['$\\{2;\\,3\\}$','$\\{1;\\,2;\\,3;\\,4\\}$','$\\{1\\}$','$\\{4\\}$'],answer:'$\\{2;\\,3\\}$',explain:'Giao gồm các phần tử thuộc cả $A$ và $B$: $\\{2;\\,3\\}$. $\\{1;\\,2;\\,3;\\,4\\}$ là hợp.'},
+  {id:'t2',grade:10,level:'Cơ bản',topic:'Hàm số bậc hai',type:'num',text:'Đồ thị hàm số $y = x^2 - 4x + 3$ có đỉnh $I(a;\\,b)$. Tính $a + b$.',answer:'1',traps:['5','3'],ww:'Lấy tung độ đỉnh bằng hệ số tự do 3 nên $a + b = 5$',explain:'$a = -\\dfrac{-4}{2} = 2$, $b = 2^2 - 4 \\cdot 2 + 3 = -1$, nên $a + b = 1$.'},
+  {id:'t3',grade:10,level:'Cơ bản',topic:'Vectơ',type:'num',text:'Cho $\\vec{a} = (1;\\,2)$ và $\\vec{b} = (3;\\,-1)$. Tính $\\vec{a} \\cdot \\vec{b}$.',answer:'1',traps:['5','-1'],ww:'$\\vec{a} \\cdot \\vec{b} = 1 \\cdot 3 + 2 \\cdot 1 = 5$',explain:'$\\vec{a} \\cdot \\vec{b} = 1 \\cdot 3 + 2 \\cdot (-1) = 1$.'},
+  {id:'t4',grade:10,level:'Khá',topic:'Hệ thức lượng',type:'num',text:'Tam giác $ABC$ có $AB = 3$, $AC = 5$ và $\\hat{A} = 120^\\circ$. Tính $BC$.',answer:'7',traps:['√19','4'],ww:'$BC^2 = 9 + 25 - 15 = 19$',explain:'$BC^2 = 3^2 + 5^2 - 2 \\cdot 3 \\cdot 5 \\cos 120^\\circ = 34 + 15 = 49$ nên $BC = 7$. Lưu ý $\\cos 120^\\circ = -\\dfrac{1}{2}$.'},
+  {id:'t5',grade:10,level:'Khá',topic:'Hàm số bậc hai',type:'tf',text:'Cho hàm số $y = -x^2 + 2x + 3$.',statements:['Đồ thị có trục đối xứng $x = 1$','Hàm số đồng biến trên $(1;\\,+\\infty)$','Giá trị lớn nhất của hàm số bằng 4','Đồ thị cắt trục hoành tại $x = -1$ và $x = 3$'],answer:'ĐSĐĐ',traps:[],explain:'Đỉnh $I(1;\\,4)$, hệ số $a < 0$ nên hàm nghịch biến trên $(1;\\,+\\infty)$ và đạt GTLN bằng 4. $-x^2 + 2x + 3 = 0 \\Leftrightarrow x = -1$ hoặc $x = 3$.'},
+  {id:'t6',grade:10,level:'Khá',topic:'Tập hợp',type:'mc',text:'Mệnh đề phủ định của “$\\forall x \\in \\mathbb{R},\\ x^2 \\ge 0$” là',options:['$\\exists x \\in \\mathbb{R},\\ x^2 < 0$','$\\forall x \\in \\mathbb{R},\\ x^2 < 0$','$\\exists x \\in \\mathbb{R},\\ x^2 \\ge 0$','$\\forall x \\in \\mathbb{R},\\ x^2 \\le 0$'],answer:'$\\exists x \\in \\mathbb{R},\\ x^2 < 0$',explain:'Phủ định của “với mọi” là “tồn tại”, và phủ định của $\\ge$ là $<$.'},
+  {id:'t7',grade:10,level:'Giỏi',topic:'Hàm số bậc hai',type:'num',text:'Có bao nhiêu số nguyên $m \\in [-10;\\,10]$ để hàm số $y = x^2 - 2mx + 1$ đồng biến trên $(2;\\,+\\infty)$?',answer:'13',traps:['12','8'],ww:'Lấy $m < 2$ nên có 12 giá trị',explain:'Hàm đồng biến trên $(m;\\,+\\infty)$, cần $m \\le 2$. Với $m \\in [-10;\\,2]$ có 13 số nguyên. Lưu ý dấu “≤”.'},
+  {id:'t8',grade:10,level:'Giỏi',topic:'Vectơ',type:'num',text:'Cho $A(1;\\,2)$, $B(3;\\,4)$, $C(5;\\,0)$. Tính diện tích tam giác $ABC$.',answer:'6',traps:['12','3'],ww:'$S = |2 \\cdot (-2) - 2 \\cdot 4| = 12$',explain:'$\\overrightarrow{AB} = (2;\\,2)$, $\\overrightarrow{AC} = (4;\\,-2)$, $S = \\dfrac{1}{2}\\,|2 \\cdot (-2) - 2 \\cdot 4| = 6$. Nhớ nhân $\\dfrac{1}{2}$.'},
+  {id:'t9',grade:10,level:'Giỏi',topic:'Hệ thức lượng',type:'tf',text:'Cho tam giác $ABC$ có $a = 7$, $b = 5$, $c = 3$.',statements:['$\\cos A = -\\dfrac{1}{2}$','Tam giác $ABC$ là tam giác nhọn','Diện tích tam giác bằng $\\dfrac{15\\sqrt{3}}{4}$','Bán kính đường tròn ngoại tiếp $R = \\dfrac{7\\sqrt{3}}{3}$'],answer:'ĐSĐĐ',traps:[],explain:'$\\cos A = \\dfrac{25 + 9 - 49}{30} = -\\dfrac{1}{2}$ nên $\\hat{A} = 120^\\circ$, tam giác tù. $S = \\dfrac{1}{2} bc \\sin A = \\dfrac{15\\sqrt{3}}{4}$, $R = \\dfrac{a}{2\\sin A} = \\dfrac{7\\sqrt{3}}{3}$.'}
 ];
 
 const STUDENTS = [
-  {id:'s1',name:'Nguyễn Minh An',level:'Cơ bản',skill:.72,weak:'Tích phân',user:'hs01',pass:'an2k8m'},
-  {id:'s2',name:'Trần Bảo Ngọc',level:'Cơ bản',skill:.62,weak:'Oxyz',user:'hs02',pass:'ng4p7t'},
-  {id:'s3',name:'Lê Gia Huy',level:'Khá',skill:.78,weak:'Đạo hàm',user:'hs03',pass:'hu9x3c'},
-  {id:'s4',name:'Phạm Thu Hà',level:'Khá',skill:.72,weak:'Xác suất',user:'hs04',pass:'ha5r2w'},
-  {id:'s5',name:'Võ Đức Thịnh',level:'Khá',skill:.8,weak:'Oxyz',user:'hs05',pass:'th8m6q'},
-  {id:'s6',name:'Đặng Khánh Linh',level:'Giỏi',skill:.8,weak:'Xác suất',user:'hs06',pass:'li3v9k'},
-  {id:'s7',name:'Hoàng Quốc Bảo',level:'Giỏi',skill:.74,weak:'Tích phân',user:'hs07',pass:'ba7e4n'}
+  {id:'s1',grade:11,name:'Nguyễn Minh An',level:'Cơ bản',skill:.72,weak:'Mũ – Logarit',user:'hs01',pass:'an2k8m'},
+  {id:'s2',grade:11,name:'Trần Bảo Ngọc',level:'Cơ bản',skill:.62,weak:'Lượng giác',user:'hs02',pass:'ng4p7t'},
+  {id:'s3',grade:11,name:'Lê Gia Huy',level:'Khá',skill:.78,weak:'Giới hạn',user:'hs03',pass:'hu9x3c'},
+  {id:'s4',grade:11,name:'Phạm Thu Hà',level:'Khá',skill:.72,weak:'Lượng giác',user:'hs04',pass:'ha5r2w'},
+  {id:'s5',grade:11,name:'Võ Đức Thịnh',level:'Khá',skill:.8,weak:'Cấp số',user:'hs05',pass:'th8m6q'},
+  {id:'s6',grade:11,name:'Đặng Khánh Linh',level:'Giỏi',skill:.8,weak:'Mũ – Logarit',user:'hs06',pass:'li3v9k'},
+  {id:'s7',grade:11,name:'Hoàng Quốc Bảo',level:'Giỏi',skill:.74,weak:'Giới hạn',user:'hs07',pass:'ba7e4n'},
+  {id:'s8',grade:12,name:'Bùi Thanh Tùng',level:'Cơ bản',skill:.7,weak:'Tích phân',user:'hs08',pass:'tu6k2d'},
+  {id:'s9',grade:12,name:'Đỗ Ngọc Ánh',level:'Khá',skill:.76,weak:'Xác suất',user:'hs09',pass:'nh3w8p'},
+  {id:'s10',grade:12,name:'Phan Minh Khôi',level:'Giỏi',skill:.82,weak:'Oxyz',user:'hs10',pass:'kh5t9m'},
+  {id:'s11',grade:10,name:'Lý Hải Yến',level:'Cơ bản',skill:.7,weak:'Vectơ',user:'hs11',pass:'ye4c7r'},
+  {id:'s12',grade:10,name:'Ngô Tuấn Kiệt',level:'Khá',skill:.75,weak:'Hệ thức lượng',user:'hs12',pass:'ki8n2v'}
 ];
 
 // ---------- dữ liệu ----------
 function seed(){
   const rnd = mulberry32(20261023);
-  const st = {v:3, teacher:{name:'Giáo viên Toán', user:'giaovien', pass:'123456'}, students:STUDENTS.map(s => ({id:s.id,name:s.name,level:s.level,user:s.user,pass:s.pass})), bank:BANK.map(q => ({...q})), assignments:[], submissions:[], fixed:{}, n:1};
+  const st = {v:4, teacher:{name:'Giáo viên Toán', user:'giaovien', pass:'123456'}, students:STUDENTS.map(s => ({id:s.id,grade:s.grade,name:s.name,level:s.level,user:s.user,pass:s.pass})), bank:BANK.map(q => ({...q, grade:q.grade || 12})), assignments:[], submissions:[], fixed:{}, n:1};
   const rot = (arr, k) => arr.length ? arr.slice(k % arr.length).concat(arr.slice(0, k % arr.length)) : arr;
   for (let i = -6; i <= 0; i++) {
     const day = addDays(TODAY, i);
-    LEVELS.forEach((lv, li) => {
-      const pool = st.bank.filter(q => q.level === lv);
-      const topic = TOPICS[(i + 6 + li) % TOPICS.length];
+    for (const g of GRADES) LEVELS.forEach((lv, li) => {
+      const pool = st.bank.filter(q => q.level === lv && q.grade === g), tops = TOPICS_BY_GRADE[g];
+      if (!pool.length) return;
+      const topic = tops[(i + 6 + li + g) % tops.length];
       const pick = rot(pool.filter(q => q.topic === topic), i + 6).slice(0, 2);
       for (const q of rot(pool.filter(q => q.topic !== topic), (i + 6) * 2 + li)) { if (pick.length >= 3) break; pick.push(q); }
-      const a = {id:'a' + st.n++, date:day, level:lv, topic, title:TOPIC_FULL[topic], qids:pick.map(q => q.id)};
+      const a = {id:'a' + st.n++, date:day, grade:g, level:lv, topic, title:TOPIC_FULL[topic], qids:pick.map(q => q.id)};
       st.assignments.push(a);
-      STUDENTS.filter(s => s.level === lv).forEach(s => {
+      STUDENTS.filter(s => s.level === lv && s.grade === g).forEach(s => {
         if (rnd() > (i === 0 ? 0.45 : 0.86)) return;
         const answers = {};
         a.qids.forEach(qid => {
@@ -625,10 +674,10 @@ function seed(){
 const KEY = 'toan-moi-ngay-v1';
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)); } catch (e) { S = null; }
-if (!S || S.v !== 3) S = seed();
+if (!S || S.v !== 4) S = seed();
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 
-const ui = {role:'teacher', sid:'s1', tab:{teacher:'today', student:'today'}, tSid:null, an:{range:'7', level:'all'}, compose:null, flash:{}, armed:null, justSubmitted:null};
+const ui = {grade:11, role:'teacher', sid:'s1', tab:{teacher:'today', student:'today'}, tSid:null, an:{range:'7', level:'all'}, compose:null, flash:{}, armed:null, justSubmitted:null};
 try { const u = JSON.parse(localStorage.getItem(KEY + '-ui')); if (u) { ui.role = u.role || ui.role; ui.sid = u.sid || ui.sid; } } catch (e) {}
 function saveUi(){ try { localStorage.setItem(KEY + '-ui', JSON.stringify({role:ui.role, sid:ui.sid})); } catch (e) {} }
 
@@ -659,7 +708,7 @@ function scoreOf(sub){
 }
 const subsOf = sid => S.submissions.filter(b => b.sid === sid && A(b.aid)).sort((x, y) => y.at.localeCompare(x.at));
 const subFor = (aid, sid) => S.submissions.find(b => b.aid === aid && b.sid === sid);
-const todaysFor = st => S.assignments.filter(a => a.date === TODAY && a.level === st.level);
+const todaysFor = st => S.assignments.filter(a => a.date === TODAY && a.grade === st.grade && a.level === st.level);
 
 // sổ lỗi: mỗi câu từng làm sai, lấy lần sai gần nhất
 function mistakes(sid){
@@ -709,8 +758,9 @@ const ICON = {
   trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>'
 };
 const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICON[n]}</svg>`;
-const TOPIC_VAR = {'Đạo hàm':'--t1', 'Tích phân':'--t2', 'Oxyz':'--t3', 'Xác suất':'--t4'};
-const TOPIC_GLYPH = {'Đạo hàm':'f′', 'Tích phân':'∫', 'Oxyz':'→', 'Xác suất':'%'};
+const TOPIC_VAR = {}; for (const g of GRADES) TOPICS_BY_GRADE[g].forEach((t, i) => TOPIC_VAR[t] = '--t' + (i + 1));
+const TOPIC_GLYPH = {'Tập hợp':'∩', 'Hàm số bậc hai':'x²', 'Vectơ':'→', 'Hệ thức lượng':'△', 'Lượng giác':'sin', 'Cấp số':'uₙ', 'Mũ – Logarit':'log', 'Giới hạn':'lim', 'Đạo hàm':'f′', 'Tích phân':'∫', 'Oxyz':'xyz', 'Xác suất':'%'};
+const SG = () => S.students.filter(s => s.grade === ui.grade);   // học sinh của khối giáo viên đang xem
 const TYPE_LABEL = {mc:'Trắc nghiệm', tf:'Đúng/Sai', num:'Trả lời ngắn'};
 const qImg = (q, cls = '') => q.img ? `<img class="qimg ${cls}" src="${q.img}" alt="Hình minh họa của câu hỏi">` : '';
 const MATH_TOOLS = [['a/b','\\frac{a}{b}'],['√x','\\sqrt{x}'],['xⁿ','x^{n}'],['xₙ','x_{n}'],['∫','\\int_{a}^{b} f(x)\\,dx'],['lim','\\lim_{x \\to a}'],['vectơ','\\vec{u}'],['≤','\\le'],['≥','\\ge'],['≠','\\ne'],['∞','\\infty'],['π','\\pi'],['∈','\\in'],['ℝ','\\mathbb{R}'],['°','^{\\circ}'],['⇔','\\Leftrightarrow']];
@@ -775,6 +825,7 @@ function render(){
   ui.role = AUTH.role; if (AUTH.role === 'student') ui.sid = AUTH.sid;
   const st = STU(ui.sid) || S.students[0];
   const T = ui.role === 'teacher';
+  TOPICS = TOPICS_BY_GRADE[T ? ui.grade : st.grade];
   const nOpen = mistakes(st.id).filter(m => !m.fixed).length;
   const tabs = T
     ? [['today','Tổng quan','home'],['compose','Soạn & giao bài','edit'],['work','Bài làm học sinh','users'],['analysis','Phân tích lỗi sai','chart'],['accounts','Tài khoản học sinh','key']]
@@ -784,15 +835,15 @@ function render(){
   $('#sidenav').innerHTML = tabs.map(([k, l, i, c]) => `<button class="nav-item" data-act="tab" data-v="${k}" ${k === cur ? 'aria-current="page"' : ''}>${ic(i)}<span>${l}</span>${c ? `<span class="badge">${c}</span>` : ''}</button>`).join('');
   $('#bnav').innerHTML = tabs.map(([k, l, i, c]) => `<button data-act="tab" data-v="${k}" ${k === cur ? 'aria-current="page"' : ''}>${ic(i)}<span class="l">${{compose:'Giao bài', work:'Bài làm', analysis:'Phân tích', accounts:'Tài khoản'}[k] || l}</span>${c ? `<span class="badge">${c}</span>` : ''}</button>`).join('');
 
-  const me = T ? {av:'<span class="av" style="--c:var(--primary)">GV</span>', name:S.teacher.name, sub:'Giáo viên · Lớp 12A1'} : {av:avatar(st), name:st.name, sub:'Lớp 12A1 · nhóm ' + st.level};
+  const me = T ? {av:'<span class="av" style="--c:var(--primary)">GV</span>', name:S.teacher.name, sub:'Khối 10, 11, 12'} : {av:avatar(st), name:st.name, sub:'Lớp ' + st.grade + 'A1 · nhóm ' + st.level};
   $('#rolecard').innerHTML = `<div class="who">${me.av}<div style="min-width:0;flex:1"><b>${esc(me.name)}</b><span>${me.sub}</span></div></div><button class="btn sm logout" data-act="logout">${ic('logout','sm')} Đăng xuất</button>`;
 
   const titles = T
-    ? {today:['Lớp 12A1','Tổng quan lớp học'], compose:['Lớp 12A1','Soạn & giao bài'], work:['Lớp 12A1','Bài làm học sinh'], analysis:['Lớp 12A1','Phân tích lỗi sai'], accounts:['Lớp 12A1','Tài khoản học sinh']}
-    : {today:['Toán 12',`Chào ${esc(firstName(st))}!`], mistakes:['Toán 12','Sổ lỗi sai'], history:['Toán 12','Lịch sử làm bài']};
+    ? {today:[`Khối ${ui.grade}`,'Tổng quan lớp học'], compose:[`Khối ${ui.grade}`,'Soạn & giao bài'], work:[`Khối ${ui.grade}`,'Bài làm học sinh'], analysis:[`Khối ${ui.grade}`,'Phân tích lỗi sai'], accounts:[`Khối ${ui.grade}`,'Tài khoản học sinh']}
+    : {today:[`Toán ${st.grade}`,`Chào ${esc(firstName(st))}!`], mistakes:[`Toán ${st.grade}`,'Sổ lỗi sai'], history:[`Toán ${st.grade}`,'Lịch sử làm bài']};
   const [crumb, title] = titles[cur];
   $('#topbar').innerHTML = `<div><div class="crumb">${crumb} ${ic('chev','sm')} ${T ? 'Giáo viên' : 'Nhóm ' + st.level}</div><h1>${title}</h1></div>
-    <div class="r"><span class="chip-date">${ic('cal','sm')} ${fmtDate(TODAY)}</span></div>
+    <div class="r">${T ? `<div class="seg gradeseg" role="group" aria-label="Chọn khối">${GRADES.map(g => `<button data-act="grade" data-v="${g}" aria-pressed="${g === ui.grade}">Khối ${g}</button>`).join('')}</div>` : ''}<span class="chip-date">${ic('cal','sm')} ${fmtDate(TODAY)}</span></div>
     <div class="toprole"><div class="who">${me.av}<div style="min-width:0;flex:1"><b>${esc(me.name)}</b><span>${me.sub}</span></div></div><button class="iconbtn" data-act="logout" aria-label="Đăng xuất">${ic('logout','sm')}</button></div>`;
 
   const views = T ? {today:tHome, compose:tCompose, work:tWork, analysis:tAnalysis, accounts:tAccounts} : {today:sHome, mistakes:sMistakes, history:sHistory};
@@ -809,7 +860,7 @@ function dayRate(d){
 }
 function weekDots(s){
   return `<div class="days" aria-label="7 ngày gần nhất">${last7().map(d => {
-    const as = S.assignments.filter(a => a.date === d && a.level === s.level);
+    const as = S.assignments.filter(a => a.date === d && a.grade === s.grade && a.level === s.level);
     const subs = as.map(a => subFor(a.id, s.id)).filter(Boolean);
     if (!as.length) return `<i title="${fmtDate(d)}: không có bài"></i>`;
     if (!subs.length) return d === TODAY ? `<i title="Hôm nay: chưa nộp"></i>` : `<i class="miss" title="${fmtDate(d)}: bỏ lỡ"></i>`;
@@ -818,15 +869,15 @@ function weekDots(s){
   }).join('')}</div>`;
 }
 function tHome(){
-  const withWork = S.students.filter(s => todaysFor(s).length);
+  const withWork = SG().filter(s => todaysFor(s).length);
   const isDone = s => todaysFor(s).every(a => subFor(a.id, s.id));
   const done = withWork.filter(isDone).length;
   const todaySubs = S.submissions.filter(b => A(b.aid)?.date === TODAY);
   const avg = mean(todaySubs.map(b => scoreOf(b).ten));
   const daily = last7().map(d => { const r = dayRate(d); return r.n ? r.w / r.n : null; });
   const wk = last7().map(dayRate).reduce((x, r) => ({n:x.n + r.n, w:x.w + r.w}), {n:0, w:0});
-  const open = S.students.reduce((x, s) => x + mistakes(s.id).filter(m => !m.fixed).length, 0);
-  const fixedN = S.students.reduce((x, s) => x + mistakes(s.id).filter(m => m.fixed).length, 0);
+  const open = SG().reduce((x, s) => x + mistakes(s.id).filter(m => !m.fixed).length, 0);
+  const fixedN = SG().reduce((x, s) => x + mistakes(s.id).filter(m => m.fixed).length, 0);
 
   const kpis = `<div class="grid g4">
     <div class="card kpi">${ring(withWork.length ? done / withWork.length : 0, 58, 7, 'var(--success)', `${done}/${withWork.length}`)}<div><div class="t">Đã nộp hôm nay</div><div class="s">${withWork.length - done ? `${withWork.length - done} em chưa nộp` : 'Cả lớp đã nộp'}</div></div></div>
@@ -837,8 +888,8 @@ function tHome(){
 
   const courses = `<div class="card"><div class="card-h"><div><h2>Bài hôm nay</h2><p>Mỗi nhóm trình độ nhận một bài riêng</p></div><button class="btn soft sm" data-act="tab" data-v="compose">${ic('plus','sm')} Giao bài mới</button></div>
     <div class="card-b"><div class="grid g3">${LEVELS.map(lv => {
-      const as = S.assignments.filter(a => a.date === TODAY && a.level === lv);
-      const mem = S.students.filter(s => s.level === lv);
+      const as = S.assignments.filter(a => a.date === TODAY && a.grade === ui.grade && a.level === lv);
+      const mem = SG().filter(s => s.level === lv);
       if (!as.length) return `<div class="card course empty"><div class="emptyst" style="padding:8px"><div class="ib">${ic('edit')}</div><b style="color:var(--ink)">Nhóm ${lv}</b><span class="small">Chưa có bài cho hôm nay</span><button class="btn sm" data-act="compose-for" data-v="${lv}">Soạn bài</button></div></div>`;
       const a = as[0], subs = mem.filter(s => subFor(a.id, s.id));
       const sc = mean(subs.map(s => scoreOf(subFor(a.id, s.id)).ten));
@@ -848,7 +899,7 @@ function tHome(){
           <div class="row between"><div class="avstack">${subs.map(s => avatar(s, 'sm')).join('') || '<span class="small muted">Chưa có ai nộp</span>'}</div><button class="btn ghost sm" data-act="view-student" data-v="${(subs[0] || mem[0])?.id || ''}">Xem bài làm</button></div></div></div>`;
     }).join('')}</div></div></div>`;
 
-  const rows = S.students.map(s => {
+  const rows = SG().map(s => {
     const as = todaysFor(s), subs = as.map(a => subFor(a.id, s.id)).filter(Boolean);
     const sc = subs.map(scoreOf), c = sc.reduce((x, y) => x + y.c, 0), t = sc.reduce((x, y) => x + y.t, 0);
     const open = mistakes(s.id).filter(m => !m.fixed).length;
@@ -866,7 +917,7 @@ function tHome(){
       <thead><tr><th>Học sinh</th><th>Nhóm</th><th>Hôm nay</th><th>Đúng</th><th>7 ngày</th><th>Lỗi chưa sửa</th></tr></thead><tbody>${rows}</tbody></table></div>
       <div class="legend" style="padding:4px 12px"><span><i style="background:var(--success)"></i>Đúng ≥ 67%</span><span><i style="background:var(--warn)"></i>Dưới 67%</span><span><i style="box-shadow:inset 0 0 0 1.5px var(--danger)"></i>Bỏ lỡ</span><span><i style="background:var(--surface-2)"></i>Không có bài</span></div></div></div>`;
 
-  const att = S.students.map(s => {
+  const att = SG().map(s => {
     const why = [];
     if (todaysFor(s).length && !todaysFor(s).every(a => subFor(a.id, s.id))) why.push('<span class="chip warn">Chưa nộp hôm nay</span>');
     const open = mistakes(s.id).filter(m => !m.fixed).length;
@@ -899,8 +950,8 @@ function syncCompose(){
 }
 function tCompose(){
   const c = ui.compose ||= newCompose();
-  const bank = S.bank.filter(q => q.level === c.level && (ui.bankTopic === 'all' || q.topic === ui.bankTopic));
-  const recent = S.assignments.slice().sort((x, y) => y.date.localeCompare(x.date) || Number(y.id.slice(1)) - Number(x.id.slice(1))).slice(0, 10);
+  const bank = S.bank.filter(q => q.grade === ui.grade && q.level === c.level && (ui.bankTopic === 'all' || q.topic === ui.bankTopic));
+  const recent = S.assignments.filter(a => a.grade === ui.grade).sort((x, y) => y.date.localeCompare(x.date) || Number(y.id.slice(1)) - Number(x.id.slice(1))).slice(0, 10);
   const q = c.newQ;
   const form = `<div class="card"><div class="card-h"><div><h2>Thông tin bài</h2><p>Bài sẽ hiện cho học sinh của nhóm đã chọn vào ngày làm</p></div></div><div class="card-b">
       ${c.msg ? `<div class="note ${c.msg.ok ? 'ok' : 'bad'}">${ic(c.msg.ok ? 'check' : 'alert', 'sm')}<span>${esc(c.msg.text)}</span></div>` : ''}
@@ -938,7 +989,7 @@ function tCompose(){
     </div></div>`;
   const hist = `<div class="card"><div class="card-h"><div><h2>Bài đã giao</h2><p>10 bài gần nhất</p></div></div><div class="card-b" style="padding-inline:8px"><div class="tbl"><table>
     <thead><tr><th>Ngày</th><th>Tên bài</th><th>Nhóm</th><th>Số câu</th><th>Đã nộp</th><th></th></tr></thead>
-    <tbody>${recent.map(a => { const n = S.students.filter(s => s.level === a.level).length, d = S.submissions.filter(b => b.aid === a.id).length; return `<tr>
+    <tbody>${recent.map(a => { const n = SG().filter(s => s.level === a.level).length, d = S.submissions.filter(b => b.aid === a.id).length; return `<tr>
       <td class="num">${fmtDate(a.date)}</td><td><div class="person"><b>${esc(a.title)}</b></div></td><td><span class="chip">${a.level}</span></td><td class="num">${a.qids.length}</td>
       <td><div class="row" style="gap:8px;flex-wrap:nowrap"><div class="prog" style="width:64px"><i style="width:${n ? d / n * 100 : 0}%"></i></div><span class="num small">${d}/${n}</span></div></td>
       <td><button class="btn danger sm ${ui.armed === a.id ? 'armed' : ''}" data-act="del-a" data-v="${a.id}">${ui.armed === a.id ? 'Bấm lần nữa để xoá' : ic('trash','sm')}</button></td></tr>`; }).join('')}</tbody></table></div></div></div>`;
@@ -952,7 +1003,7 @@ function saveNewQ(){
   if (q.type === 'num' && isNaN(parseNum(q.answer))) return fail('Đáp số phải là số, ví dụ 5, -3, 2,5 hoặc 5/6.');
   if (q.type === 'mc' && q.options.some(o => !o.trim())) return fail('Điền đủ 4 lựa chọn A, B, C, D.');
   if (q.type === 'tf' && q.statements.some(o => !o.trim())) return fail('Điền đủ 4 mệnh đề a, b, c, d.');
-  const nq = {id:'q' + S.n++, level:c.level, topic:c.topic, type:q.type, text:q.text.trim(), explain:q.explain.trim(), traps:[]};
+  const nq = {id:'q' + S.n++, grade:ui.grade, level:c.level, topic:c.topic, type:q.type, text:q.text.trim(), explain:q.explain.trim(), traps:[]};
   if (q.type === 'mc') { nq.options = q.options.map(o => o.trim()); nq.answer = nq.options[q.correct]; }
   else if (q.type === 'tf') { nq.statements = q.statements.map(o => o.trim()); nq.answer = q.tfans.join(''); }
   else nq.answer = q.answer.trim();
@@ -966,7 +1017,7 @@ function saveCompose(){
   const fail = t => { c.msg = {ok:false, text:t}; render(); window.scrollTo(0, 0); };
   if (!c.title.trim()) return fail('Nhập tên bài trước khi giao.');
   if (!c.qids.length) return fail('Bài cần ít nhất một câu hỏi.');
-  S.assignments.push({id:'a' + S.n++, date:c.date, level:c.level, topic:c.topic, title:c.title.trim(), qids:[...c.qids]});
+  S.assignments.push({id:'a' + S.n++, date:c.date, grade:ui.grade, level:c.level, topic:c.topic, title:c.title.trim(), qids:[...c.qids]});
   save();
   const t = c.title.trim();
   ui.compose = newCompose(c.level);
@@ -997,12 +1048,14 @@ function subRow(b, open, teacher){
     <div class="body">${subDetail(b, teacher)}</div></details>`;
 }
 function tWork(){
-  const sid = ui.tSid || S.students[0].id, st = STU(sid), subs = subsOf(sid);
-  const missed = S.assignments.filter(a => a.level === st.level && a.date < TODAY && !subFor(a.id, sid)).length;
+  const sid = (STU(ui.tSid)?.grade === ui.grade ? ui.tSid : SG()[0]?.id), st = STU(sid);
+  if (!st) return `<div class="card"><div class="emptyst"><div class="ib">${ic('users')}</div>Khối ${ui.grade} chưa có học sinh. Thêm ở trang Tài khoản học sinh.</div></div>`;
+  const subs = subsOf(sid);
+  const missed = S.assignments.filter(a => a.grade === st.grade && a.level === st.level && a.date < TODAY && !subFor(a.id, sid)).length;
   const avg = mean(subs.map(b => scoreOf(b).ten));
   const open = mistakes(sid).filter(m => !m.fixed).length;
   return `<div class="wsplit">
-    <div class="card"><div class="people">${S.students.map(s => { const l = subsOf(s.id)[0]; const sc = l && scoreOf(l); return `<button data-act="pick-work" data-v="${s.id}" aria-current="${s.id === sid}">${avatar(s)}<span class="nm"><b>${esc(s.name)}</b><span>${s.level}${sc ? ' · gần nhất ' + sc.c + '/' + sc.t : ''}</span></span></button>`; }).join('')}</div></div>
+    <div class="card"><div class="people">${SG().map(s => { const l = subsOf(s.id)[0]; const sc = l && scoreOf(l); return `<button data-act="pick-work" data-v="${s.id}" aria-current="${s.id === sid}">${avatar(s)}<span class="nm"><b>${esc(s.name)}</b><span>${s.level}${sc ? ' · gần nhất ' + sc.c + '/' + sc.t : ''}</span></span></button>`; }).join('')}</div></div>
     <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
       <div class="card"><div class="card-b" style="padding-top:20px"><div class="row" style="gap:16px">${avatar(st, 'lg')}<div style="flex:1;min-width:180px"><h2>${esc(st.name)}</h2><div class="small muted">Nhóm ${st.level} · chuỗi ${streakOf(sid)} ngày</div></div>
         <div class="row" style="gap:24px">
@@ -1022,6 +1075,7 @@ function analysisData(){
   for (const b of S.submissions) {
     const a = A(b.aid); if (!a || a.date < from) continue;
     if (!STU(b.sid)) continue;
+    if (a.grade !== ui.grade) continue;
     if (ui.an.level !== 'all' && a.level !== ui.an.level) continue;
     for (const qid of a.qids) {
       const q = Q(qid); if (!q) continue;
@@ -1038,7 +1092,7 @@ function tAnalysis(){
   const d = analysisData();
   const hard = d.qs.filter(s => s.w > 0).sort((x, y) => y.w / y.n - x.w / x.n || y.w - x.w).slice(0, 6);
   const total = d.qs.reduce((x, s) => x + s.n, 0), wrong = d.qs.reduce((x, s) => x + s.w, 0);
-  const studs = S.students.filter(s => d.per[s.id]);
+  const studs = SG().filter(s => d.per[s.id]);
   const filters = `<div class="row between">
     <div class="row" style="gap:6px">${[['3','3 ngày'],['7','7 ngày'],['all','Tất cả']].map(([v, l]) => `<button class="fchip" data-act="an-range" data-v="${v}" aria-pressed="${ui.an.range === v}">${l}</button>`).join('')}</div>
     <div class="row" style="gap:6px"><button class="fchip" data-act="an-level" data-v="all" aria-pressed="${ui.an.level === 'all'}">Cả lớp</button>${LEVELS.map(l => `<button class="fchip" data-act="an-level" data-v="${l}" aria-pressed="${ui.an.level === l}">${l}</button>`).join('')}</div></div>`;
@@ -1087,7 +1141,7 @@ function sHome(st){
   }).join('') : `<div class="card"><div class="emptyst"><div class="ib">${ic('cal')}</div><b style="color:var(--ink)">Hôm nay chưa có bài</b>Thầy cô chưa giao bài cho nhóm của em. Trong lúc chờ, em ôn lại Sổ lỗi sai nhé.</div></div>`;
 
   const days = new Set(subsOf(st.id).map(b => A(b.aid).date));
-  const had = new Set(S.assignments.filter(a => a.level === st.level).map(a => a.date));
+  const had = new Set(S.assignments.filter(a => a.grade === st.grade && a.level === st.level).map(a => a.date));
   const streakCard = `<div class="card"><div class="card-b" style="padding-top:20px">
     <div class="streak"><div class="flame">${ic('flame','fill lg')}</div><div><div class="bignum">${streak} ngày</div><div class="small muted">chuỗi làm bài liên tiếp</div></div></div>
     <div class="week">${last7().map(d => { const ok = days.has(d), miss = !ok && d < TODAY && had.has(d); return `<div class="d"><span class="c ${ok ? 'ok' : miss ? 'miss' : ''} ${d === TODAY ? 'now' : ''}" title="${fmtDate(d)}">${ok ? ic('check','sm') : miss ? ic('x','sm') : ''}</span>${wdOf(d)}</div>`; }).join('')}</div>
@@ -1120,7 +1174,7 @@ function sMistakes(st){
 }
 function sHistory(st){
   const subs = subsOf(st.id), avg = mean(subs.map(b => scoreOf(b).ten));
-  const missed = S.assignments.filter(a => a.level === st.level && a.date < TODAY && !subFor(a.id, st.id)).length;
+  const missed = S.assignments.filter(a => a.grade === st.grade && a.level === st.level && a.date < TODAY && !subFor(a.id, st.id)).length;
   return `<div class="grid g4">
     <div class="card kpi"><div class="ico" style="background:var(--primary-soft);color:var(--primary)">${ic('list')}</div><div><div class="t">Bài đã nộp</div><div class="v">${subs.length}</div></div></div>
     <div class="card kpi"><div class="ico" style="background:var(--success-soft);color:var(--success)">${ic('trophy')}</div><div><div class="t">Điểm trung bình</div><div class="v">${avg == null ? '–' : dec(avg)}<small>/10</small></div></div></div>
@@ -1201,8 +1255,8 @@ function pNext(){
 function loginHtml(){
   const s0 = S.students[0];
   return `<div class="board">
-    <div class="logo"><span class="wm"><b>toán</b>mỗi ngày</span><span>Luyện Toán 12</span></div>
-    <div class="lead"><h1>Mỗi ngày vài bài,<br>sửa hết lỗi sai.</h1><p>Luyện Toán 12 theo từng chuyên đề và trình độ. Có lời giải ngay sau mỗi câu và sổ lỗi sai riêng cho từng em.</p></div>
+    <div class="logo"><span class="wm"><b>toán</b>mỗi ngày</span><span>Toán 10 · 11 · 12</span></div>
+    <div class="lead"><h1>Mỗi ngày vài bài,<br>sửa hết lỗi sai.</h1><p>Luyện Toán lớp 10, 11, 12 theo từng chuyên đề và trình độ. Có lời giải ngay sau mỗi câu và sổ lỗi sai riêng cho từng em.</p></div>
     <div class="formula" aria-hidden="true">y′ = 3x² − 3 = 0 ⇔ x = ±1<br>∫₀^π sin x dx = 2<br>P(A | B) = P(A ∩ B) / P(B)</div>
   </div>
   <div class="formside"><form id="login-form" autocomplete="off" novalidate>
@@ -1227,10 +1281,10 @@ function doLogin(){
 }
 function genPass(){ const a = 'abcdefghjkmnpqrstuvwxyz23456789'; let x = ''; for (let i = 0; i < 6; i++) x += a[Math.floor(Math.random() * a.length)]; return x; }
 function nextUser(){ const n = S.students.reduce((m, s) => Math.max(m, Number(String(s.user).replace(/\D/g, '')) || 0), 0) + 1; return 'hs' + String(n).padStart(2, '0'); }
-function addStudents(names, level){ const out = []; for (const nm of names) { const x = {id:'s' + S.n++, name:nm, level, user:nextUser(), pass:genPass()}; S.students.push(x); out.push(x); } save(); return out; }
+function addStudents(names, level){ const out = []; for (const nm of names) { const x = {id:'s' + S.n++, grade:ui.grade, name:nm, level, user:nextUser(), pass:genPass()}; S.students.push(x); out.push(x); } save(); return out; }
 function copyAccounts(list){
   const url = location.href.split('#')[0];
-  const text = `Trang luyện toán: ${url}\n` + list.map(s => `${s.name} | Tên đăng nhập: ${s.user} | Mật khẩu: ${s.pass}`).join('\n');
+  const text = `Trang luyện toán: ${url}\n` + list.map(s => `${s.name} (lớp ${s.grade}) | Tên đăng nhập: ${s.user} | Mật khẩu: ${s.pass}`).join('\n');
   try { navigator.clipboard.writeText(text).then(() => toast(list.length > 1 ? `Đã sao chép ${list.length} tài khoản.` : 'Đã sao chép tài khoản.'), () => toast('Trình duyệt chặn sao chép, hãy bôi đen và copy thủ công.')); }
   catch (e) { toast('Trình duyệt chặn sao chép, hãy bôi đen và copy thủ công.'); }
 }
@@ -1242,7 +1296,7 @@ function tAccounts(){
     : m.list ? `<div class="note ok">${ic('check','sm')}<span>Đã tạo ${m.list.length} tài khoản: ${m.list.map(x => `<b>${esc(x.name)}</b> (${esc(x.user)} / ${esc(x.pass)})`).join(', ')}</span></div>`
     : `<div class="note ok">${ic('check','sm')}<span>${esc(m.text)}</span></div>`;
   return `${msg}<div class="split even">
-    <div class="card"><div class="card-h"><div><h2>Thêm một học sinh</h2><p>Tên đăng nhập và mật khẩu được tạo tự động</p></div></div><div class="card-b">
+    <div class="card"><div class="card-h"><div><h2>Thêm một học sinh</h2><p>Vào khối ${ui.grade}. Tên đăng nhập và mật khẩu được tạo tự động</p></div></div><div class="card-b">
       <label class="f">Họ và tên<input type="text" id="acc-name" placeholder="vd: Nguyễn Văn Bình"></label>
       <label class="f">Nhóm trình độ<select id="acc-level">${lvOpts('Khá')}</select></label>
       <div><button class="btn" data-act="acc-add">${ic('plus','sm')} Tạo tài khoản</button></div></div></div>
@@ -1250,10 +1304,10 @@ function tAccounts(){
       <label class="f">Danh sách học sinh<textarea id="acc-bulk" rows="4" placeholder="Trần Thị Mai&#10;Lê Văn Nam&#10;Phan Hoài Thương"></textarea></label>
       <div class="row between" style="align-items:flex-end"><label class="f" style="flex:1;max-width:220px">Nhóm trình độ<select id="acc-bulk-level">${lvOpts('Khá')}</select></label><button class="btn sec" data-act="acc-bulk">${ic('users','sm')} Tạo tất cả</button></div></div></div>
   </div>
-  <div class="card"><div class="card-h"><div><h2>Tài khoản học sinh <span class="chip pri num">${S.students.length}</span></h2><p>Mỗi em một tài khoản riêng. Gửi tên đăng nhập và mật khẩu cho từng em.</p></div><button class="btn soft sm" data-act="acc-copy" data-v="all">${ic('list','sm')} Sao chép cả danh sách</button></div>
+  <div class="card"><div class="card-h"><div><h2>Tài khoản khối ${ui.grade} <span class="chip pri num">${SG().length}</span></h2><p>Mỗi em một tài khoản riêng. Gửi tên đăng nhập và mật khẩu cho từng em.</p></div><button class="btn soft sm" data-act="acc-copy" data-v="all">${ic('list','sm')} Sao chép cả danh sách</button></div>
     <div class="card-b" style="padding-inline:8px"><div class="tbl"><table>
       <thead><tr><th>Học sinh</th><th>Nhóm</th><th>Tên đăng nhập</th><th>Mật khẩu</th><th>Làm bài gần nhất</th><th></th></tr></thead>
-      <tbody>${S.students.map(s => `<tr>
+      <tbody>${SG().map(s => `<tr>
         <td><div class="person">${avatar(s)}<b>${esc(s.name)}</b></div></td>
         <td><select data-act="set-level" data-v="${s.id}" id="acc-lv-${s.id}" aria-label="Nhóm của ${esc(s.name)}">${lvOpts(s.level)}</select></td>
         <td><span class="cred">${esc(s.user)}</span></td><td><span class="cred">${esc(s.pass)}</span></td>
@@ -1273,6 +1327,7 @@ document.addEventListener('click', e => {
   switch (act) {
     case 'role': ui.role = v; saveUi(); go(ui.tab[v]); break;
     case 'tab': go(v); break;
+    case 'grade': if (Number(v) !== ui.grade) { if (ui.tab.teacher === 'compose') syncCompose(); ui.grade = Number(v); ui.compose = null; ui.bankTopic = 'all'; ui.tSid = null; ui.an.level = 'all'; ui.accMsg = null; render(); } break;
     case 'view-student': if (v) { ui.tSid = v; go('work'); } break;
     case 'pick-work': ui.tSid = v; render(); break;
     case 'compose-for': ui.compose = newCompose(v); go('compose'); break;
@@ -1318,7 +1373,7 @@ document.addEventListener('click', e => {
       if (ui.armed !== 'del-' + v) { ui.armed = 'del-' + v; render(); return; }
       { const x = STU(v); S.students = S.students.filter(s => s.id !== v); S.submissions = S.submissions.filter(b => b.sid !== v); delete S.fixed[v]; if (ui.tSid === v) ui.tSid = null; ui.armed = null; save(); render(); toast('Đã xoá tài khoản ' + x.name + '.'); }
       break;
-    case 'acc-copy': copyAccounts(v === 'all' ? S.students : [STU(v)]); break;
+    case 'acc-copy': copyAccounts(v === 'all' ? SG() : [STU(v)]); break;
     case 'p-next': pNext(); break;
     case 'p-close': if (p.done) { ui.player = null; render(); } else { p.exit = true; render(); } break;
     case 'p-stay': p.exit = false; render(); break;
