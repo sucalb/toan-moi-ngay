@@ -18,6 +18,8 @@ Tài khoản dùng thử (có nút vào nhanh ở màn đăng nhập):
 - Tổng quan lớp: số học sinh đã nộp hôm nay, điểm trung bình, tỉ lệ sai 7 ngày, lỗi chưa sửa, học sinh cần chú ý.
 - Soạn và giao bài theo nhóm trình độ (Cơ bản, Khá, Giỏi) và chuyên đề, lấy từ ngân hàng câu hỏi hoặc tự soạn.
 - Ba dạng câu theo đề tốt nghiệp THPT: trắc nghiệm 4 lựa chọn, đúng/sai 4 ý, trả lời ngắn.
+- Gõ công thức toán (phân số, căn, mũ, tích phân, vectơ…) bằng thanh công cụ, có xem trước. Công thức hiển thị bằng MathJax.
+- Chèn hình (đồ thị, hình vẽ, bảng biến thiên) vào câu hỏi, ảnh tự được nén.
 - Xem bài làm của từng học sinh, gồm đáp án và cách làm.
 - Phân tích lỗi sai: tỉ lệ sai theo chuyên đề, bản đồ năng lực học sinh × chuyên đề, câu sai nhiều nhất và nút giao lại.
 

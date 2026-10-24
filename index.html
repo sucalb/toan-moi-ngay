@@ -462,7 +462,24 @@ details.sub{border-radius:12px;border-color:var(--line)}
 .tfa{grid-column:2 / -1;font-size:13px;font-weight:700;color:var(--danger)}
 .tfs{margin:6px 0 0;padding-left:22px;list-style:lower-alpha;font-size:13.5px;font-weight:500;color:var(--ink-2);display:flex;flex-direction:column;gap:2px}
 @media (max-width:520px){.tfrow{grid-template-columns:22px minmax(0,1fr)}.tfb{grid-column:2}}
+
+/* công thức và hình trong câu hỏi */
+.qimg{display:block;max-width:100%;max-height:300px;margin-top:10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.qimg.big{max-height:240px;margin:0}
+.qimg.sm{max-height:110px;margin-top:6px}
+.mathbar{display:flex;flex-wrap:wrap;gap:6px}
+.mathbar button{border:1px solid var(--line-2);background:var(--surface);border-radius:8px;padding:5px 10px;min-width:40px;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer}
+.mathbar button:hover{background:var(--surface-2)}
+.mprev{background:var(--surface);border:1px dashed var(--line-2);border-radius:10px;padding:10px 12px;font-size:15.5px;min-height:46px;overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;background:var(--surface-2);padding:1px 5px;border-radius:5px}
+mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
+.qbig mjx-container{font-size:105%}
 </style>
+<script>
+window.MathJax = {tex:{inlineMath:[['$','$']]}, svg:{fontCache:'global'}, options:{skipHtmlTags:['script','noscript','style','textarea','pre','code','input']},
+  startup:{typeset:false, ready(){ MathJax.startup.defaultReady(); MathJax.startup.promise.then(() => window.typesetAll && window.typesetAll()); }}};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" async></script>
 
 </head>
 <body>
@@ -508,12 +525,28 @@ const LEVELS = ['Cơ bản', 'Khá', 'Giỏi'];
 // ngân hàng câu hỏi mẫu Toán 12, theo 3 dạng của đề tốt nghiệp THPT:
 // mc = trắc nghiệm 4 lựa chọn, tf = đúng/sai 4 ý (answer là chuỗi Đ/S), num = trả lời ngắn
 // traps = đáp án sai hay gặp, ww = cách làm sai điển hình
+// đồ thị y = x³ − 3x vẽ sẵn bằng SVG để minh họa câu hỏi có hình
+function graphSvg(){
+  const W = 340, H = 250, ox = 170, oy = 125, sx = 58, sy = 32;
+  const X = x => (ox + x * sx).toFixed(1), Y = y => (oy - y * sy).toFixed(1);
+  let pts = []; for (let x = -2.15; x <= 2.151; x += 0.05) pts.push(X(x) + ',' + Y(x * x * x - 3 * x));
+  const t = (x, y, s, a) => `<text x="${x}" y="${y}" font-size="13" font-family="Times New Roman,serif" font-style="italic" text-anchor="${a || 'middle'}" fill="#222">${s}</text>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="#fff"/>
+    <g stroke="#bbb" stroke-dasharray="3 3" stroke-width="1"><line x1="${X(-1)}" y1="${Y(2)}" x2="${X(-1)}" y2="${oy}"/><line x1="${X(1)}" y1="${Y(-2)}" x2="${X(1)}" y2="${oy}"/><line x1="${X(-1)}" y1="${Y(2)}" x2="${ox}" y2="${Y(2)}"/><line x1="${X(1)}" y1="${Y(-2)}" x2="${ox}" y2="${Y(-2)}"/></g>
+    <g stroke="#222" stroke-width="1.3" fill="#222"><line x1="12" y1="${oy}" x2="${W - 14}" y2="${oy}"/><path d="M${W - 12} ${oy} l-8 -4 v8z"/><line x1="${ox}" y1="${H - 8}" x2="${ox}" y2="12"/><path d="M${ox} 8 l-4 8 h8z"/></g>
+    <polyline points="${pts.join(' ')}" fill="none" stroke="#1f5fbf" stroke-width="2.4" stroke-linejoin="round"/>
+    ${t(W - 16, oy + 18, 'x')}${t(ox - 10, 18, 'y')}${t(ox - 9, oy + 16, 'O')}${t(X(-1), oy + 16, '−1')}${t(X(1), oy - 7, '1')}${t(X(2), oy + 16, '2')}${t(X(-2), oy - 7, '−2')}${t(ox + 6, +Y(2) + 4, '2', 'start')}${t(ox - 6, +Y(-2) + 4, '−2', 'end')}</svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+const GRAPH = graphSvg();
 const BANK = [
-  {id:'c1',level:'Cơ bản',topic:'Đạo hàm',type:'num',text:'Cho hàm số y = x³ − 3x + 2. Giá trị cực đại của hàm số bằng bao nhiêu?',answer:'4',traps:['-1','0'],ww:'y′ = 0 ⇒ x = −1 nên giá trị cực đại là −1',explain:'y′ = 3x² − 3 = 0 ⇔ x = ±1. y′ đổi dấu từ + sang − tại x = −1 nên giá trị cực đại là y(−1) = 4. Đề hỏi giá trị cực đại (y), không phải điểm cực đại (x).'},
+  {id:'c12',level:'Cơ bản',topic:'Đạo hàm',type:'num',text:'Cho hàm số $y = f(x)$ có đồ thị như hình bên. Hàm số có bao nhiêu điểm cực trị?',img:GRAPH,answer:'2',traps:['3','1'],ww:'Đếm cả các giao điểm với trục hoành ⇒ 3',explain:'Đồ thị có một điểm cực đại tại $x = -1$ và một điểm cực tiểu tại $x = 1$, nên hàm số có 2 điểm cực trị. Giao điểm với trục hoành không phải là cực trị.'},
+  {id:'k11',level:'Khá',topic:'Đạo hàm',type:'num',text:'Cho hàm số $y = f(x)$ có đồ thị như hình bên. Tìm giá trị lớn nhất của hàm số trên đoạn $[-2;\\,2]$.',img:GRAPH,answer:'2',traps:['-1','1'],ww:'Đọc hoành độ điểm cực đại: max = −1',explain:'Trên $[-2;\\,2]$, điểm cao nhất của đồ thị có tung độ bằng 2 (tại $x = -1$ và $x = 2$), nên GTLN bằng 2. Đề hỏi giá trị $y$, không hỏi $x$.'},
+  {id:'c1',level:'Cơ bản',topic:'Đạo hàm',type:'num',text:'Cho hàm số $y = x^3 - 3x + 2$. Giá trị cực đại của hàm số bằng bao nhiêu?',answer:'4',traps:['-1','0'],ww:'y′ = 0 ⇒ x = −1 nên giá trị cực đại là −1',explain:'y′ = 3x² − 3 = 0 ⇔ x = ±1. y′ đổi dấu từ + sang − tại x = −1 nên giá trị cực đại là y(−1) = 4. Đề hỏi giá trị cực đại (y), không phải điểm cực đại (x).'},
   {id:'c2',level:'Cơ bản',topic:'Đạo hàm',type:'mc',text:'Hàm số y = x³ − 3x² nghịch biến trên khoảng nào?',options:['(−∞; 0)','(0; 2)','(2; +∞)','(−∞; +∞)'],answer:'(0; 2)',explain:'y′ = 3x² − 6x = 3x(x − 2) < 0 ⇔ 0 < x < 2.'},
-  {id:'c3',level:'Cơ bản',topic:'Đạo hàm',type:'num',text:'Đồ thị hàm số y = (2x + 1)/(x − 1) có tiệm cận ngang y = a. Tìm a.',answer:'2',traps:['1','-1/2'],ww:'Cho mẫu x − 1 = 0 ⇒ tiệm cận y = 1',explain:'Khi x → ±∞, y → 2/1 = 2 nên tiệm cận ngang là y = 2. Đường x = 1 là tiệm cận đứng.'},
-  {id:'c4',level:'Cơ bản',topic:'Tích phân',type:'num',text:'Tính ∫₀¹ 2x dx.',answer:'1',traps:['2','0'],ww:'∫₀¹ 2x dx = 2 (nhầm lấy luôn hệ số)',explain:'Một nguyên hàm của 2x là x², nên tích phân bằng 1² − 0² = 1.'},
-  {id:'c5',level:'Cơ bản',topic:'Tích phân',type:'num',text:'Tính ∫₁² 3x² dx.',answer:'7',traps:['8','9'],ww:'∫₁² 3x² dx = x³ tại x = 2 = 8',explain:'∫₁² 3x² dx = x³ |₁² = 8 − 1 = 7. Nhớ trừ giá trị tại cận dưới.'},
+  {id:'c3',level:'Cơ bản',topic:'Đạo hàm',type:'num',text:'Đồ thị hàm số $y = \\dfrac{2x+1}{x-1}$ có tiệm cận ngang $y = a$. Tìm $a$.',answer:'2',traps:['1','-1/2'],ww:'Cho mẫu x − 1 = 0 ⇒ tiệm cận y = 1',explain:'Khi x → ±∞, y → 2/1 = 2 nên tiệm cận ngang là y = 2. Đường x = 1 là tiệm cận đứng.'},
+  {id:'c4',level:'Cơ bản',topic:'Tích phân',type:'num',text:'Tính $\\displaystyle\\int_0^1 2x\\,dx$.',answer:'1',traps:['2','0'],ww:'∫₀¹ 2x dx = 2 (nhầm lấy luôn hệ số)',explain:'Một nguyên hàm của 2x là x², nên tích phân bằng 1² − 0² = 1.'},
+  {id:'c5',level:'Cơ bản',topic:'Tích phân',type:'num',text:'Tính $\\displaystyle\\int_1^2 3x^2\\,dx$.',answer:'7',traps:['8','9'],ww:'∫₁² 3x² dx = x³ tại x = 2 = 8',explain:'∫₁² 3x² dx = x³ |₁² = 8 − 1 = 7. Nhớ trừ giá trị tại cận dưới.'},
   {id:'c6',level:'Cơ bản',topic:'Tích phân',type:'mc',text:'Một nguyên hàm của hàm số f(x) = cos x là',options:['sin x','−sin x','cos x','−cos x'],answer:'sin x',explain:'(sin x)′ = cos x nên sin x là một nguyên hàm của cos x.'},
   {id:'c7',level:'Cơ bản',topic:'Oxyz',type:'num',text:'Trong không gian Oxyz, cho A(1; 2; 3) và B(3; 0; −1). Tính tổng các tọa độ của trung điểm I của AB.',answer:'4',traps:['8'],ww:'I = (1 + 3; 2 + 0; 3 − 1) = (4; 2; 2), tổng bằng 8',explain:'I = ((1 + 3)/2; (2 + 0)/2; (3 − 1)/2) = (2; 1; 1), tổng các tọa độ bằng 4. Nhớ chia 2.'},
   {id:'c8',level:'Cơ bản',topic:'Oxyz',type:'num',text:'Cho vectơ a = (1; −2; 2). Tính độ dài |a|.',answer:'3',traps:['1','9'],ww:'|a| = 1 − 2 + 2 = 1',explain:'|a| = √(1² + (−2)² + 2²) = √9 = 3.'},
@@ -523,17 +556,17 @@ const BANK = [
   {id:'k1',level:'Khá',topic:'Đạo hàm',type:'num',text:'Tìm giá trị lớn nhất của hàm số y = x³ − 3x + 1 trên đoạn [0; 2].',answer:'3',traps:['-1','1'],ww:'y′ = 0 ⇒ x = 1, y(1) = −1 ⇒ GTLN = −1',explain:'y′ = 0 ⇔ x = 1 thuộc [0; 2]. So sánh y(0) = 1, y(1) = −1, y(2) = 3 ⇒ GTLN là 3. Đừng quên hai đầu mút.'},
   {id:'k2',level:'Khá',topic:'Đạo hàm',type:'tf',text:'Cho hàm số y = x⁴ − 2x² + 1.',statements:['Hàm số có 3 điểm cực trị','Giá trị cực tiểu của hàm số bằng 0','Hàm số đồng biến trên khoảng (0; 1)','Đồ thị hàm số đi qua điểm (2; 9)'],answer:'ĐĐSĐ',traps:[],explain:'y′ = 4x(x² − 1) = 0 ⇔ x = 0; ±1 nên có 3 cực trị. y(±1) = 0 là giá trị cực tiểu. Trên (0; 1), y′ < 0 nên hàm nghịch biến. y(2) = 16 − 8 + 1 = 9.'},
   {id:'k3',level:'Khá',topic:'Đạo hàm',type:'mc',text:'Tiệm cận đứng của đồ thị hàm số y = (x + 1)/(x − 2) là',options:['x = 2','x = −1','y = 1','x = 1'],answer:'x = 2',explain:'Mẫu bằng 0 tại x = 2 và tử khác 0 tại đó, nên x = 2 là tiệm cận đứng. y = 1 là tiệm cận ngang.'},
-  {id:'k4',level:'Khá',topic:'Tích phân',type:'num',text:'Tính ∫₀^π sin x dx.',answer:'2',traps:['-2','0'],ww:'∫₀^π sin x dx = cos π − cos 0 = −2',explain:'Nguyên hàm của sin x là −cos x: −cos π − (−cos 0) = 1 + 1 = 2. Lỗi hay gặp là quên dấu trừ.'},
+  {id:'k4',level:'Khá',topic:'Tích phân',type:'num',text:'Tính $\\displaystyle\\int_0^{\\pi} \\sin x\\,dx$.',answer:'2',traps:['-2','0'],ww:'∫₀^π sin x dx = cos π − cos 0 = −2',explain:'Nguyên hàm của sin x là −cos x: −cos π − (−cos 0) = 1 + 1 = 2. Lỗi hay gặp là quên dấu trừ.'},
   {id:'k5',level:'Khá',topic:'Tích phân',type:'num',text:'Tính diện tích hình phẳng giới hạn bởi y = x², y = 0, x = 0, x = 3.',answer:'9',traps:['27','3'],ww:'S = 3³ = 27',explain:'S = ∫₀³ x² dx = x³/3 |₀³ = 27/3 = 9. Nhớ chia 3 khi lấy nguyên hàm.'},
-  {id:'k6',level:'Khá',topic:'Tích phân',type:'tf',text:'Cho ∫₀² f(x) dx = 4 và ∫₀² g(x) dx = 1.',statements:['∫₀² [f(x) + g(x)] dx = 5','∫₀² 2f(x) dx = 6','∫₂⁰ f(x) dx = −4','∫₀² f(x)·g(x) dx = 4'],answer:'ĐSĐS',traps:[],explain:'Tích phân của tổng bằng tổng các tích phân: 4 + 1 = 5. ∫2f = 2·4 = 8. Đổi cận thì đổi dấu: −4. Không có quy tắc tích phân của tích bằng tích các tích phân.'},
-  {id:'k7',level:'Khá',topic:'Oxyz',type:'num',text:'Tính khoảng cách từ M(1; 2; 3) đến mặt phẳng (P): 2x + y − 2z + 3 = 0.',answer:'1/3',traps:['1','3'],ww:'d = |2 + 2 − 6 + 3| = 1',explain:'d = |2·1 + 2 − 2·3 + 3| / √(4 + 1 + 4) = 1/3. Nhớ chia cho độ dài vectơ pháp tuyến.'},
+  {id:'k6',level:'Khá',topic:'Tích phân',type:'tf',text:'Cho $\\int_0^2 f(x)\\,dx = 4$ và $\\int_0^2 g(x)\\,dx = 1$.',statements:['$\\int_0^2 [f(x) + g(x)]\\,dx = 5$','$\\int_0^2 2f(x)\\,dx = 6$','$\\int_2^0 f(x)\\,dx = -4$','$\\int_0^2 f(x)\\cdot g(x)\\,dx = 4$'],answer:'ĐSĐS',traps:[],explain:'Tích phân của tổng bằng tổng các tích phân: 4 + 1 = 5. ∫2f = 2·4 = 8. Đổi cận thì đổi dấu: −4. Không có quy tắc tích phân của tích bằng tích các tích phân.'},
+  {id:'k7',level:'Khá',topic:'Oxyz',type:'num',text:'Tính khoảng cách từ $M(1;\\,2;\\,3)$ đến mặt phẳng $(P)\\colon 2x + y - 2z + 3 = 0$.',answer:'1/3',traps:['1','3'],ww:'d = |2 + 2 − 6 + 3| = 1',explain:'d = |2·1 + 2 − 2·3 + 3| / √(4 + 1 + 4) = 1/3. Nhớ chia cho độ dài vectơ pháp tuyến.'},
   {id:'k8',level:'Khá',topic:'Oxyz',type:'mc',text:'Mặt cầu (S): (x − 1)² + (y + 2)² + z² = 9 có tâm và bán kính là',options:['I(1; −2; 0), R = 3','I(−1; 2; 0), R = 3','I(1; −2; 0), R = 9','I(−1; 2; 0), R = 9'],answer:'I(1; −2; 0), R = 3',explain:'(x − a)² + (y − b)² + (z − c)² = R² có tâm I(a; b; c). Ở đây I(1; −2; 0), R = √9 = 3.'},
   {id:'k9',level:'Khá',topic:'Xác suất',type:'num',text:'Lớp có 20 nam và 15 nữ. Chọn ngẫu nhiên 2 bạn. Tính xác suất chọn được 2 bạn nữ (làm tròn đến hàng phần trăm).',answer:'0,18',traps:['0,43','0,19'],ww:'P = 15/35 ≈ 0,43',explain:'P = C(15, 2) / C(35, 2) = 105/595 ≈ 0,18.'},
   {id:'k10',level:'Khá',topic:'Xác suất',type:'tf',text:'Cho hai biến cố A, B với P(A) = 0,5; P(B) = 0,4; P(A ∩ B) = 0,2.',statements:['A và B độc lập','P(A ∪ B) = 0,9','P(A | B) = 0,5','P(B | A) = 0,5'],answer:'ĐSĐS',traps:[],explain:'P(A)·P(B) = 0,2 = P(A ∩ B) nên A, B độc lập. P(A ∪ B) = 0,5 + 0,4 − 0,2 = 0,7. P(A | B) = 0,2/0,4 = 0,5. P(B | A) = 0,2/0,5 = 0,4.'},
-  {id:'n1',level:'Giỏi',topic:'Đạo hàm',type:'num',text:'Có bao nhiêu giá trị nguyên của m để hàm số y = x³ − 3mx² + 3(m + 2)x đồng biến trên ℝ?',answer:'4',traps:['2','3'],ww:'Δ′ < 0 ⇒ −1 < m < 2 ⇒ có 2 giá trị',explain:'y′ = 3x² − 6mx + 3(m + 2) ≥ 0 ∀x ⇔ Δ′ = 9m² − 9(m + 2) ≤ 0 ⇔ −1 ≤ m ≤ 2 ⇒ m ∈ {−1; 0; 1; 2}. Lưu ý dấu “≤”.'},
+  {id:'n1',level:'Giỏi',topic:'Đạo hàm',type:'num',text:'Có bao nhiêu giá trị nguyên của $m$ để hàm số $y = x^3 - 3mx^2 + 3(m+2)x$ đồng biến trên $\\mathbb{R}$?',answer:'4',traps:['2','3'],ww:'Δ′ < 0 ⇒ −1 < m < 2 ⇒ có 2 giá trị',explain:'y′ = 3x² − 6mx + 3(m + 2) ≥ 0 ∀x ⇔ Δ′ = 9m² − 9(m + 2) ≤ 0 ⇔ −1 ≤ m ≤ 2 ⇒ m ∈ {−1; 0; 1; 2}. Lưu ý dấu “≤”.'},
   {id:'n2',level:'Giỏi',topic:'Đạo hàm',type:'num',text:'Từ tấm tôn hình vuông cạnh 12 cm, cắt ở bốn góc bốn hình vuông bằng nhau cạnh x rồi gấp thành hộp không nắp. Thể tích lớn nhất của hộp là bao nhiêu cm³?',answer:'128',traps:['108','96'],ww:'Chọn x = 3 ⇒ V = 3·6² = 108',explain:'V = x(12 − 2x)², V′ = (12 − 2x)(12 − 6x) = 0 ⇒ x = 2 (vì 0 < x < 6). V(2) = 2·8² = 128.'},
-  {id:'n3',level:'Giỏi',topic:'Tích phân',type:'num',text:'Tính ∫₀¹ x·eˣ dx.',answer:'1',traps:['e','e − 1'],ww:'Đặt u = x, dv = eˣdx ⇒ x·eˣ |₀¹ = e',explain:'Từng phần: x·eˣ |₀¹ − ∫₀¹ eˣ dx = e − (e − 1) = 1.'},
-  {id:'n4',level:'Giỏi',topic:'Tích phân',type:'num',text:'Quay hình phẳng giới hạn bởi y = √x, y = 0, x = 4 quanh trục Ox được khối tròn xoay có thể tích aπ. Tìm a.',answer:'8',traps:['16/3','16'],ww:'V = π∫₀⁴ √x dx = 16π/3',explain:'V = π∫₀⁴ (√x)² dx = π∫₀⁴ x dx = 8π nên a = 8. Nhớ bình phương hàm số.'},
+  {id:'n3',level:'Giỏi',topic:'Tích phân',type:'num',text:'Tính $\\displaystyle\\int_0^1 x e^x\\,dx$.',answer:'1',traps:['e','e − 1'],ww:'Đặt u = x, dv = eˣdx ⇒ x·eˣ |₀¹ = e',explain:'Từng phần: x·eˣ |₀¹ − ∫₀¹ eˣ dx = e − (e − 1) = 1.'},
+  {id:'n4',level:'Giỏi',topic:'Tích phân',type:'num',text:'Quay hình phẳng giới hạn bởi $y = \\sqrt{x}$, $y = 0$, $x = 4$ quanh trục $Ox$ được khối tròn xoay có thể tích $a\\pi$. Tìm $a$.',answer:'8',traps:['16/3','16'],ww:'V = π∫₀⁴ √x dx = 16π/3',explain:'V = π∫₀⁴ (√x)² dx = π∫₀⁴ x dx = 8π nên a = 8. Nhớ bình phương hàm số.'},
   {id:'n5',level:'Giỏi',topic:'Oxyz',type:'num',text:'Cho A(1; 0; 0), B(0; 2; 0), C(0; 0; 3). Tính khoảng cách từ gốc O đến mặt phẳng (ABC) (làm tròn đến hàng phần trăm).',answer:'0,86',traps:['6','1'],ww:'(ABC): 6x + 3y + 2z − 6 = 0 ⇒ d = 6',explain:'(ABC): x/1 + y/2 + z/3 = 1 ⇔ 6x + 3y + 2z − 6 = 0. d = 6/√(36 + 9 + 4) = 6/7 ≈ 0,86.'},
   {id:'n6',level:'Giỏi',topic:'Oxyz',type:'tf',text:'Cho mặt cầu (S): x² + y² + z² − 2x + 4y − 4 = 0 và mặt phẳng (P): 2x − y + 2z + 2 = 0.',statements:['(S) có tâm I(1; −2; 0)','(S) có bán kính R = 9','Khoảng cách từ I đến (P) bằng 2','(P) cắt (S) theo đường tròn có bán kính √5'],answer:'ĐSĐĐ',traps:[],explain:'Tâm I(1; −2; 0), R² = 1 + 4 + 4 = 9 ⇒ R = 3. d(I, (P)) = |2 + 2 + 2|/3 = 2 < R. Bán kính đường tròn giao tuyến r = √(9 − 4) = √5.'},
   {id:'n7',level:'Giỏi',topic:'Xác suất',type:'num',text:'Tỉ lệ mắc bệnh X là 2%. Xét nghiệm cho kết quả dương tính ở 95% người bệnh và 10% người không bệnh. Một người có kết quả dương tính. Tính xác suất người đó thật sự mắc bệnh (làm tròn đến hàng phần trăm).',answer:'0,16',traps:['0,95','0,02'],ww:'P = 95% vì xét nghiệm đúng 95%',explain:'Công thức Bayes: P = 0,02·0,95 / (0,02·0,95 + 0,98·0,1) = 0,019/0,117 ≈ 0,16. Không nhầm P(dương tính | bệnh) với P(bệnh | dương tính).'},
@@ -553,7 +586,7 @@ const STUDENTS = [
 // ---------- dữ liệu ----------
 function seed(){
   const rnd = mulberry32(20261023);
-  const st = {v:2, teacher:{name:'Giáo viên Toán', user:'giaovien', pass:'123456'}, students:STUDENTS.map(s => ({id:s.id,name:s.name,level:s.level,user:s.user,pass:s.pass})), bank:BANK.map(q => ({...q})), assignments:[], submissions:[], fixed:{}, n:1};
+  const st = {v:3, teacher:{name:'Giáo viên Toán', user:'giaovien', pass:'123456'}, students:STUDENTS.map(s => ({id:s.id,name:s.name,level:s.level,user:s.user,pass:s.pass})), bank:BANK.map(q => ({...q})), assignments:[], submissions:[], fixed:{}, n:1};
   const rot = (arr, k) => arr.length ? arr.slice(k % arr.length).concat(arr.slice(0, k % arr.length)) : arr;
   for (let i = -6; i <= 0; i++) {
     const day = addDays(TODAY, i);
@@ -592,7 +625,7 @@ function seed(){
 const KEY = 'toan-moi-ngay-v1';
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)); } catch (e) { S = null; }
-if (!S || S.v !== 2) S = seed();
+if (!S || S.v !== 3) S = seed();
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 
 const ui = {role:'teacher', sid:'s1', tab:{teacher:'today', student:'today'}, tSid:null, an:{range:'7', level:'all'}, compose:null, flash:{}, armed:null, justSubmitted:null};
@@ -670,6 +703,7 @@ const ICON = {
   retry:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
   chev:'<path d="M9 6l6 6-6 6"/>',
   list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
+  image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 17-5-5L6 20"/>',
   key:'<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M16 7l3 3M14 9l2 2"/>',
   logout:'<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l-5-5 5-5M5 12h11"/>',
   trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>'
@@ -678,6 +712,26 @@ const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hid
 const TOPIC_VAR = {'Đạo hàm':'--t1', 'Tích phân':'--t2', 'Oxyz':'--t3', 'Xác suất':'--t4'};
 const TOPIC_GLYPH = {'Đạo hàm':'f′', 'Tích phân':'∫', 'Oxyz':'→', 'Xác suất':'%'};
 const TYPE_LABEL = {mc:'Trắc nghiệm', tf:'Đúng/Sai', num:'Trả lời ngắn'};
+const qImg = (q, cls = '') => q.img ? `<img class="qimg ${cls}" src="${q.img}" alt="Hình minh họa của câu hỏi">` : '';
+const MATH_TOOLS = [['a/b','\\frac{a}{b}'],['√x','\\sqrt{x}'],['xⁿ','x^{n}'],['xₙ','x_{n}'],['∫','\\int_{a}^{b} f(x)\\,dx'],['lim','\\lim_{x \\to a}'],['vectơ','\\vec{u}'],['≤','\\le'],['≥','\\ge'],['≠','\\ne'],['∞','\\infty'],['π','\\pi'],['∈','\\in'],['ℝ','\\mathbb{R}'],['°','^{\\circ}'],['⇔','\\Leftrightarrow']];
+function typesetAll(){
+  const M = window.MathJax; if (!M || !M.typesetPromise) return;
+  const els = ['#main', '#player', '#login'].map(x => $(x)).filter(e => e && !e.hidden);
+  if (M.typesetClear) M.typesetClear(els);
+  M.typesetPromise(els).catch(() => {});
+}
+window.typesetAll = typesetAll;
+function compressImage(file){
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onload = () => { const im = new Image(); im.onload = () => {
+      const k = Math.min(1, 900 / im.width), c = document.createElement('canvas');
+      c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
+      const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0, c.width, c.height);
+      res(c.toDataURL('image/jpeg', 0.82)); }; im.onerror = rej; im.src = fr.result; };
+    fr.onerror = rej; fr.readAsDataURL(file);
+  });
+}
 const tfList = q => q.type === 'tf' ? `<ol class="tfs">${q.statements.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : '';
 const answered = (q, v) => q.type === 'tf' ? /^[ĐS]{4}$/.test(v || '') : !!String(v ?? '').trim();
 const tcv = t => `--tc:var(${TOPIC_VAR[t] || '--t1'})`;
@@ -716,7 +770,7 @@ function setAuth(a){ AUTH = a; try { a ? localStorage.setItem(KEY + '-auth', JSO
 function render(){
   if (AUTH && AUTH.role === 'student' && !STU(AUTH.sid)) setAuth(null);
   const lg = $('#login');
-  if (!AUTH) { $('.app').hidden = true; lg.hidden = false; lg.innerHTML = loginHtml(); ui.player = null; renderPlayer(); return; }
+  if (!AUTH) { $('.app').hidden = true; lg.hidden = false; lg.innerHTML = loginHtml(); ui.player = null; renderPlayer(); typesetAll(); return; }
   $('.app').hidden = false; lg.hidden = true; lg.innerHTML = '';
   ui.role = AUTH.role; if (AUTH.role === 'student') ui.sid = AUTH.sid;
   const st = STU(ui.sid) || S.students[0];
@@ -744,6 +798,7 @@ function render(){
   const views = T ? {today:tHome, compose:tCompose, work:tWork, analysis:tAnalysis, accounts:tAccounts} : {today:sHome, mistakes:sMistakes, history:sHistory};
   $('#main').innerHTML = views[cur](st);
   renderPlayer();
+  typesetAll();
 }
 
 // ---------- giáo viên ----------
@@ -857,11 +912,15 @@ function tCompose(){
       <div class="f" style="font-size:12.5px;font-weight:600;color:var(--ink-2);display:flex;flex-direction:column;gap:6px">Nhóm trình độ<div class="seg" role="group" aria-label="Nhóm trình độ">${LEVELS.map(l => `<button data-act="c-level" data-v="${l}" aria-pressed="${l === c.level}">${l}</button>`).join('')}</div></div>
     </div></div>
     <div class="card"><div class="card-h"><div><h2>Câu hỏi trong bài <span class="chip pri num">${c.qids.length}</span></h2><p>Chọn từ ngân hàng hoặc soạn câu mới</p></div>${q ? '' : `<button class="btn soft sm" data-act="c-newq">${ic('plus','sm')} Soạn câu mới</button>`}</div><div class="card-b">
-      ${c.qids.length ? `<div class="list">${c.qids.map((id, i) => { const x = Q(id); return x ? `<div class="li"><span class="qn">${i + 1}</span><div class="grow"><div class="qt">${esc(x.text)}</div><div class="row small" style="gap:8px;margin-top:4px">${topicChip(x.topic)}<span class="muted">Đáp án: <b>${esc(showVal(x.answer))}</b></span></div></div><button class="iconbtn" data-act="c-rm" data-v="${id}" aria-label="Bỏ câu này">${ic('x','sm')}</button></div>` : ''; }).join('')}</div>`
+      ${c.qids.length ? `<div class="list">${c.qids.map((id, i) => { const x = Q(id); return x ? `<div class="li"><span class="qn">${i + 1}</span><div class="grow"><div class="qt">${esc(x.text)}</div>${qImg(x, 'sm')}<div class="row small" style="gap:8px;margin-top:4px">${topicChip(x.topic)}<span class="muted">Đáp án: <b>${esc(showVal(x.answer))}</b></span></div></div><button class="iconbtn" data-act="c-rm" data-v="${id}" aria-label="Bỏ câu này">${ic('x','sm')}</button></div>` : ''; }).join('')}</div>`
         : `<div class="emptyst"><div class="ib">${ic('list')}</div>Chưa có câu nào. Bấm "Thêm" ở ngân hàng câu hỏi bên cạnh.</div>`}
       ${q ? `<div class="newq">
         <div class="row between"><h3>Câu hỏi mới</h3><button class="btn ghost sm" data-act="c-cancelq">Huỷ</button></div>
-        <label class="f">${q.type === 'tf' ? 'Phần dẫn chung' : 'Đề bài'}<textarea id="nq-text" placeholder="Nhập đề bài">${esc(q.text)}</textarea></label>
+        <div class="mathbar" role="toolbar" aria-label="Chèn ký hiệu toán">${MATH_TOOLS.map(([l, t]) => `<button type="button" data-act="ins" data-v="${esc(t)}" title="Chèn ${esc(t)}">${l}</button>`).join('')}</div>
+        <label class="f">${q.type === 'tf' ? 'Phần dẫn chung' : 'Đề bài'}<textarea id="nq-text" placeholder="vd: Tính $\\int_0^1 2x\\,dx$">${esc(q.text)}</textarea></label>
+        <div class="small muted">Gõ công thức giữa hai dấu $, ví dụ <code>$x^2 + \\sqrt{x}$</code>, hoặc bấm các nút ở trên. Xem trước:</div>
+        <div class="mprev" id="nq-prev">${q.text ? esc(q.text) : '<span class="muted small">Đề bài sẽ hiện ở đây đúng như học sinh thấy</span>'}</div>
+        <div class="row" style="gap:10px">${q.img ? `<img class="qimg sm" src="${q.img}" alt="Hình đã chèn"><button class="btn sec sm" data-act="c-rmimg">${ic('x','sm')} Bỏ hình</button>` : ''}<label class="btn sec sm" style="cursor:pointer">${ic('image','sm')} ${q.img ? 'Đổi hình' : 'Chèn hình vào câu hỏi'}<input type="file" accept="image/*" id="nq-img" hidden></label><span class="small muted">Đồ thị, hình vẽ, bảng biến thiên. Ảnh tự được nén cho nhẹ.</span></div>
         <div class="fgrid">
           <label class="f">Dạng câu<select id="nq-type" data-act="c-refresh"><option value="num" ${q.type === 'num' ? 'selected' : ''}>Trả lời ngắn</option><option value="mc" ${q.type === 'mc' ? 'selected' : ''}>Trắc nghiệm 4 lựa chọn</option><option value="tf" ${q.type === 'tf' ? 'selected' : ''}>Đúng/Sai (4 ý)</option></select></label>
           ${q.type === 'num' ? `<label class="f">Đáp số đúng<input type="text" id="nq-ans" value="${esc(q.answer)}" placeholder="vd: 0,18 hoặc -3 hoặc 1/3"></label>` : q.type === 'tf' ? '' : `<label class="f">Đáp án đúng<select id="nq-cor">${[0,1,2,3].map(j => `<option value="${j}" ${q.correct === j ? 'selected' : ''}>${'ABCD'[j]}</option>`).join('')}</select></label>`}
@@ -875,7 +934,7 @@ function tCompose(){
     </div></div>`;
   const bankCard = `<div class="card"><div class="card-h"><div><h2>Ngân hàng câu hỏi</h2><p>Nhóm ${c.level} · ${bank.length} câu</p></div></div><div class="card-b">
       <div class="row" style="gap:6px"><button class="fchip" data-act="bank-topic" data-v="all" aria-pressed="${ui.bankTopic === 'all'}">Tất cả</button>${TOPICS.map(t => `<button class="fchip" data-act="bank-topic" data-v="${t}" aria-pressed="${ui.bankTopic === t}">${t}</button>`).join('')}</div>
-      <div class="bank list">${bank.map(x => { const inn = c.qids.includes(x.id); return `<div class="li"><div class="grow"><div class="qt">${esc(x.text)}</div><div class="row small" style="gap:8px;margin-top:4px">${topicChip(x.topic)}<span class="muted">${TYPE_LABEL[x.type]}</span></div></div>${inn ? `<span class="chip ok">${ic('check','sm')} Đã thêm</span>` : `<button class="btn sec sm" data-act="c-add" data-v="${x.id}">${ic('plus','sm')} Thêm</button>`}</div>`; }).join('') || '<div class="emptyst">Chưa có câu nào ở chuyên đề này.</div>'}</div>
+      <div class="bank list">${bank.map(x => { const inn = c.qids.includes(x.id); return `<div class="li"><div class="grow"><div class="qt">${esc(x.text)}</div>${qImg(x, 'sm')}<div class="row small" style="gap:8px;margin-top:4px">${topicChip(x.topic)}<span class="muted">${TYPE_LABEL[x.type]}</span></div></div>${inn ? `<span class="chip ok">${ic('check','sm')} Đã thêm</span>` : `<button class="btn sec sm" data-act="c-add" data-v="${x.id}">${ic('plus','sm')} Thêm</button>`}</div>`; }).join('') || '<div class="emptyst">Chưa có câu nào ở chuyên đề này.</div>'}</div>
     </div></div>`;
   const hist = `<div class="card"><div class="card-h"><div><h2>Bài đã giao</h2><p>10 bài gần nhất</p></div></div><div class="card-b" style="padding-inline:8px"><div class="tbl"><table>
     <thead><tr><th>Ngày</th><th>Tên bài</th><th>Nhóm</th><th>Số câu</th><th>Đã nộp</th><th></th></tr></thead>
@@ -897,6 +956,7 @@ function saveNewQ(){
   if (q.type === 'mc') { nq.options = q.options.map(o => o.trim()); nq.answer = nq.options[q.correct]; }
   else if (q.type === 'tf') { nq.statements = q.statements.map(o => o.trim()); nq.answer = q.tfans.join(''); }
   else nq.answer = q.answer.trim();
+  if (q.img) nq.img = q.img;
   S.bank.push(nq); c.qids.push(nq.id); c.newQ = null; c.msg = {ok:true, text:'Đã thêm câu hỏi mới vào bài và ngân hàng câu hỏi.'};
   save(); render();
 }
@@ -921,7 +981,7 @@ function subDetail(b, teacher){
     const q = Q(qid); if (!q) return '';
     const ans = b.answers[qid] || {}, ok = isRight(q, ans.value), fixed = S.fixed[b.sid]?.[qid];
     return `<div class="qr ${ok ? '' : 'bad'}">
-      <div class="h"><span class="qn">${i + 1}</span><span class="qt">${esc(q.text)}${tfList(q)}</span>${ok ? `<span class="chip ok">${ic('check','sm')} Đúng</span>` : `<span class="chip bad">${ic('x','sm')} Sai</span>`}</div>
+      <div class="h"><span class="qn">${i + 1}</span><span class="qt">${esc(q.text)}${qImg(q)}${tfList(q)}</span>${ok ? `<span class="chip ok">${ic('check','sm')} Đúng</span>` : `<span class="chip bad">${ic('x','sm')} Sai</span>`}</div>
       <div class="ansl"><span>${teacher ? 'Học sinh' : 'Em'} trả lời: <span class="${ok ? 'r' : 'w'}">${esc(showVal(ans.value))}</span></span>${ok ? '' : `<span>Đáp án: <span class="r">${esc(showVal(q.answer))}</span></span>`}${!ok && teacher ? (fixed ? `<span class="chip ok">Đã tự sửa</span>` : `<span class="chip warn">Chưa sửa</span>`) : ''}</div>
       ${ans.work ? `<div class="work ${ok ? '' : 'bad'}">Cách làm: ${esc(ans.work)}</div>` : ''}
       ${!ok && q.explain ? `<div class="explain"><b>Lời giải:</b> ${esc(q.explain)}</div>` : ''}
@@ -999,7 +1059,7 @@ function tAnalysis(){
   const hq = `<div class="card"><div class="card-h"><div><h2>Câu sai nhiều nhất</h2><p>Kèm đáp án sai phổ biến để biết học sinh hiểu nhầm ở đâu</p></div>
     ${ui.an.level !== 'all' && hard.length ? `<button class="btn sm" data-act="reassign">${ic('retry','sm')} Giao lại ${Math.min(4, hard.length)} câu này</button>` : '<span class="small muted">Chọn một nhóm để giao lại các câu này</span>'}</div><div class="card-b">
     ${hard.length ? hard.map((s, i) => { const top = Object.entries(s.vals).sort((x, y) => y[1] - x[1])[0]; const r = s.w / s.n; return `<div class="qr">
-      <div class="h"><span class="qn">${i + 1}</span><span class="qt">${esc(s.q.text)}${tfList(s.q)}</span><span class="chip bad num">${pct(r)} sai</span></div>
+      <div class="h"><span class="qn">${i + 1}</span><span class="qt">${esc(s.q.text)}${qImg(s.q, 'sm')}${tfList(s.q)}</span><span class="chip bad num">${pct(r)} sai</span></div>
       <div class="row small" style="gap:8px">${topicChip(s.q.topic)}<span class="chip">${s.q.level}</span><span class="muted">${s.w}/${s.n} lượt sai</span></div>
       <div class="ansl"><span>Đáp án đúng: <span class="r">${esc(showVal(s.q.answer))}</span></span>${top ? `<span>Sai phổ biến: <span class="w" style="text-decoration:none">${esc(showVal(top[0]))}</span> (${top[1]} lần)</span>` : ''}</div>
       ${s.q.ww ? `<div class="work bad">Cách làm sai hay gặp: ${esc(s.q.ww)}</div>` : ''}
@@ -1053,7 +1113,7 @@ function sMistakes(st){
     ${open.length ? `<button class="btn cta lg" data-act="retry" data-v="${open.map(m => m.q.id).join(',')}">${ic('play','fill sm')} Luyện lại tất cả</button>` : ''}</div></div></div>`;
   const groups = TOPICS.map(t => [t, open.filter(m => m.q.topic === t)]).filter(([, l]) => l.length);
   const body = groups.map(([t, l]) => `<div class="card"><div class="card-h"><div class="row" style="gap:10px">${topicChip(t)}<span class="small muted">${l.length} câu</span></div></div><div class="card-b" style="padding-top:8px"><div class="list">
-    ${l.map(m => `<div class="li"><div class="grow"><div class="qt">${esc(m.q.text)}${tfList(m.q)}</div><div class="ansl" style="margin-top:4px"><span>Lần trước: <span class="w">${esc(showVal(m.value))}</span></span><span class="muted">sai ngày ${fmtDate(m.date)}</span></div></div><button class="btn sec sm" data-act="retry" data-v="${m.q.id}">${ic('retry','sm')} Làm lại</button></div>`).join('')}
+    ${l.map(m => `<div class="li"><div class="grow"><div class="qt">${esc(m.q.text)}${qImg(m.q, 'sm')}${tfList(m.q)}</div><div class="ansl" style="margin-top:4px"><span>Lần trước: <span class="w">${esc(showVal(m.value))}</span></span><span class="muted">sai ngày ${fmtDate(m.date)}</span></div></div><button class="btn sec sm" data-act="retry" data-v="${m.q.id}">${ic('retry','sm')} Làm lại</button></div>`).join('')}
   </div></div></div>`).join('');
   const fixed = done.length ? `<details class="sub"><summary><div class="grow"><b>Các câu đã sửa (${done.length})</b></div>${ic('chev','chev')}</summary><div class="body"><div class="list">${done.map(m => `<div class="li"><span class="chip ok">${ic('check','sm')}</span><div class="grow"><div class="qt">${esc(m.q.text)}</div></div>${topicChip(m.q.topic)}</div>`).join('')}</div></div></details>` : '';
   return head + body + fixed;
@@ -1103,7 +1163,7 @@ function renderPlayer(){
     : `<div><input type="text" class="ansbox ${st}" id="p-input" value="${esc(val)}" placeholder="Nhập đáp số" autocomplete="off" ${p.checked ? 'disabled' : ''}><div class="hint" style="margin-top:8px">Có thể nhập số nguyên, số thập phân (2,5) hoặc phân số (5/6).</div></div>`;
   const body = `<div class="pc"><div class="pin">
     <div class="row">${topicChip(q.topic)}<span class="small muted">${p.mode === 'assign' ? esc(A(p.aid)?.title || '') : 'Luyện lại lỗi sai'}</span></div>
-    <div class="qbig">${esc(q.text)}</div>${input}
+    <div class="qbig">${esc(q.text)}</div>${qImg(q, 'big')}${input}
     ${p.mode === 'assign' ? `<details class="wk" ${p.works[qid] ? 'open' : ''}><summary>Ghi cách làm (không bắt buộc)</summary><textarea id="p-work" rows="3" placeholder="Viết các bước em làm để thầy cô xem em sai ở đâu" ${p.checked ? 'disabled' : ''}>${esc(p.works[qid] || '')}</textarea></details>` : ''}
   </div></div>`;
   const last = p.i === n - 1;
@@ -1222,6 +1282,14 @@ document.addEventListener('click', e => {
     case 'c-newq': syncCompose(); ui.compose.newQ = {type:'num', text:'', answer:'', options:['','','',''], correct:0, statements:['','','',''], tfans:['Đ','Đ','Đ','Đ'], explain:''}; ui.compose.msg = null; render(); break;
     case 'c-cancelq': syncCompose(); ui.compose.newQ = null; render(); break;
     case 'c-saveq': saveNewQ(); break;
+    case 'c-rmimg': syncCompose(); delete ui.compose.newQ.img; render(); break;
+    case 'ins': {
+      const f = $('#' + (ui.lastField || 'nq-text')) || $('#nq-text'); if (!f) break;
+      const a = f.selectionStart ?? f.value.length, b = f.selectionEnd ?? a, before = f.value.slice(0, a);
+      const inMath = (before.match(/\$/g) || []).length % 2 === 1, ins = inMath ? v : '$' + v + '$';
+      f.value = before + ins + f.value.slice(b); const cur = a + ins.length - (inMath ? 0 : 1);
+      f.focus(); f.setSelectionRange(cur, cur); f.dispatchEvent(new Event('input', {bubbles:true})); break;
+    }
     case 'c-save': saveCompose(); break;
     case 'bank-topic': syncCompose(); ui.bankTopic = v; render(); break;
     case 'del-a':
@@ -1267,6 +1335,14 @@ document.addEventListener('change', e => {
   if (t.matches('[data-pick]')) { ui.sid = t.value; ui.review = {}; saveUi(); render(); }
   else if (t.dataset.act === 'set-level') { STU(t.dataset.v).level = t.value; save(); render(); toast('Đã chuyển sang nhóm ' + t.value + '.'); }
   else if (t.dataset.act === 'c-refresh') { syncCompose(); render(); }
+  else if (t.id === 'nq-img' && t.files && t.files[0]) { syncCompose(); compressImage(t.files[0]).then(d => { ui.compose.newQ.img = d; render(); }, () => toast('Không đọc được ảnh này, thử ảnh khác.')); }
+});
+document.addEventListener('mousedown', e => { if (e.target.closest('.mathbar button')) e.preventDefault(); });
+document.addEventListener('focusin', e => { if (/^nq-(text|exp|ans|o\d|s\d)$/.test(e.target.id || '')) ui.lastField = e.target.id; });
+document.addEventListener('input', e => {
+  if (e.target.id !== 'nq-text') return;
+  clearTimeout(ui.prevT);
+  ui.prevT = setTimeout(() => { const pv = $('#nq-prev'); if (!pv) return; pv.innerHTML = e.target.value.trim() ? esc(e.target.value) : '<span class="muted small">Đề bài sẽ hiện ở đây đúng như học sinh thấy</span>'; const M = window.MathJax; if (M && M.typesetPromise) M.typesetPromise([pv]).catch(() => {}); }, 250);
 });
 document.addEventListener('input', e => {
   const p = ui.player; if (!p) return;
