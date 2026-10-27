@@ -15,19 +15,20 @@ Tài khoản dùng thử (có nút vào nhanh ở màn đăng nhập):
 - Giáo viên thêm từng em hoặc dán cả danh sách lớp, hệ thống tự tạo tên đăng nhập và mật khẩu. Có đổi mật khẩu, xoá, sao chép danh sách để gửi cho học sinh.
 
 **Giáo viên**
-- Chọn khối 10, 11 hoặc 12. Mỗi khối có học sinh, chuyên đề, ngân hàng câu hỏi và bài giao riêng. Mặc định mở khối 11.
-- Tổng quan lớp: số học sinh đã nộp hôm nay, điểm trung bình, tỉ lệ sai 7 ngày, lỗi chưa sửa, học sinh cần chú ý.
-- Soạn và giao bài theo nhóm trình độ (Cơ bản, Khá, Giỏi) và chuyên đề, lấy từ ngân hàng câu hỏi hoặc tự soạn.
+- Chọn khối 10, 11 hoặc 12. Mặc định mở khối 11.
+- Lớp học: tạo, đổi tên, xoá lớp; chuyển học sinh giữa các lớp ngay trong bảng.
+- Chuyên đề dạng thư mục: giáo viên tự thêm, đổi tên, xoá; mỗi thư mục chứa câu hỏi và tài liệu (PDF, ảnh) cho học sinh tự học.
+- Soạn và giao bài: tick các lớp và trình độ được nhận bài; chỉ học sinh thuộc lớp và trình độ đó mới thấy. Đính kèm được PDF, ảnh.
+- Tạo đề nhanh: lấy ngẫu nhiên câu có sẵn trong ngân hàng theo chuyên đề, dạng câu, số câu.
+- Soạn câu mới: tick một hoặc nhiều trình độ, gõ công thức toán (MathJax) có xem trước, chèn hình.
 - Ba dạng câu theo đề tốt nghiệp THPT: trắc nghiệm 4 lựa chọn, đúng/sai 4 ý, trả lời ngắn.
-- Gõ công thức toán (phân số, căn, mũ, tích phân, vectơ…) bằng thanh công cụ, có xem trước. Công thức hiển thị bằng MathJax.
-- Chèn hình (đồ thị, hình vẽ, bảng biến thiên) vào câu hỏi, ảnh tự được nén.
-- Xem bài làm của từng học sinh, gồm đáp án và cách làm.
-- Phân tích lỗi sai: tỉ lệ sai theo chuyên đề, bản đồ năng lực học sinh × chuyên đề, câu sai nhiều nhất và nút giao lại.
+- Tổng quan, xem bài làm từng học sinh, phân tích lỗi sai (lọc theo lớp và trình độ), bản đồ năng lực.
 
 **Học sinh**
-- Làm bài hôm nay theo từng câu, có phản hồi và lời giải ngay.
+- Làm bài hôm nay theo từng câu, có phản hồi và lời giải ngay; mở tài liệu giáo viên gửi kèm.
+- Chuyên đề tự học: xem các thư mục giáo viên tạo, đọc tài liệu PDF, ảnh, tự luyện 5 hoặc 10 câu theo độ khó tự chọn, không tính điểm.
 - Chuỗi ngày làm bài liên tiếp, mức thành thạo theo chuyên đề.
-- Sổ lỗi sai: làm lại các câu sai cho đến khi đúng.
+- Sổ lỗi sai: gồm câu sai ở bài được giao và khi tự luyện; làm lại cho đến khi đúng.
 
 ## Ghi chú
 

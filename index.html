@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Demo LMS luyện Toán 10, 11, 12 mỗi ngày: giáo viên giao bài theo khối và trình độ, học sinh làm bài và sửa lỗi sai.">
+<meta name="description" content="Demo LMS luyện Toán 10, 11, 12 mỗi ngày: giáo viên giao bài theo lớp và trình độ, chuyên đề và tài liệu, học sinh tự luyện và sửa lỗi sai.">
 <title>Toán Mỗi Ngày</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@ body{margin:0}
   --success:#12913e; --success-soft:#e0f4e5;
   --danger:#d2352b; --danger-soft:#fde8e6;
   --warn:#b36b00; --warn-soft:#fff1da;
-  --t1:#2563c9; --t2:#b8327f; --t3:#0e8a7a; --t4:#e0661a;
+  --t1:#2563c9; --t2:#b8327f; --t3:#0e8a7a; --t4:#e0661a; --t5:#7a4fc0; --t6:#8a6a12;
   --board:#2d4a3b; --board-2:#24402f; --wood:#a46f3e; --chalk:#f3f0e4; --chalk-y:#ffe066;
   --band:var(--board); --hard:var(--ink); --yellow:#ffd84d; --navy:var(--ink);
   --shadow:0 1px 2px rgba(23,37,29,.05),0 4px 14px rgba(23,37,29,.05);
@@ -478,6 +478,40 @@ mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
 .gradeseg{background:var(--surface);border:1px solid var(--line);flex:none}
 .gradeseg button{padding:7px 12px}
 @media (max-width:900px){.topbar .r{width:100%}.gradeseg{width:100%}}
+
+/* thư mục chuyên đề, lớp, tài liệu */
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:900px){.g2{grid-template-columns:minmax(0,1fr)}}
+.fl{display:flex;flex-direction:column;gap:8px;font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.cbxs{display:flex;flex-wrap:wrap;gap:8px}
+.cbx{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line-2);border-radius:999px;padding:6px 13px;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;background:var(--surface);user-select:none}
+.cbx input{accent-color:var(--board);margin:0;width:16px;height:16px}
+.cbx:has(input:checked){border-color:var(--board);background:var(--primary-soft)}
+.docs{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.doc{display:inline-flex;align-items:stretch;border:1px solid var(--line-2);border-radius:10px;background:var(--surface);max-width:100%;overflow:hidden}
+.doc .dopen{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;padding:7px 10px;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;min-width:0}
+.doc .dopen:hover{background:var(--surface-2)}
+.doc .dx{border:0;border-left:1px solid var(--line);background:transparent;color:var(--muted);padding:0 8px;cursor:pointer}
+.doc .dx:hover{color:var(--danger);background:var(--danger-soft)}
+.doc .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px}
+.ext{font-size:10px;font-weight:800;letter-spacing:.04em;border-radius:5px;padding:2px 6px;background:var(--danger-soft);color:var(--danger);flex:none}
+.ext.img{background:var(--primary-soft);color:var(--primary)}
+.clist{display:flex;flex-direction:column;gap:8px}
+.crow{display:flex;align-items:center;gap:8px}
+.crow input{flex:1;min-width:0}
+button.tcard{padding:0;text-align:left;font:inherit;color:inherit;cursor:pointer;width:100%}
+button.tcard:focus-visible{outline:2.5px solid var(--primary);outline-offset:2px}
+.course .cb .fl{margin-top:2px}
+/* xem tài liệu */
+.viewer{position:fixed;inset:0;z-index:45;background:rgba(14,20,17,.9);display:flex;flex-direction:column}
+.viewer .vh{display:flex;align-items:center;gap:12px;color:#fff;padding:calc(12px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px))}
+.viewer .vh b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px}
+.viewer .iconbtn{background:rgba(255,255,255,.14);color:#fff;border-color:transparent}
+.viewer .vb{flex:1;overflow:auto;padding:8px max(16px,env(safe-area-inset-right,0px)) 28px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;align-items:center;gap:14px}
+.viewer .vb img{max-width:min(100%,1000px);background:#fff;border-radius:6px;box-shadow:0 6px 22px rgba(0,0,0,.4)}
+.viewer .vb canvas{width:min(100%,900px);height:auto;background:#fff;border-radius:4px;box-shadow:0 6px 22px rgba(0,0,0,.4)}
+.vmsg{color:rgba(255,255,255,.8);font-size:14px}
+@media (max-width:900px){.bnav button{font-size:10.5px;letter-spacing:-.01em}.bnav{padding-left:max(4px,env(safe-area-inset-left,0px));padding-right:max(4px,env(safe-area-inset-right,0px))}}
 </style>
 <script>
 window.MathJax = {tex:{inlineMath:[['$','$']]}, svg:{fontCache:'global'}, options:{skipHtmlTags:['script','noscript','style','textarea','pre','code','input']},
@@ -506,6 +540,7 @@ window.MathJax = {tex:{inlineMath:[['$','$']]}, svg:{fontCache:'global'}, option
   <nav class="bnav" id="bnav" aria-label="Điều hướng"></nav>
 </div>
 <div class="login" id="login" hidden></div>
+<div class="viewer" id="viewer" hidden></div>
 <div class="player" id="player" hidden></div>
 <div class="toast" id="toast" hidden></div>
 
@@ -617,34 +652,70 @@ const BANK = [
 ];
 
 const STUDENTS = [
-  {id:'s1',grade:11,name:'Nguyễn Minh An',level:'Cơ bản',skill:.72,weak:'Mũ – Logarit',user:'hs01',pass:'an2k8m'},
-  {id:'s2',grade:11,name:'Trần Bảo Ngọc',level:'Cơ bản',skill:.62,weak:'Lượng giác',user:'hs02',pass:'ng4p7t'},
-  {id:'s3',grade:11,name:'Lê Gia Huy',level:'Khá',skill:.78,weak:'Giới hạn',user:'hs03',pass:'hu9x3c'},
-  {id:'s4',grade:11,name:'Phạm Thu Hà',level:'Khá',skill:.72,weak:'Lượng giác',user:'hs04',pass:'ha5r2w'},
-  {id:'s5',grade:11,name:'Võ Đức Thịnh',level:'Khá',skill:.8,weak:'Cấp số',user:'hs05',pass:'th8m6q'},
-  {id:'s6',grade:11,name:'Đặng Khánh Linh',level:'Giỏi',skill:.8,weak:'Mũ – Logarit',user:'hs06',pass:'li3v9k'},
-  {id:'s7',grade:11,name:'Hoàng Quốc Bảo',level:'Giỏi',skill:.74,weak:'Giới hạn',user:'hs07',pass:'ba7e4n'},
-  {id:'s8',grade:12,name:'Bùi Thanh Tùng',level:'Cơ bản',skill:.7,weak:'Tích phân',user:'hs08',pass:'tu6k2d'},
-  {id:'s9',grade:12,name:'Đỗ Ngọc Ánh',level:'Khá',skill:.76,weak:'Xác suất',user:'hs09',pass:'nh3w8p'},
-  {id:'s10',grade:12,name:'Phan Minh Khôi',level:'Giỏi',skill:.82,weak:'Oxyz',user:'hs10',pass:'kh5t9m'},
-  {id:'s11',grade:10,name:'Lý Hải Yến',level:'Cơ bản',skill:.7,weak:'Vectơ',user:'hs11',pass:'ye4c7r'},
-  {id:'s12',grade:10,name:'Ngô Tuấn Kiệt',level:'Khá',skill:.75,weak:'Hệ thức lượng',user:'hs12',pass:'ki8n2v'}
+  {id:'s1',cls:'c11a1',grade:11,name:'Nguyễn Minh An',level:'Cơ bản',skill:.72,weak:'Mũ – Logarit',user:'hs01',pass:'an2k8m'},
+  {id:'s2',cls:'c11a1',grade:11,name:'Trần Bảo Ngọc',level:'Cơ bản',skill:.62,weak:'Lượng giác',user:'hs02',pass:'ng4p7t'},
+  {id:'s3',cls:'c11a1',grade:11,name:'Lê Gia Huy',level:'Khá',skill:.78,weak:'Giới hạn',user:'hs03',pass:'hu9x3c'},
+  {id:'s4',cls:'c11a1',grade:11,name:'Phạm Thu Hà',level:'Khá',skill:.72,weak:'Lượng giác',user:'hs04',pass:'ha5r2w'},
+  {id:'s5',cls:'c11a2',grade:11,name:'Võ Đức Thịnh',level:'Khá',skill:.8,weak:'Cấp số',user:'hs05',pass:'th8m6q'},
+  {id:'s6',cls:'c11a2',grade:11,name:'Đặng Khánh Linh',level:'Giỏi',skill:.8,weak:'Mũ – Logarit',user:'hs06',pass:'li3v9k'},
+  {id:'s7',cls:'c11a2',grade:11,name:'Hoàng Quốc Bảo',level:'Giỏi',skill:.74,weak:'Giới hạn',user:'hs07',pass:'ba7e4n'},
+  {id:'s8',cls:'c12a1',grade:12,name:'Bùi Thanh Tùng',level:'Cơ bản',skill:.7,weak:'Tích phân',user:'hs08',pass:'tu6k2d'},
+  {id:'s9',cls:'c12a1',grade:12,name:'Đỗ Ngọc Ánh',level:'Khá',skill:.76,weak:'Xác suất',user:'hs09',pass:'nh3w8p'},
+  {id:'s10',cls:'c12a1',grade:12,name:'Phan Minh Khôi',level:'Giỏi',skill:.82,weak:'Oxyz',user:'hs10',pass:'kh5t9m'},
+  {id:'s11',cls:'c10a1',grade:10,name:'Lý Hải Yến',level:'Cơ bản',skill:.7,weak:'Vectơ',user:'hs11',pass:'ye4c7r'},
+  {id:'s12',cls:'c10a1',grade:10,name:'Ngô Tuấn Kiệt',level:'Khá',skill:.75,weak:'Hệ thức lượng',user:'hs12',pass:'ki8n2v'}
 ];
+const CLASSES = [{id:'c10a1',grade:10,name:'10A1'}, {id:'c11a1',grade:11,name:'11A1'}, {id:'c11a2',grade:11,name:'11A2'}, {id:'c12a1',grade:12,name:'12A1'}];
+
+// ---------- tài liệu mẫu (tạo ngay trong trình duyệt) ----------
+function makePdf(title, lines){
+  const e = s => s.replace(/[\\()]/g, m => '\\' + m);
+  let content = `BT /F1 20 Tf 56 780 Td (${e(title)}) Tj ET\n`, y = 738;
+  for (const l of lines) { content += `BT /F1 13 Tf 56 ${y} Td (${e(l)}) Tj ET\n`; y -= 24; }
+  const objs = ['<< /Type /Catalog /Pages 2 0 R >>', '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>',
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>', `<< /Length ${content.length} >>\nstream\n${content}endstream`];
+  let pdf = '%PDF-1.4\n'; const offs = [];
+  objs.forEach((o, i) => { offs.push(pdf.length); pdf += `${i + 1} 0 obj\n${o}\nendobj\n`; });
+  const xref = pdf.length;
+  pdf += `xref\n0 ${objs.length + 1}\n0000000000 65535 f \n` + offs.map(o => String(o).padStart(10, '0') + ' 00000 n \n').join('') + `trailer\n<< /Size ${objs.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  return 'data:application/pdf;base64,' + btoa(pdf);
+}
+function trigTableSvg(){
+  const rows = [['α','0°','30°','45°','60°','90°'], ['sin α','0','1/2','√2/2','√3/2','1'], ['cos α','1','√3/2','√2/2','1/2','0'], ['tan α','0','√3/3','1','√3','—']];
+  const W = 520, H = 200, cw = W / 6, rh = H / 4;
+  let g = '';
+  rows.forEach((r, i) => r.forEach((c, j) => {
+    g += `<rect x="${j * cw}" y="${i * rh}" width="${cw}" height="${rh}" fill="${i === 0 || j === 0 ? '#e9f1ec' : '#fff'}" stroke="#2d4a3b" stroke-width="1"/>`;
+    g += `<text x="${j * cw + cw / 2}" y="${i * rh + rh / 2 + 6}" font-size="17" font-family="Times New Roman,serif" text-anchor="middle" fill="#17251d" ${i === 0 || j === 0 ? 'font-weight="bold"' : ''}>${c}</text>`;
+  }));
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${W + 2}" height="${H + 2}" viewBox="-1 -1 ${W + 2} ${H + 2}">${g}</svg>`);
+}
 
 // ---------- dữ liệu ----------
 function seed(){
   const rnd = mulberry32(20261023);
-  const st = {v:4, teacher:{name:'Giáo viên Toán', user:'giaovien', pass:'123456'}, students:STUDENTS.map(s => ({id:s.id,grade:s.grade,name:s.name,level:s.level,user:s.user,pass:s.pass})), bank:BANK.map(q => ({...q, grade:q.grade || 12})), assignments:[], submissions:[], fixed:{}, n:1};
+  const st = {v:5, teacher:{name:'Giáo viên Toán', user:'giaovien', pass:'123456'},
+    classes:CLASSES.map(c => ({...c})),
+    topics:[], students:STUDENTS.map(s => ({id:s.id, grade:s.grade, cls:s.cls, name:s.name, level:s.level, user:s.user, pass:s.pass})),
+    bank:BANK.map(q => { const x = {...q, grade:q.grade || 12, levels:[q.level]}; delete x.level; return x; }),
+    assignments:[], submissions:[], fixed:{}, practice:{}, pwrong:{}, n:1};
+  for (const g of GRADES) TOPICS_BY_GRADE[g].forEach(name => st.topics.push({id:'tp' + st.n++, grade:g, name, docs:[]}));
+  const tp = (g, name) => st.topics.find(t => t.grade === g && t.name === name);
+  tp(11, 'Lượng giác').docs.push(
+    {id:'d' + st.n++, name:'Công thức lượng giác cơ bản.pdf', kind:'pdf', data:makePdf('Cong thuc luong giac co ban (tai lieu mau)', ['sin^2 x + cos^2 x = 1', '1 + tan^2 x = 1 / cos^2 x', 'sin 2x = 2 sin x cos x', 'cos 2x = cos^2 x - sin^2 x = 1 - 2 sin^2 x', 'sin(a + b) = sin a cos b + cos a sin b', 'cos(a + b) = cos a cos b - sin a sin b', 'tan(a + b) = (tan a + tan b) / (1 - tan a tan b)'])},
+    {id:'d' + st.n++, name:'Bảng giá trị lượng giác.svg', kind:'img', data:trigTableSvg()});
+  tp(12, 'Đạo hàm').docs.push({id:'d' + st.n++, name:'Đồ thị y = x³ − 3x.svg', kind:'img', data:GRAPH});
   const rot = (arr, k) => arr.length ? arr.slice(k % arr.length).concat(arr.slice(0, k % arr.length)) : arr;
   for (let i = -6; i <= 0; i++) {
     const day = addDays(TODAY, i);
     for (const g of GRADES) LEVELS.forEach((lv, li) => {
-      const pool = st.bank.filter(q => q.level === lv && q.grade === g), tops = TOPICS_BY_GRADE[g];
+      const pool = st.bank.filter(q => q.levels.includes(lv) && q.grade === g), tops = TOPICS_BY_GRADE[g];
       if (!pool.length) return;
       const topic = tops[(i + 6 + li + g) % tops.length];
       const pick = rot(pool.filter(q => q.topic === topic), i + 6).slice(0, 2);
       for (const q of rot(pool.filter(q => q.topic !== topic), (i + 6) * 2 + li)) { if (pick.length >= 3) break; pick.push(q); }
-      const a = {id:'a' + st.n++, date:day, grade:g, level:lv, topic, title:TOPIC_FULL[topic], qids:pick.map(q => q.id)};
+      const a = {id:'a' + st.n++, date:day, grade:g, classes:CLASSES.filter(c => c.grade === g).map(c => c.id), levels:[lv], topic, title:TOPIC_FULL[topic], qids:pick.map(q => q.id), docs:[]};
       st.assignments.push(a);
       STUDENTS.filter(s => s.level === lv && s.grade === g).forEach(s => {
         if (rnd() > (i === 0 ? 0.45 : 0.86)) return;
@@ -663,23 +734,23 @@ function seed(){
         });
         const h = 15 + Math.floor(rnd() * 6), m = Math.floor(rnd() * 60);
         st.submissions.push({id:'b' + st.n++, aid:a.id, sid:s.id, at:day + 'T' + z(h) + ':' + z(m), answers});
-        // vài lỗi cũ đã được sửa
         if (i < -2) a.qids.forEach(qid => { if (!isRight(st.bank.find(x => x.id === qid), answers[qid].value) && rnd() < 0.4) (st.fixed[s.id] ||= {})[qid] = true; });
       });
     });
   }
+  // vài lượt tự luyện mẫu để trang chuyên đề của học sinh có số liệu
+  for (const s of STUDENTS) for (const t of TOPICS_BY_GRADE[s.grade]) if (rnd() < 0.5) { const n = 3 + Math.floor(rnd() * 8); ((st.practice[s.id] ||= {})[t] = {n, c:Math.round(n * (s.skill - (t === s.weak ? 0.25 : 0)))}); }
   return st;
 }
 
 const KEY = 'toan-moi-ngay-v1';
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)); } catch (e) { S = null; }
-if (!S || S.v !== 4) S = seed();
-function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+if (!S || S.v !== 5) S = seed();
+// trả về false khi bộ nhớ trình duyệt đầy (bản demo lưu cả tài liệu trong trình duyệt)
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); return true; } catch (e) { return false; } }
 
-const ui = {grade:11, role:'teacher', sid:'s1', tab:{teacher:'today', student:'today'}, tSid:null, an:{range:'7', level:'all'}, compose:null, flash:{}, armed:null, justSubmitted:null};
-try { const u = JSON.parse(localStorage.getItem(KEY + '-ui')); if (u) { ui.role = u.role || ui.role; ui.sid = u.sid || ui.sid; } } catch (e) {}
-function saveUi(){ try { localStorage.setItem(KEY + '-ui', JSON.stringify({role:ui.role, sid:ui.sid})); } catch (e) {} }
+const ui = {grade:11, role:'teacher', sid:'s1', tab:{teacher:'today', student:'today'}, tSid:null, an:{range:'7', level:'all', cls:'all'}, compose:null, flash:{}, armed:null};
 
 // ---------- chấm bài ----------
 function parseNum(s){
@@ -701,6 +772,14 @@ const normVal = v => String(v ?? '').trim().replace(/[−–]/g, '-').replace(/\
 const Q = id => S.bank.find(q => q.id === id);
 const A = id => S.assignments.find(a => a.id === id);
 const STU = id => S.students.find(s => s.id === id);
+const CL = id => S.classes.find(c => c.id === id);
+const clsName = id => CL(id)?.name || '—';
+const classesOf = g => S.classes.filter(c => c.grade === g).sort((x, y) => x.name.localeCompare(y.name));
+const topicsOf = g => S.topics.filter(t => t.grade === g);
+const topicObj = (g, name) => S.topics.find(t => t.grade === g && t.name === name);
+// bài a hiện cho học sinh s khi s thuộc một lớp và một trình độ được giao
+const sees = (a, s) => a.grade === s.grade && (a.classes || []).includes(s.cls) && (a.levels || []).includes(s.level);
+const targets = a => S.students.filter(s => sees(a, s));
 function scoreOf(sub){
   const a = A(sub.aid); if (!a) return {c:0, t:0, ten:0};
   const c = a.qids.filter(qid => isRight(Q(qid), sub.answers[qid]?.value)).length;
@@ -708,9 +787,9 @@ function scoreOf(sub){
 }
 const subsOf = sid => S.submissions.filter(b => b.sid === sid && A(b.aid)).sort((x, y) => y.at.localeCompare(x.at));
 const subFor = (aid, sid) => S.submissions.find(b => b.aid === aid && b.sid === sid);
-const todaysFor = st => S.assignments.filter(a => a.date === TODAY && a.grade === st.grade && a.level === st.level);
+const todaysFor = st => S.assignments.filter(a => a.date === TODAY && sees(a, st));
 
-// sổ lỗi: mỗi câu từng làm sai, lấy lần sai gần nhất
+// sổ lỗi: mỗi câu từng làm sai (bài được giao hoặc tự luyện), lấy lần sai gần nhất
 function mistakes(sid){
   const seen = new Map();
   for (const b of subsOf(sid)) {
@@ -720,6 +799,10 @@ function mistakes(sid){
       const v = b.answers[qid]?.value;
       if (!isRight(q, v)) seen.set(qid, {q, value:v, work:b.answers[qid]?.work, date:a.date, fixed:!!S.fixed[sid]?.[qid]});
     }
+  }
+  for (const [qid, w] of Object.entries(S.pwrong[sid] || {})) {
+    const q = Q(qid); if (!q || seen.has(qid)) continue;
+    seen.set(qid, {q, value:w.value, date:w.date, fixed:!!S.fixed[sid]?.[qid], practice:true});
   }
   return [...seen.values()];
 }
@@ -731,7 +814,7 @@ function streakOf(sid){
 }
 
 // ---------- giao diện: tiện ích ----------
-ui.player = null; ui.review = {}; ui.bankTopic = 'all';
+ui.player = null; ui.review = {}; ui.bankTopic = 'all'; ui.viewer = null; ui.stTopic = null;
 const ICON = {
   home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
   edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
@@ -743,6 +826,7 @@ const ICON = {
   check:'<path d="M5 12.5l4.5 4.5L19 7"/>',
   x:'<path d="M6 6l12 12M18 6 6 18"/>',
   arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',
   play:'<path d="M7 5v14l11-7z"/>',
   alert:'<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',
@@ -755,11 +839,16 @@ const ICON = {
   image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 17-5-5L6 20"/>',
   key:'<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M16 7l3 3M14 9l2 2"/>',
   logout:'<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l-5-5 5-5M5 12h11"/>',
+  folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  file:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
+  upload:'<path d="M12 16V4M7 9l5-5 5 5M5 20h14"/>',
+  shuffle:'<path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>',
+  save:'<path d="M5 3h11l3 3v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 3v5h8M7 21v-7h10v7"/>',
   trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>'
 };
 const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICON[n]}</svg>`;
-const TOPIC_VAR = {}; for (const g of GRADES) TOPICS_BY_GRADE[g].forEach((t, i) => TOPIC_VAR[t] = '--t' + (i + 1));
 const TOPIC_GLYPH = {'Tập hợp':'∩', 'Hàm số bậc hai':'x²', 'Vectơ':'→', 'Hệ thức lượng':'△', 'Lượng giác':'sin', 'Cấp số':'uₙ', 'Mũ – Logarit':'log', 'Giới hạn':'lim', 'Đạo hàm':'f′', 'Tích phân':'∫', 'Oxyz':'xyz', 'Xác suất':'%'};
+const glyph = t => TOPIC_GLYPH[t] || String(t).trim().charAt(0).toUpperCase();
 const SG = () => S.students.filter(s => s.grade === ui.grade);   // học sinh của khối giáo viên đang xem
 const TYPE_LABEL = {mc:'Trắc nghiệm', tf:'Đúng/Sai', num:'Trả lời ngắn'};
 const qImg = (q, cls = '') => q.img ? `<img class="qimg ${cls}" src="${q.img}" alt="Hình minh họa của câu hỏi">` : '';
@@ -771,27 +860,43 @@ function typesetAll(){
   M.typesetPromise(els).catch(() => {});
 }
 window.typesetAll = typesetAll;
-function compressImage(file){
+function compressImage(file, maxW = 900){
   return new Promise((res, rej) => {
     const fr = new FileReader();
     fr.onload = () => { const im = new Image(); im.onload = () => {
-      const k = Math.min(1, 900 / im.width), c = document.createElement('canvas');
+      const k = Math.min(1, maxW / im.width), c = document.createElement('canvas');
       c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
       const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0, c.width, c.height);
       res(c.toDataURL('image/jpeg', 0.82)); }; im.onerror = rej; im.src = fr.result; };
     fr.onerror = rej; fr.readAsDataURL(file);
   });
 }
+const readDataUrl = file => new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(file); });
+// đọc tệp tài liệu: ảnh được nén, PDF giữ nguyên (tối đa 3 MB vì bản demo lưu trong trình duyệt)
+async function readDoc(file){
+  if (file.type === 'application/pdf' || /\.pdf$/i.test(file.name)) {
+    if (file.size > 3 * 1024 * 1024) throw new Error('PDF lớn hơn 3 MB. Bản demo lưu trong trình duyệt nên giới hạn dung lượng; bản chính thức lưu trên máy chủ.');
+    return {name:file.name, kind:'pdf', data:await readDataUrl(file)};
+  }
+  if (/^image\//.test(file.type)) return {name:file.name, kind:'img', data:await compressImage(file, 1400)};
+  throw new Error('Chỉ nhận tệp PDF hoặc ảnh.');
+}
+const docChip = (d, del) => `<span class="doc"><button class="dopen" data-act="open-doc" data-v="${d.id}" title="Mở ${esc(d.name)}"><span class="ext ${d.kind}">${d.kind === 'pdf' ? 'PDF' : 'ẢNH'}</span><span class="nm">${esc(d.name)}</span></button>${del ? `<button class="dx" data-act="${del}" data-v="${d.id}" aria-label="Xoá ${esc(d.name)}">${ic('x','sm')}</button>` : ''}</span>`;
+const allDocs = () => S.topics.flatMap(t => t.docs).concat(S.assignments.flatMap(a => a.docs || [])).concat(ui.compose?.docs || []);
 const tfList = q => q.type === 'tf' ? `<ol class="tfs">${q.statements.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : '';
 const answered = (q, v) => q.type === 'tf' ? /^[ĐS]{4}$/.test(v || '') : !!String(v ?? '').trim();
-const tcv = t => `--tc:var(${TOPIC_VAR[t] || '--t1'})`;
+const tvar = t => { const i = TOPICS.indexOf(t); return '--t' + ((i < 0 ? 0 : i) % 6 + 1); };
+const tcv = t => `--tc:var(${tvar(t)})`;
 const topicChip = t => `<span class="chip topic" style="${tcv(t)}"><span class="dot"></span>${esc(t)}</span>`;
+const lvChips = q => (q.levels || []).map(l => `<span class="chip">${l}</span>`).join('');
 const AVC = ['--t1','--t2','--t3','--t4','--danger','--success','--warn'];
 function initials(n){ const p = n.trim().split(/\s+/); return (p.length > 1 ? p[p.length - 2][0] : '') + p[p.length - 1][0]; }
 function avatar(s, cls = ''){ const k = Number(String(s.id).replace(/\D/g, '')) || 0; return `<span class="av ${cls}" style="--c:var(${AVC[k % AVC.length]})" aria-hidden="true">${esc(initials(s.name))}</span>`; }
 const firstName = s => s.name.trim().split(/\s+/).pop();
 const mean = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
 const scoreCls = f => f >= 0.8 ? 'ok' : f >= 0.5 ? 'warn' : 'bad';
+const shuffle = arr => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const targetText = a => `${(a.classes || []).map(clsName).join(', ') || 'chưa chọn lớp'} · ${(a.levels || []).join(', ')}`;
 function ring(frac, size = 64, stroke = 7, color = 'var(--primary)', inner = ''){
   const r = (size - stroke) / 2, c = 2 * Math.PI * r, h = size / 2;
   return `<div class="ring" style="width:${size}px;height:${size}px"><svg viewBox="0 0 ${size} ${size}"><circle cx="${h}" cy="${h}" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="${stroke}"/>${frac > 0 ? `<circle cx="${h}" cy="${h}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c * Math.min(frac, 1)} ${c}" transform="rotate(-90 ${h} ${h})"/>` : ''}</svg><span>${inner}</span></div>`;
@@ -809,9 +914,10 @@ function spark(vals, w = 132, h = 34, color = 'var(--danger)'){
 const WD = ['CN','T2','T3','T4','T5','T6','T7'];
 const wdOf = k => { const [y, m, d] = k.split('-').map(Number); return WD[new Date(y, m - 1, d).getDay()]; };
 const last7 = () => [...Array(7)].map((_, i) => addDays(TODAY, i - 6));
+const note = m => !m ? '' : `<div class="note ${m.ok ? 'ok' : 'bad'}">${ic(m.ok ? 'check' : 'alert', 'sm')}<span>${m.html || esc(m.text)}</span></div>`;
 
-function toast(msg){ const t = $('#toast'); t.innerHTML = ic('check', 'sm') + esc(msg); t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 2600); }
-function go(tab){ if (ui.role === 'teacher' && ui.tab.teacher === 'compose') syncCompose(); ui.tab[ui.role] = tab; ui.armed = null; ui.accMsg = null; render(); window.scrollTo(0, 0); }
+function toast(msg){ const t = $('#toast'); t.innerHTML = ic('check', 'sm') + esc(msg); t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 2800); }
+function go(tab){ if (ui.role === 'teacher' && ui.tab.teacher === 'compose') syncCompose(); ui.tab[ui.role] = tab; ui.armed = null; ui.accMsg = null; ui.tpMsg = null; ui.stTopic = null; render(); window.scrollTo(0, 0); }
 
 // ---------- khung ----------
 let AUTH = null;
@@ -820,47 +926,86 @@ function setAuth(a){ AUTH = a; try { a ? localStorage.setItem(KEY + '-auth', JSO
 function render(){
   if (AUTH && AUTH.role === 'student' && !STU(AUTH.sid)) setAuth(null);
   const lg = $('#login');
-  if (!AUTH) { $('.app').hidden = true; lg.hidden = false; lg.innerHTML = loginHtml(); ui.player = null; renderPlayer(); typesetAll(); return; }
+  if (!AUTH) { $('.app').hidden = true; lg.hidden = false; lg.innerHTML = loginHtml(); ui.player = null; renderPlayer(); renderViewer(); typesetAll(); return; }
   $('.app').hidden = false; lg.hidden = true; lg.innerHTML = '';
   ui.role = AUTH.role; if (AUTH.role === 'student') ui.sid = AUTH.sid;
   const st = STU(ui.sid) || S.students[0];
   const T = ui.role === 'teacher';
-  TOPICS = TOPICS_BY_GRADE[T ? ui.grade : st.grade];
+  TOPICS = topicsOf(T ? ui.grade : st.grade).map(t => t.name);
   const nOpen = mistakes(st.id).filter(m => !m.fixed).length;
   const tabs = T
-    ? [['today','Tổng quan','home'],['compose','Soạn & giao bài','edit'],['work','Bài làm học sinh','users'],['analysis','Phân tích lỗi sai','chart'],['accounts','Tài khoản học sinh','key']]
-    : [['today','Trang chủ','home'],['mistakes','Sổ lỗi sai','book',nOpen],['history','Lịch sử','clock']];
+    ? [['today','Tổng quan','home'],['compose','Soạn & giao bài','edit'],['topics','Chuyên đề & tài liệu','folder'],['work','Bài làm học sinh','users'],['analysis','Phân tích lỗi sai','chart'],['accounts','Lớp & tài khoản','key']]
+    : [['today','Trang chủ','home'],['topics','Chuyên đề','folder'],['mistakes','Sổ lỗi sai','book',nOpen],['history','Lịch sử','clock']];
   const cur = ui.tab[ui.role];
+  const SHORT = {compose:'Giao bài', topics:'Chuyên đề', work:'Bài làm', analysis:'Phân tích', accounts:'Lớp'};
   $('#navlbl').textContent = T ? 'Lớp học' : 'Học tập';
   $('#sidenav').innerHTML = tabs.map(([k, l, i, c]) => `<button class="nav-item" data-act="tab" data-v="${k}" ${k === cur ? 'aria-current="page"' : ''}>${ic(i)}<span>${l}</span>${c ? `<span class="badge">${c}</span>` : ''}</button>`).join('');
-  $('#bnav').innerHTML = tabs.map(([k, l, i, c]) => `<button data-act="tab" data-v="${k}" ${k === cur ? 'aria-current="page"' : ''}>${ic(i)}<span class="l">${{compose:'Giao bài', work:'Bài làm', analysis:'Phân tích', accounts:'Tài khoản'}[k] || l}</span>${c ? `<span class="badge">${c}</span>` : ''}</button>`).join('');
+  $('#bnav').innerHTML = tabs.map(([k, l, i, c]) => `<button data-act="tab" data-v="${k}" ${k === cur ? 'aria-current="page"' : ''}>${ic(i)}<span class="l">${SHORT[k] || l}</span>${c ? `<span class="badge">${c}</span>` : ''}</button>`).join('');
 
-  const me = T ? {av:'<span class="av" style="--c:var(--primary)">GV</span>', name:S.teacher.name, sub:'Khối 10, 11, 12'} : {av:avatar(st), name:st.name, sub:'Lớp ' + st.grade + 'A1 · nhóm ' + st.level};
+  const me = T ? {av:'<span class="av" style="--c:var(--primary)">GV</span>', name:S.teacher.name, sub:'Khối 10, 11, 12'} : {av:avatar(st), name:st.name, sub:'Lớp ' + clsName(st.cls) + ' · nhóm ' + st.level};
   $('#rolecard').innerHTML = `<div class="who">${me.av}<div style="min-width:0;flex:1"><b>${esc(me.name)}</b><span>${me.sub}</span></div></div><button class="btn sm logout" data-act="logout">${ic('logout','sm')} Đăng xuất</button>`;
 
   const titles = T
-    ? {today:[`Khối ${ui.grade}`,'Tổng quan lớp học'], compose:[`Khối ${ui.grade}`,'Soạn & giao bài'], work:[`Khối ${ui.grade}`,'Bài làm học sinh'], analysis:[`Khối ${ui.grade}`,'Phân tích lỗi sai'], accounts:[`Khối ${ui.grade}`,'Tài khoản học sinh']}
-    : {today:[`Toán ${st.grade}`,`Chào ${esc(firstName(st))}!`], mistakes:[`Toán ${st.grade}`,'Sổ lỗi sai'], history:[`Toán ${st.grade}`,'Lịch sử làm bài']};
-  const [crumb, title] = titles[cur];
-  $('#topbar').innerHTML = `<div><div class="crumb">${crumb} ${ic('chev','sm')} ${T ? 'Giáo viên' : 'Nhóm ' + st.level}</div><h1>${title}</h1></div>
+    ? {today:'Tổng quan lớp học', compose:'Soạn & giao bài', topics:'Chuyên đề & tài liệu', work:'Bài làm học sinh', analysis:'Phân tích lỗi sai', accounts:'Lớp & tài khoản'}
+    : {today:`Chào ${esc(firstName(st))}!`, topics:ui.stTopic ? esc(ui.stTopic) : 'Chuyên đề tự học', mistakes:'Sổ lỗi sai', history:'Lịch sử làm bài'};
+  const crumb = T ? `Khối ${ui.grade} ${ic('chev','sm')} Giáo viên` : `Lớp ${clsName(st.cls)} ${ic('chev','sm')} Nhóm ${st.level}`;
+  $('#topbar').innerHTML = `<div><div class="crumb">${crumb}</div><h1>${titles[cur]}</h1></div>
     <div class="r">${T ? `<div class="seg gradeseg" role="group" aria-label="Chọn khối">${GRADES.map(g => `<button data-act="grade" data-v="${g}" aria-pressed="${g === ui.grade}">Khối ${g}</button>`).join('')}</div>` : ''}<span class="chip-date">${ic('cal','sm')} ${fmtDate(TODAY)}</span></div>
     <div class="toprole"><div class="who">${me.av}<div style="min-width:0;flex:1"><b>${esc(me.name)}</b><span>${me.sub}</span></div></div><button class="iconbtn" data-act="logout" aria-label="Đăng xuất">${ic('logout','sm')}</button></div>`;
 
-  const views = T ? {today:tHome, compose:tCompose, work:tWork, analysis:tAnalysis, accounts:tAccounts} : {today:sHome, mistakes:sMistakes, history:sHistory};
+  const views = T ? {today:tHome, compose:tCompose, topics:tTopics, work:tWork, analysis:tAnalysis, accounts:tAccounts} : {today:sHome, topics:sTopics, mistakes:sMistakes, history:sHistory};
   $('#main').innerHTML = views[cur](st);
   renderPlayer();
+  renderViewer();
   typesetAll();
 }
 
-// ---------- giáo viên ----------
+// ---------- xem tài liệu (ảnh, PDF) ----------
+let pdfReady = null;
+function loadPdfJs(){
+  const add = src => new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+  return pdfReady ||= add('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js')
+    .then(() => add('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'))
+    .then(() => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; return window.pdfjsLib; });
+}
+function renderViewer(){
+  const el = $('#viewer'), d = ui.viewer && allDocs().find(x => x.id === ui.viewer);
+  if (!d) { el.hidden = true; el.innerHTML = ''; if (!ui.player) document.body.style.overflow = ''; return; }
+  el.hidden = false; document.body.style.overflow = 'hidden';
+  if (el.dataset.doc === d.id && el.innerHTML) return;
+  el.dataset.doc = d.id;
+  el.innerHTML = `<div class="vh"><span class="ext ${d.kind}">${d.kind === 'pdf' ? 'PDF' : 'ẢNH'}</span><b>${esc(d.name)}</b><button class="iconbtn" data-act="close-doc" aria-label="Đóng">${ic('x')}</button></div>
+    <div class="vb" id="vb">${d.kind === 'img' ? `<img src="${d.data}" alt="${esc(d.name)}">` : '<p class="vmsg">Đang mở PDF…</p>'}</div>`;
+  if (d.kind === 'pdf') showPdf(d);
+}
+async function showPdf(d){
+  const box = $('#vb');
+  try {
+    const lib = await loadPdfJs();
+    const bin = atob(d.data.split(',')[1]), bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const pdf = await lib.getDocument({data:bytes}).promise;
+    if (ui.viewer !== d.id) return;
+    box.innerHTML = `<p class="vmsg">${pdf.numPages} trang</p>`;
+    const W = Math.min(900, box.clientWidth - 8);
+    for (let n = 1; n <= Math.min(pdf.numPages, 30); n++) {
+      const page = await pdf.getPage(n), v0 = page.getViewport({scale:1}), scale = W / v0.width * (window.devicePixelRatio || 1);
+      const vp = page.getViewport({scale}), c = document.createElement('canvas');
+      c.width = vp.width; c.height = vp.height; box.appendChild(c);
+      await page.render({canvasContext:c.getContext('2d'), viewport:vp}).promise;
+    }
+  } catch (e) { box.innerHTML = '<p class="vmsg">Không mở được tệp PDF này trên trình duyệt. Thử tải lại trang.</p>'; }
+}
+
+// ---------- giáo viên: tổng quan ----------
 function dayRate(d){
   let n = 0, w = 0;
-  for (const b of S.submissions) { const a = A(b.aid); if (!a || a.date !== d) continue; for (const qid of a.qids) { n++; if (!isRight(Q(qid), b.answers[qid]?.value)) w++; } }
+  for (const b of S.submissions) { const a = A(b.aid); if (!a || a.date !== d || a.grade !== ui.grade) continue; for (const qid of a.qids) { n++; if (!isRight(Q(qid), b.answers[qid]?.value)) w++; } }
   return {n, w};
 }
 function weekDots(s){
   return `<div class="days" aria-label="7 ngày gần nhất">${last7().map(d => {
-    const as = S.assignments.filter(a => a.date === d && a.grade === s.grade && a.level === s.level);
+    const as = S.assignments.filter(a => a.date === d && sees(a, s));
     const subs = as.map(a => subFor(a.id, s.id)).filter(Boolean);
     if (!as.length) return `<i title="${fmtDate(d)}: không có bài"></i>`;
     if (!subs.length) return d === TODAY ? `<i title="Hôm nay: chưa nộp"></i>` : `<i class="miss" title="${fmtDate(d)}: bỏ lỡ"></i>`;
@@ -872,7 +1017,7 @@ function tHome(){
   const withWork = SG().filter(s => todaysFor(s).length);
   const isDone = s => todaysFor(s).every(a => subFor(a.id, s.id));
   const done = withWork.filter(isDone).length;
-  const todaySubs = S.submissions.filter(b => A(b.aid)?.date === TODAY);
+  const todaySubs = S.submissions.filter(b => { const a = A(b.aid); return a?.date === TODAY && a.grade === ui.grade; });
   const avg = mean(todaySubs.map(b => scoreOf(b).ten));
   const daily = last7().map(d => { const r = dayRate(d); return r.n ? r.w / r.n : null; });
   const wk = last7().map(dayRate).reduce((x, r) => ({n:x.n + r.n, w:x.w + r.w}), {n:0, w:0});
@@ -880,24 +1025,22 @@ function tHome(){
   const fixedN = SG().reduce((x, s) => x + mistakes(s.id).filter(m => m.fixed).length, 0);
 
   const kpis = `<div class="grid g4">
-    <div class="card kpi">${ring(withWork.length ? done / withWork.length : 0, 58, 7, 'var(--success)', `${done}/${withWork.length}`)}<div><div class="t">Đã nộp hôm nay</div><div class="s">${withWork.length - done ? `${withWork.length - done} em chưa nộp` : 'Cả lớp đã nộp'}</div></div></div>
+    <div class="card kpi">${ring(withWork.length ? done / withWork.length : 0, 58, 7, 'var(--success)', `${done}/${withWork.length}`)}<div><div class="t">Đã nộp hôm nay</div><div class="s">${withWork.length - done ? `${withWork.length - done} em chưa nộp` : 'Cả khối đã nộp'}</div></div></div>
     <div class="card kpi"><div class="ico" style="background:var(--primary-soft);color:var(--primary)">${ic('target')}</div><div><div class="t">Điểm TB hôm nay</div><div class="v">${avg == null ? '–' : dec(avg)}<small>/10</small></div></div></div>
     <div class="card kpi" style="align-items:flex-start"><div style="flex:1;min-width:0"><div class="t">Tỉ lệ sai 7 ngày</div><div class="v">${wk.n ? pct(wk.w / wk.n) : '–'}</div>${spark(daily)}</div></div>
     <div class="card kpi"><div class="ico" style="background:var(--danger-soft);color:var(--danger)">${ic('book')}</div><div><div class="t">Lỗi chưa sửa</div><div class="v">${open}</div><div class="s">${fixedN} lỗi học sinh đã tự sửa</div></div></div>
   </div>`;
 
-  const courses = `<div class="card"><div class="card-h"><div><h2>Bài hôm nay</h2><p>Mỗi nhóm trình độ nhận một bài riêng</p></div><button class="btn soft sm" data-act="tab" data-v="compose">${ic('plus','sm')} Giao bài mới</button></div>
-    <div class="card-b"><div class="grid g3">${LEVELS.map(lv => {
-      const as = S.assignments.filter(a => a.date === TODAY && a.grade === ui.grade && a.level === lv);
-      const mem = SG().filter(s => s.level === lv);
-      if (!as.length) return `<div class="card course empty"><div class="emptyst" style="padding:8px"><div class="ib">${ic('edit')}</div><b style="color:var(--ink)">Nhóm ${lv}</b><span class="small">Chưa có bài cho hôm nay</span><button class="btn sm" data-act="compose-for" data-v="${lv}">Soạn bài</button></div></div>`;
-      const a = as[0], subs = mem.filter(s => subFor(a.id, s.id));
+  const todayAs = S.assignments.filter(a => a.date === TODAY && a.grade === ui.grade);
+  const courses = `<div class="card"><div class="card-h"><div><h2>Bài hôm nay</h2><p>Mỗi bài chỉ hiện cho các lớp và trình độ được giao</p></div><button class="btn soft sm" data-act="compose-for">${ic('plus','sm')} Giao bài mới</button></div>
+    <div class="card-b">${todayAs.length ? `<div class="grid g3">${todayAs.map(a => {
+      const mem = targets(a), subs = mem.filter(s => subFor(a.id, s.id));
       const sc = mean(subs.map(s => scoreOf(subFor(a.id, s.id)).ten));
-      return `<div class="card course" style="${tcv(a.topic)}"><div class="band" data-g="${TOPIC_GLYPH[a.topic] || '∑'}"><span>Nhóm ${lv} · ${a.topic}</span><b>${esc(a.title)}</b></div>
+      return `<div class="card course" style="${tcv(a.topic)}"><div class="band" data-g="${esc(glyph(a.topic))}"><span>${esc(targetText(a))}</span><b>${esc(a.title)}</b></div>
         <div class="cb"><div class="row between small"><span class="muted">${subs.length}/${mem.length} đã nộp</span><span class="muted">${a.qids.length} câu${sc == null ? '' : ' · TB ' + dec(sc)}</span></div>
           <div class="prog"><i style="width:${mem.length ? subs.length / mem.length * 100 : 0}%"></i></div>
           <div class="row between"><div class="avstack">${subs.map(s => avatar(s, 'sm')).join('') || '<span class="small muted">Chưa có ai nộp</span>'}</div><button class="btn ghost sm" data-act="view-student" data-v="${(subs[0] || mem[0])?.id || ''}">Xem bài làm</button></div></div></div>`;
-    }).join('')}</div></div></div>`;
+    }).join('')}</div>` : `<div class="emptyst"><div class="ib">${ic('edit')}</div><b style="color:var(--ink)">Khối ${ui.grade} chưa có bài hôm nay</b><button class="btn sm" data-act="compose-for">Soạn bài</button></div>`}</div></div>`;
 
   const rows = SG().map(s => {
     const as = todaysFor(s), subs = as.map(a => subFor(a.id, s.id)).filter(Boolean);
@@ -906,15 +1049,16 @@ function tHome(){
     const status = !as.length ? '<span class="chip">Không có bài</span>' : subs.length === as.length ? `<span class="chip ok">${ic('check','sm')} Nộp ${subs[0].at.slice(11)}</span>` : '<span class="chip warn">Chưa nộp</span>';
     return `<tr class="click" data-act="view-student" data-v="${s.id}">
       <td><div class="person">${avatar(s)}<div><b>${esc(s.name)}</b><div class="small muted">Chuỗi ${streakOf(s.id)} ngày</div></div></div></td>
+      <td><span class="chip">${esc(clsName(s.cls))}</span></td>
       <td><select data-act="set-level" data-v="${s.id}" id="lv-${s.id}" aria-label="Nhóm của ${esc(s.name)}">${LEVELS.map(l => `<option ${l === s.level ? 'selected' : ''}>${l}</option>`).join('')}</select></td>
       <td>${status}</td>
       <td>${t ? `<span class="chip ${scoreCls(c / t)} num">${c}/${t}</span>` : '<span class="muted">–</span>'}</td>
       <td>${weekDots(s)}</td>
       <td>${open ? `<span class="chip bad">${open} lỗi</span>` : '<span class="chip ok">0</span>'}</td></tr>`;
   }).join('');
-  const table = `<div class="card"><div class="card-h"><div><h2>Học sinh</h2><p>Bấm vào một học sinh để xem bài làm. Đổi nhóm trình độ ngay trong bảng.</p></div></div>
+  const table = `<div class="card"><div class="card-h"><div><h2>Học sinh khối ${ui.grade}</h2><p>Bấm vào một học sinh để xem bài làm. Đổi nhóm trình độ ngay trong bảng.</p></div></div>
     <div class="card-b" style="padding-inline:8px"><div class="tbl"><table>
-      <thead><tr><th>Học sinh</th><th>Nhóm</th><th>Hôm nay</th><th>Đúng</th><th>7 ngày</th><th>Lỗi chưa sửa</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <thead><tr><th>Học sinh</th><th>Lớp</th><th>Nhóm</th><th>Hôm nay</th><th>Đúng</th><th>7 ngày</th><th>Lỗi chưa sửa</th></tr></thead><tbody>${rows}</tbody></table></div>
       <div class="legend" style="padding:4px 12px"><span><i style="background:var(--success)"></i>Đúng ≥ 67%</span><span><i style="background:var(--warn)"></i>Dưới 67%</span><span><i style="box-shadow:inset 0 0 0 1.5px var(--danger)"></i>Bỏ lỡ</span><span><i style="background:var(--surface-2)"></i>Không có bài</span></div></div></div>`;
 
   const att = SG().map(s => {
@@ -925,48 +1069,71 @@ function tHome(){
     const per = {};
     for (const b of subsOf(s.id)) { const a = A(b.aid); for (const qid of a.qids) { const q = Q(qid); if (!q) continue; const p = per[q.topic] ||= {n:0, w:0}; p.n++; if (!isRight(q, b.answers[qid]?.value)) p.w++; } }
     const weak = Object.entries(per).filter(([, v]) => v.n >= 3 && v.w / v.n >= 0.5).sort((x, y) => y[1].w / y[1].n - x[1].w / x[1].n)[0];
-    if (weak) why.push(`<span class="chip topic" style="${tcv(weak[0])}">Yếu ${weak[0]} · sai ${pct(weak[1].w / weak[1].n)}</span>`);
+    if (weak) why.push(`<span class="chip topic" style="${tcv(weak[0])}">Yếu ${esc(weak[0])} · sai ${pct(weak[1].w / weak[1].n)}</span>`);
     return {s, why};
   }).filter(x => x.why.length).sort((x, y) => y.why.length - x.why.length);
   const attn = `<div class="card"><div class="card-h"><div><h2>Cần chú ý</h2><p>Gợi ý ai cần nhắc hoặc kèm thêm</p></div></div><div class="card-b" style="padding-top:4px">
-    ${att.length ? `<div class="attn">${att.slice(0, 6).map(x => `<div class="it">${avatar(x.s)}<div style="min-width:0"><button class="btn ghost sm" style="padding:0" data-act="view-student" data-v="${x.s.id}">${esc(x.s.name)}</button><div class="row">${x.why.join('')}</div></div></div>`).join('')}</div>` : '<div class="emptyst"><div class="ib">' + ic('check') + '</div>Lớp đang ổn, không có em nào cần chú ý.</div>'}
+    ${att.length ? `<div class="attn">${att.slice(0, 6).map(x => `<div class="it">${avatar(x.s)}<div style="min-width:0"><button class="btn ghost sm" style="padding:0" data-act="view-student" data-v="${x.s.id}">${esc(x.s.name)} · ${esc(clsName(x.s.cls))}</button><div class="row">${x.why.join('')}</div></div></div>`).join('')}</div>` : '<div class="emptyst"><div class="ib">' + ic('check') + '</div>Khối đang ổn, không có em nào cần chú ý.</div>'}
   </div></div>`;
 
   return kpis + courses + `<div class="split">${table}${attn}</div>`;
 }
 
 // ---------- soạn bài ----------
-function newCompose(level){ return {date:TODAY, level:level || LEVELS[0], topic:TOPICS[0], title:'', qids:[], newQ:null, msg:null}; }
+function newCompose(){
+  return {date:TODAY, topic:TOPICS[0] || '', title:'', classes:classesOf(ui.grade).map(c => c.id), levels:[...LEVELS], qids:[], docs:[], newQ:null, msg:null,
+    gen:{topics:[], types:['mc'], n:10}};
+}
+const cbx = (id, label, on, extra = '') => `<label class="cbx"><input type="checkbox" id="${id}" ${on ? 'checked' : ''} ${extra}>${label}</label>`;
 function syncCompose(){
   const c = ui.compose; if (!c || !$('#c-title')) return;
   c.date = $('#c-date').value || TODAY; c.topic = $('#c-topic').value; c.title = $('#c-title').value;
+  c.classes = classesOf(ui.grade).filter(cl => $('#c-cls-' + cl.id)?.checked).map(cl => cl.id);
+  c.levels = LEVELS.filter((l, i) => $('#c-lv-' + i)?.checked);
+  if ($('#gen-n')) {
+    c.gen.topics = TOPICS.filter((t, i) => $('#gen-tp-' + i)?.checked);
+    c.gen.types = ['mc', 'tf', 'num'].filter(t => $('#gen-ty-' + t)?.checked);
+    c.gen.n = Math.max(1, Math.min(40, Number($('#gen-n').value) || 10));
+  }
   const q = c.newQ;
   if (q && $('#nq-s0')) { q.statements = [0,1,2,3].map(j => $('#nq-s' + j).value); q.tfans = [0,1,2,3].map(j => $('#nq-t' + j).value); }
   if (q && $('#nq-text')) {
     q.type = $('#nq-type').value; q.text = $('#nq-text').value; q.explain = $('#nq-exp').value;
+    q.levels = LEVELS.filter((l, i) => $('#nq-lv-' + i)?.checked);
     if ($('#nq-ans')) q.answer = $('#nq-ans').value;
     if ($('#nq-o0')) { q.options = [0,1,2,3].map(j => $('#nq-o' + j).value); q.correct = Number($('#nq-cor').value); }
   }
 }
 function tCompose(){
   const c = ui.compose ||= newCompose();
-  const bank = S.bank.filter(q => q.grade === ui.grade && q.level === c.level && (ui.bankTopic === 'all' || q.topic === ui.bankTopic));
+  if (!TOPICS.includes(c.topic)) c.topic = TOPICS[0] || '';
+  const bank = S.bank.filter(q => q.grade === ui.grade && q.levels.some(l => c.levels.includes(l)) && (ui.bankTopic === 'all' || q.topic === ui.bankTopic));
   const recent = S.assignments.filter(a => a.grade === ui.grade).sort((x, y) => y.date.localeCompare(x.date) || Number(y.id.slice(1)) - Number(x.id.slice(1))).slice(0, 10);
+  const reach = SG().filter(s => c.classes.includes(s.cls) && c.levels.includes(s.level)).length;
   const q = c.newQ;
-  const form = `<div class="card"><div class="card-h"><div><h2>Thông tin bài</h2><p>Bài sẽ hiện cho học sinh của nhóm đã chọn vào ngày làm</p></div></div><div class="card-b">
-      ${c.msg ? `<div class="note ${c.msg.ok ? 'ok' : 'bad'}">${ic(c.msg.ok ? 'check' : 'alert', 'sm')}<span>${esc(c.msg.text)}</span></div>` : ''}
-      <label class="f">Tên bài<input type="text" id="c-title" value="${esc(c.title)}" placeholder="Ví dụ: Cộng trừ phân số khác mẫu"></label>
+  const form = `<div class="card"><div class="card-h"><div><h2>Thông tin bài</h2><p>Bài chỉ hiện cho học sinh thuộc lớp và trình độ được tick</p></div></div><div class="card-b">
+      ${note(c.msg)}
+      <label class="f">Tên bài<input type="text" id="c-title" value="${esc(c.title)}" placeholder="Ví dụ: Phương trình lượng giác cơ bản"></label>
       <div class="fgrid">
         <label class="f">Ngày làm<input type="date" id="c-date" value="${c.date}"></label>
-        <label class="f">Chuyên đề chính<select id="c-topic">${TOPICS.map(t => `<option ${t === c.topic ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+        <label class="f">Chuyên đề chính<select id="c-topic">${TOPICS.map(t => `<option ${t === c.topic ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></label>
       </div>
-      <div class="f" style="font-size:12.5px;font-weight:600;color:var(--ink-2);display:flex;flex-direction:column;gap:6px">Nhóm trình độ<div class="seg" role="group" aria-label="Nhóm trình độ">${LEVELS.map(l => `<button data-act="c-level" data-v="${l}" aria-pressed="${l === c.level}">${l}</button>`).join('')}</div></div>
-    </div></div>
-    <div class="card"><div class="card-h"><div><h2>Câu hỏi trong bài <span class="chip pri num">${c.qids.length}</span></h2><p>Chọn từ ngân hàng hoặc soạn câu mới</p></div>${q ? '' : `<button class="btn soft sm" data-act="c-newq">${ic('plus','sm')} Soạn câu mới</button>`}</div><div class="card-b">
-      ${c.qids.length ? `<div class="list">${c.qids.map((id, i) => { const x = Q(id); return x ? `<div class="li"><span class="qn">${i + 1}</span><div class="grow"><div class="qt">${esc(x.text)}</div>${qImg(x, 'sm')}<div class="row small" style="gap:8px;margin-top:4px">${topicChip(x.topic)}<span class="muted">Đáp án: <b>${esc(showVal(x.answer))}</b></span></div></div><button class="iconbtn" data-act="c-rm" data-v="${id}" aria-label="Bỏ câu này">${ic('x','sm')}</button></div>` : ''; }).join('')}</div>`
-        : `<div class="emptyst"><div class="ib">${ic('list')}</div>Chưa có câu nào. Bấm "Thêm" ở ngân hàng câu hỏi bên cạnh.</div>`}
+      <div class="fl">Giao cho lớp<div class="cbxs">${classesOf(ui.grade).map(cl => cbx('c-cls-' + cl.id, esc(cl.name), c.classes.includes(cl.id), 'data-act="c-refresh"')).join('') || '<span class="small muted">Khối này chưa có lớp. Tạo lớp ở trang Lớp &amp; tài khoản.</span>'}</div></div>
+      <div class="fl">Trình độ<div class="cbxs">${LEVELS.map((l, i) => cbx('c-lv-' + i, l, c.levels.includes(l), 'data-act="c-refresh"')).join('')}</div></div>
+      <div class="fl">Tài liệu đính kèm (PDF, ảnh)<div class="docs">${c.docs.map(d => docChip(d, 'c-rmdoc')).join('')}<label class="btn sec sm" style="cursor:pointer">${ic('upload','sm')} Tải tệp lên<input type="file" accept="application/pdf,image/*" id="c-doc" multiple hidden></label></div></div>
+      <p class="small muted">Bài sẽ hiện cho <b style="color:var(--ink)">${reach} học sinh</b> khối ${ui.grade}.</p>
+    </div></div>`;
+  const gen = `<div class="card"><div class="card-h"><div><h2>${ic('shuffle')} Tạo đề nhanh</h2><p>Lấy ngẫu nhiên câu hỏi có sẵn trong ngân hàng, đúng trình độ đã tick ở trên</p></div></div><div class="card-b">
+      <div class="fl">Chuyên đề (không tick là lấy tất cả)<div class="cbxs">${TOPICS.map((t, i) => cbx('gen-tp-' + i, esc(t), c.gen.topics.includes(t))).join('')}</div></div>
+      <div class="fl">Dạng câu<div class="cbxs">${['mc', 'tf', 'num'].map(t => cbx('gen-ty-' + t, TYPE_LABEL[t], c.gen.types.includes(t))).join('')}</div></div>
+      <div class="row" style="align-items:flex-end"><label class="f" style="width:140px">Số câu<input type="text" inputmode="numeric" id="gen-n" value="${c.gen.n}"></label><button class="btn" data-act="c-gen">${ic('shuffle','sm')} Tạo đề</button></div>
+    </div></div>`;
+  const qlist = `<div class="card"><div class="card-h"><div><h2>Câu hỏi trong bài <span class="chip pri num">${c.qids.length}</span></h2><p>Chọn từ ngân hàng, tạo đề nhanh hoặc soạn câu mới</p></div>${q ? '' : `<button class="btn soft sm" data-act="c-newq">${ic('plus','sm')} Soạn câu mới</button>`}</div><div class="card-b">
+      ${c.qids.length ? `<div class="list">${c.qids.map((id, i) => { const x = Q(id); return x ? `<div class="li"><span class="qn">${i + 1}</span><div class="grow"><div class="qt">${esc(x.text)}</div>${qImg(x, 'sm')}<div class="row small" style="gap:6px;margin-top:4px">${topicChip(x.topic)}${lvChips(x)}<span class="muted">Đáp án: <b>${esc(showVal(x.answer))}</b></span></div></div><button class="iconbtn" data-act="c-rm" data-v="${id}" aria-label="Bỏ câu này">${ic('x','sm')}</button></div>` : ''; }).join('')}</div>${c.qids.length > 1 ? `<div><button class="btn ghost sm" data-act="c-clear">${ic('trash','sm')} Bỏ hết câu đã chọn</button></div>` : ''}`
+        : `<div class="emptyst"><div class="ib">${ic('list')}</div>Chưa có câu nào. Bấm "Thêm" ở ngân hàng câu hỏi hoặc dùng Tạo đề nhanh.</div>`}
       ${q ? `<div class="newq">
         <div class="row between"><h3>Câu hỏi mới</h3><button class="btn ghost sm" data-act="c-cancelq">Huỷ</button></div>
+        <div class="fl">Trình độ của câu (tick một hoặc nhiều)<div class="cbxs">${LEVELS.map((l, i) => cbx('nq-lv-' + i, l, (q.levels || []).includes(l))).join('')}</div></div>
         <div class="mathbar" role="toolbar" aria-label="Chèn ký hiệu toán">${MATH_TOOLS.map(([l, t]) => `<button type="button" data-act="ins" data-v="${esc(t)}" title="Chèn ${esc(t)}">${l}</button>`).join('')}</div>
         <label class="f">${q.type === 'tf' ? 'Phần dẫn chung' : 'Đề bài'}<textarea id="nq-text" placeholder="vd: Tính $\\int_0^1 2x\\,dx$">${esc(q.text)}</textarea></label>
         <div class="small muted">Gõ công thức giữa hai dấu $, ví dụ <code>$x^2 + \\sqrt{x}$</code>, hoặc bấm các nút ở trên. Xem trước:</div>
@@ -976,53 +1143,113 @@ function tCompose(){
           <label class="f">Dạng câu<select id="nq-type" data-act="c-refresh"><option value="num" ${q.type === 'num' ? 'selected' : ''}>Trả lời ngắn</option><option value="mc" ${q.type === 'mc' ? 'selected' : ''}>Trắc nghiệm 4 lựa chọn</option><option value="tf" ${q.type === 'tf' ? 'selected' : ''}>Đúng/Sai (4 ý)</option></select></label>
           ${q.type === 'num' ? `<label class="f">Đáp số đúng<input type="text" id="nq-ans" value="${esc(q.answer)}" placeholder="vd: 0,18 hoặc -3 hoặc 1/3"></label>` : q.type === 'tf' ? '' : `<label class="f">Đáp án đúng<select id="nq-cor">${[0,1,2,3].map(j => `<option value="${j}" ${q.correct === j ? 'selected' : ''}>${'ABCD'[j]}</option>`).join('')}</select></label>`}
         </div>
-        ${q.type === 'tf' ? `<div style="display:flex;flex-direction:column;gap:8px">${[0,1,2,3].map(j => `<div class="row" style="flex-wrap:nowrap;gap:8px"><span class="qn">${'abcd'[j]}</span><input type="text" id="nq-s${j}" value="${esc(q.statements[j])}" placeholder="Mệnh đề ${'abcd'[j]}" aria-label="Mệnh đề ${'abcd'[j]}"><select id="nq-t${j}" style="width:auto" aria-label="Đáp án ý ${'abcd'[j]}">${['Đ','S'].map(c => `<option value="${c}" ${q.tfans[j] === c ? 'selected' : ''}>${c === 'Đ' ? 'Đúng' : 'Sai'}</option>`).join('')}</select></div>`).join('')}</div>` : ''}
+        ${q.type === 'tf' ? `<div style="display:flex;flex-direction:column;gap:8px">${[0,1,2,3].map(j => `<div class="row" style="flex-wrap:nowrap;gap:8px"><span class="qn">${'abcd'[j]}</span><input type="text" id="nq-s${j}" value="${esc(q.statements[j])}" placeholder="Mệnh đề ${'abcd'[j]}" aria-label="Mệnh đề ${'abcd'[j]}"><select id="nq-t${j}" style="width:auto" aria-label="Đáp án ý ${'abcd'[j]}">${['Đ','S'].map(x => `<option value="${x}" ${q.tfans[j] === x ? 'selected' : ''}>${x === 'Đ' ? 'Đúng' : 'Sai'}</option>`).join('')}</select></div>`).join('')}</div>` : ''}
         ${q.type === 'mc' ? `<div class="fgrid">${[0,1,2,3].map(j => `<label class="f">Lựa chọn ${'ABCD'[j]}<input type="text" id="nq-o${j}" value="${esc(q.options[j])}"></label>`).join('')}</div>` : ''}
         <label class="f">Lời giải hiện cho học sinh khi làm sai<textarea id="nq-exp">${esc(q.explain)}</textarea></label>
         <div><button class="btn" data-act="c-saveq">${ic('plus','sm')} Thêm vào bài và ngân hàng</button></div>
       </div>` : ''}
-      <div class="row between" style="border-top:1px solid var(--line);padding-top:14px"><span class="small muted">Giao cho nhóm <b style="color:var(--ink)">${c.level}</b> · ${fmtDate(c.date)}</span><button class="btn cta" data-act="c-save">${ic('arrow','sm')} Giao bài</button></div>
+      <div class="row between" style="border-top:1px solid var(--line);padding-top:14px"><span class="small muted">Giao cho <b style="color:var(--ink)">${esc(targetText(c))}</b> · ${fmtDate(c.date)}</span><button class="btn cta" data-act="c-save">${ic('arrow','sm')} Giao bài</button></div>
     </div></div>`;
-  const bankCard = `<div class="card"><div class="card-h"><div><h2>Ngân hàng câu hỏi</h2><p>Nhóm ${c.level} · ${bank.length} câu</p></div></div><div class="card-b">
-      <div class="row" style="gap:6px"><button class="fchip" data-act="bank-topic" data-v="all" aria-pressed="${ui.bankTopic === 'all'}">Tất cả</button>${TOPICS.map(t => `<button class="fchip" data-act="bank-topic" data-v="${t}" aria-pressed="${ui.bankTopic === t}">${t}</button>`).join('')}</div>
-      <div class="bank list">${bank.map(x => { const inn = c.qids.includes(x.id); return `<div class="li"><div class="grow"><div class="qt">${esc(x.text)}</div>${qImg(x, 'sm')}<div class="row small" style="gap:8px;margin-top:4px">${topicChip(x.topic)}<span class="muted">${TYPE_LABEL[x.type]}</span></div></div>${inn ? `<span class="chip ok">${ic('check','sm')} Đã thêm</span>` : `<button class="btn sec sm" data-act="c-add" data-v="${x.id}">${ic('plus','sm')} Thêm</button>`}</div>`; }).join('') || '<div class="emptyst">Chưa có câu nào ở chuyên đề này.</div>'}</div>
+  const bankCard = `<div class="card"><div class="card-h"><div><h2>Ngân hàng câu hỏi</h2><p>Khối ${ui.grade} · ${c.levels.join(', ') || 'chưa tick trình độ'} · ${bank.length} câu</p></div><button class="btn ghost sm" data-act="tab" data-v="topics">${ic('folder','sm')} Quản lý chuyên đề</button></div><div class="card-b">
+      <div class="row" style="gap:6px"><button class="fchip" data-act="bank-topic" data-v="all" aria-pressed="${ui.bankTopic === 'all'}">Tất cả</button>${TOPICS.map(t => `<button class="fchip" data-act="bank-topic" data-v="${esc(t)}" aria-pressed="${ui.bankTopic === t}">${esc(t)}</button>`).join('')}</div>
+      <div class="bank list">${bank.map(x => { const inn = c.qids.includes(x.id); return `<div class="li"><div class="grow"><div class="qt">${esc(x.text)}</div>${qImg(x, 'sm')}<div class="row small" style="gap:6px;margin-top:4px">${topicChip(x.topic)}${lvChips(x)}<span class="muted">${TYPE_LABEL[x.type]}</span></div></div>${inn ? `<span class="chip ok">${ic('check','sm')} Đã thêm</span>` : `<button class="btn sec sm" data-act="c-add" data-v="${x.id}">${ic('plus','sm')} Thêm</button>`}</div>`; }).join('') || '<div class="emptyst">Chưa có câu nào phù hợp.</div>'}</div>
     </div></div>`;
-  const hist = `<div class="card"><div class="card-h"><div><h2>Bài đã giao</h2><p>10 bài gần nhất</p></div></div><div class="card-b" style="padding-inline:8px"><div class="tbl"><table>
-    <thead><tr><th>Ngày</th><th>Tên bài</th><th>Nhóm</th><th>Số câu</th><th>Đã nộp</th><th></th></tr></thead>
-    <tbody>${recent.map(a => { const n = SG().filter(s => s.level === a.level).length, d = S.submissions.filter(b => b.aid === a.id).length; return `<tr>
-      <td class="num">${fmtDate(a.date)}</td><td><div class="person"><b>${esc(a.title)}</b></div></td><td><span class="chip">${a.level}</span></td><td class="num">${a.qids.length}</td>
+  const hist = `<div class="card"><div class="card-h"><div><h2>Bài đã giao</h2><p>10 bài gần nhất của khối ${ui.grade}</p></div></div><div class="card-b" style="padding-inline:8px"><div class="tbl"><table>
+    <thead><tr><th>Ngày</th><th>Tên bài</th><th>Giao cho</th><th>Số câu</th><th>Đã nộp</th><th></th></tr></thead>
+    <tbody>${recent.map(a => { const n = targets(a).length, d = S.submissions.filter(b => b.aid === a.id).length; return `<tr>
+      <td class="num">${fmtDate(a.date)}</td><td><div class="person"><b>${esc(a.title)}</b>${(a.docs || []).length ? `<span class="chip">${ic('file','sm')} ${a.docs.length}</span>` : ''}</div></td><td class="small">${esc(targetText(a))}</td><td class="num">${a.qids.length}</td>
       <td><div class="row" style="gap:8px;flex-wrap:nowrap"><div class="prog" style="width:64px"><i style="width:${n ? d / n * 100 : 0}%"></i></div><span class="num small">${d}/${n}</span></div></td>
       <td><button class="btn danger sm ${ui.armed === a.id ? 'armed' : ''}" data-act="del-a" data-v="${a.id}">${ui.armed === a.id ? 'Bấm lần nữa để xoá' : ic('trash','sm')}</button></td></tr>`; }).join('')}</tbody></table></div></div></div>`;
-  return `<div class="split"><div style="display:flex;flex-direction:column;gap:20px;min-width:0">${form}</div>${bankCard}</div>${hist}`;
+  return `<div class="split"><div style="display:flex;flex-direction:column;gap:20px;min-width:0">${form}${gen}${qlist}</div>${bankCard}</div>${hist}`;
+}
+function genExam(){
+  syncCompose();
+  const c = ui.compose, g = c.gen;
+  if (!c.levels.length) { c.msg = {ok:false, text:'Tick ít nhất một trình độ trước khi tạo đề.'}; return render(); }
+  if (!g.types.length) { c.msg = {ok:false, text:'Tick ít nhất một dạng câu.'}; return render(); }
+  const pool = S.bank.filter(q => q.grade === ui.grade && q.levels.some(l => c.levels.includes(l)) && g.types.includes(q.type) && (!g.topics.length || g.topics.includes(q.topic)));
+  const picked = shuffle(pool).slice(0, g.n).sort((x, y) => TOPICS.indexOf(x.topic) - TOPICS.indexOf(y.topic));
+  c.qids = picked.map(q => q.id);
+  if (!c.title.trim()) c.title = 'Đề luyện tập: ' + (g.topics.length ? g.topics.join(', ') : 'tổng hợp');
+  if (g.topics.length === 1) c.topic = g.topics[0];
+  c.msg = !picked.length ? {ok:false, text:'Ngân hàng chưa có câu nào khớp các lựa chọn này.'}
+    : {ok:true, text:picked.length < g.n ? `Ngân hàng chỉ có ${picked.length} câu phù hợp, đã lấy hết.` : `Đã chọn ngẫu nhiên ${picked.length} câu. Bấm Tạo đề lần nữa để đổi bộ câu khác.`};
+  render();
 }
 function saveNewQ(){
   syncCompose();
   const c = ui.compose, q = c.newQ;
   const fail = t => { c.msg = {ok:false, text:t}; render(); };
+  if (!q.levels.length) return fail('Tick ít nhất một trình độ cho câu hỏi mới.');
   if (!q.text.trim()) return fail('Câu hỏi mới chưa có đề bài.');
   if (q.type === 'num' && isNaN(parseNum(q.answer))) return fail('Đáp số phải là số, ví dụ 5, -3, 2,5 hoặc 5/6.');
   if (q.type === 'mc' && q.options.some(o => !o.trim())) return fail('Điền đủ 4 lựa chọn A, B, C, D.');
   if (q.type === 'tf' && q.statements.some(o => !o.trim())) return fail('Điền đủ 4 mệnh đề a, b, c, d.');
-  const nq = {id:'q' + S.n++, grade:ui.grade, level:c.level, topic:c.topic, type:q.type, text:q.text.trim(), explain:q.explain.trim(), traps:[]};
+  const nq = {id:'q' + S.n++, grade:ui.grade, levels:[...q.levels], topic:c.topic, type:q.type, text:q.text.trim(), explain:q.explain.trim(), traps:[]};
   if (q.type === 'mc') { nq.options = q.options.map(o => o.trim()); nq.answer = nq.options[q.correct]; }
   else if (q.type === 'tf') { nq.statements = q.statements.map(o => o.trim()); nq.answer = q.tfans.join(''); }
   else nq.answer = q.answer.trim();
   if (q.img) nq.img = q.img;
-  S.bank.push(nq); c.qids.push(nq.id); c.newQ = null; c.msg = {ok:true, text:'Đã thêm câu hỏi mới vào bài và ngân hàng câu hỏi.'};
-  save(); render();
+  S.bank.push(nq); c.qids.push(nq.id); c.newQ = null; c.msg = {ok:true, text:`Đã thêm câu hỏi mới vào bài và vào chuyên đề "${c.topic}".`};
+  if (!save()) toast('Bộ nhớ trình duyệt đầy, câu hỏi chưa được lưu lâu dài.');
+  render();
 }
 function saveCompose(){
   syncCompose();
   const c = ui.compose;
   const fail = t => { c.msg = {ok:false, text:t}; render(); window.scrollTo(0, 0); };
   if (!c.title.trim()) return fail('Nhập tên bài trước khi giao.');
+  if (!c.classes.length) return fail('Tick ít nhất một lớp để giao bài.');
+  if (!c.levels.length) return fail('Tick ít nhất một trình độ.');
   if (!c.qids.length) return fail('Bài cần ít nhất một câu hỏi.');
-  S.assignments.push({id:'a' + S.n++, date:c.date, grade:ui.grade, level:c.level, topic:c.topic, title:c.title.trim(), qids:[...c.qids]});
-  save();
-  const t = c.title.trim();
-  ui.compose = newCompose(c.level);
-  ui.compose.msg = {ok:true, text:`Đã giao "${t}" (${c.qids.length} câu) cho nhóm ${c.level}, ngày ${fmtDate(c.date)}.`};
+  const a = {id:'a' + S.n++, date:c.date, grade:ui.grade, classes:[...c.classes], levels:[...c.levels], topic:c.topic, title:c.title.trim(), qids:[...c.qids], docs:c.docs};
+  S.assignments.push(a);
+  if (!save()) { S.assignments.pop(); return fail('Bộ nhớ trình duyệt đầy nên chưa lưu được bài (bản demo giới hạn khoảng 5 MB). Bỏ bớt tài liệu đính kèm rồi thử lại.'); }
+  const n = targets(a).length;
+  ui.compose = newCompose();
+  ui.compose.msg = {ok:true, text:`Đã giao "${a.title}" (${a.qids.length} câu) cho ${targetText(a)}, ngày ${fmtDate(a.date)}. ${n} học sinh sẽ thấy bài.`};
   render(); window.scrollTo(0, 0);
+}
+
+// ---------- chuyên đề & tài liệu (giáo viên) ----------
+function tTopics(){
+  const tops = topicsOf(ui.grade);
+  return `${note(ui.tpMsg)}<div class="card"><div class="card-h"><div><h2>Thêm chuyên đề cho khối ${ui.grade}</h2><p>Mỗi chuyên đề là một thư mục: chứa câu hỏi và tài liệu (PDF, ảnh). Học sinh khối ${ui.grade} thấy các thư mục này để tự học.</p></div></div><div class="card-b">
+      <div class="row" style="align-items:flex-end"><label class="f" style="flex:1;min-width:200px">Tên chuyên đề<input type="text" id="tp-new" placeholder="vd: Quan hệ vuông góc trong không gian"></label><button class="btn" data-act="tp-add">${ic('plus','sm')} Thêm chuyên đề</button></div>
+    </div></div>
+    <div class="grid g2">${tops.map(t => {
+      const nq = S.bank.filter(q => q.grade === ui.grade && q.topic === t.name).length;
+      const prac = SG().reduce((x, s) => x + (S.practice[s.id]?.[t.name]?.n || 0), 0);
+      return `<div class="card course" style="${tcv(t.name)}"><div class="band" data-g="${esc(glyph(t.name))}"><span>${ic('folder','sm')} Thư mục chuyên đề</span><b>${esc(t.name)}</b></div>
+        <div class="cb">
+          <div class="row small" style="gap:6px"><span class="chip">${nq} câu hỏi</span><span class="chip">${t.docs.length} tài liệu</span><span class="chip">${prac} lượt tự luyện</span></div>
+          <div class="row" style="align-items:flex-end;flex-wrap:nowrap"><label class="f" style="flex:1">Đổi tên<input type="text" id="tp-name-${t.id}" value="${esc(t.name)}"></label><button class="btn sec sm" data-act="tp-rename" data-v="${t.id}">${ic('save','sm')} Lưu</button></div>
+          <div class="fl">Tài liệu<div class="docs">${t.docs.map(d => docChip(d, 'tp-rmdoc')).join('') || '<span class="small muted">Chưa có tài liệu</span>'}</div></div>
+          <div class="row between"><label class="btn soft sm" style="cursor:pointer">${ic('upload','sm')} Tải PDF, ảnh lên<input type="file" accept="application/pdf,image/*" data-topic="${t.id}" class="tp-file" multiple hidden></label>
+            <button class="btn danger sm ${ui.armed === 'tp-' + t.id ? 'armed' : ''}" data-act="tp-del" data-v="${t.id}">${ui.armed === 'tp-' + t.id ? 'Bấm lần nữa để xoá' : ic('trash','sm') + ' Xoá'}</button></div>
+        </div></div>`;
+    }).join('') || `<div class="card"><div class="emptyst">Khối ${ui.grade} chưa có chuyên đề nào.</div></div>`}</div>
+    <p class="small muted">Bản demo lưu tài liệu ngay trong trình duyệt nên giới hạn khoảng 5 MB tổng cộng và 3 MB mỗi tệp PDF. Bản chính thức lưu tài liệu trên máy chủ.</p>`;
+}
+function renameTopic(id){
+  const t = S.topics.find(x => x.id === id), nv = $('#tp-name-' + id).value.trim();
+  if (!nv) { ui.tpMsg = {ok:false, text:'Tên chuyên đề không được để trống.'}; return render(); }
+  if (nv === t.name) return;
+  if (topicsOf(t.grade).some(x => x.name === nv)) { ui.tpMsg = {ok:false, text:`Khối ${t.grade} đã có chuyên đề "${nv}".`}; return render(); }
+  const old = t.name; t.name = nv;
+  S.bank.forEach(q => { if (q.grade === t.grade && q.topic === old) q.topic = nv; });
+  S.assignments.forEach(a => { if (a.grade === t.grade && a.topic === old) a.topic = nv; });
+  for (const s of S.students) if (s.grade === t.grade && S.practice[s.id]?.[old]) { S.practice[s.id][nv] = S.practice[s.id][old]; delete S.practice[s.id][old]; }
+  if (ui.bankTopic === old) ui.bankTopic = 'all';
+  ui.compose = null; save(); ui.tpMsg = {ok:true, text:`Đã đổi "${old}" thành "${nv}". Câu hỏi và bài đã giao trong chuyên đề được cập nhật theo.`}; render();
+}
+async function uploadDocs(files, into){
+  const added = [];
+  for (const f of files) {
+    try { const d = await readDoc(f); d.id = 'd' + S.n++; into.push(d); added.push(d); }
+    catch (e) { toast(e.message || 'Không đọc được tệp ' + f.name); }
+  }
+  return added;
 }
 
 // ---------- bài làm ----------
@@ -1049,19 +1276,21 @@ function subRow(b, open, teacher){
 }
 function tWork(){
   const sid = (STU(ui.tSid)?.grade === ui.grade ? ui.tSid : SG()[0]?.id), st = STU(sid);
-  if (!st) return `<div class="card"><div class="emptyst"><div class="ib">${ic('users')}</div>Khối ${ui.grade} chưa có học sinh. Thêm ở trang Tài khoản học sinh.</div></div>`;
+  if (!st) return `<div class="card"><div class="emptyst"><div class="ib">${ic('users')}</div>Khối ${ui.grade} chưa có học sinh. Thêm ở trang Lớp &amp; tài khoản.</div></div>`;
   const subs = subsOf(sid);
-  const missed = S.assignments.filter(a => a.grade === st.grade && a.level === st.level && a.date < TODAY && !subFor(a.id, sid)).length;
+  const missed = S.assignments.filter(a => sees(a, st) && a.date < TODAY && !subFor(a.id, sid)).length;
   const avg = mean(subs.map(b => scoreOf(b).ten));
   const open = mistakes(sid).filter(m => !m.fixed).length;
+  const prac = Object.values(S.practice[sid] || {}).reduce((x, p) => x + p.n, 0);
   return `<div class="wsplit">
-    <div class="card"><div class="people">${SG().map(s => { const l = subsOf(s.id)[0]; const sc = l && scoreOf(l); return `<button data-act="pick-work" data-v="${s.id}" aria-current="${s.id === sid}">${avatar(s)}<span class="nm"><b>${esc(s.name)}</b><span>${s.level}${sc ? ' · gần nhất ' + sc.c + '/' + sc.t : ''}</span></span></button>`; }).join('')}</div></div>
+    <div class="card"><div class="people">${SG().map(s => { const l = subsOf(s.id)[0]; const sc = l && scoreOf(l); return `<button data-act="pick-work" data-v="${s.id}" aria-current="${s.id === sid}">${avatar(s)}<span class="nm"><b>${esc(s.name)}</b><span>${esc(clsName(s.cls))} · ${s.level}${sc ? ' · gần nhất ' + sc.c + '/' + sc.t : ''}</span></span></button>`; }).join('')}</div></div>
     <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
-      <div class="card"><div class="card-b" style="padding-top:20px"><div class="row" style="gap:16px">${avatar(st, 'lg')}<div style="flex:1;min-width:180px"><h2>${esc(st.name)}</h2><div class="small muted">Nhóm ${st.level} · chuỗi ${streakOf(sid)} ngày</div></div>
+      <div class="card"><div class="card-b" style="padding-top:20px"><div class="row" style="gap:16px">${avatar(st, 'lg')}<div style="flex:1;min-width:180px"><h2>${esc(st.name)}</h2><div class="small muted">Lớp ${esc(clsName(st.cls))} · nhóm ${st.level} · chuỗi ${streakOf(sid)} ngày</div></div>
         <div class="row" style="gap:24px">
           <div><div class="small muted">Bài đã nộp</div><div class="bignum" style="font-size:24px">${subs.length}</div></div>
           <div><div class="small muted">Bỏ lỡ</div><div class="bignum" style="font-size:24px">${missed}</div></div>
           <div><div class="small muted">Điểm TB</div><div class="bignum" style="font-size:24px">${avg == null ? '–' : dec(avg)}</div></div>
+          <div><div class="small muted">Tự luyện</div><div class="bignum" style="font-size:24px">${prac}</div></div>
           <div><div class="small muted">Lỗi chưa sửa</div><div class="bignum" style="font-size:24px;color:${open ? 'var(--danger)' : 'inherit'}">${open}</div></div>
         </div></div></div></div>
       <div>${subs.length ? subs.map((b, i) => subRow(b, i === 0, true)).join('') : `<div class="card"><div class="emptyst"><div class="ib">${ic('list')}</div>Học sinh này chưa nộp bài nào.</div></div>`}</div>
@@ -1073,15 +1302,15 @@ function analysisData(){
   const from = ui.an.range === 'all' ? '0000' : addDays(TODAY, -Number(ui.an.range) + 1);
   const qs = {}, topics = {}, per = {};
   for (const b of S.submissions) {
-    const a = A(b.aid); if (!a || a.date < from) continue;
-    if (!STU(b.sid)) continue;
+    const a = A(b.aid), s = STU(b.sid); if (!a || !s || a.date < from) continue;
     if (a.grade !== ui.grade) continue;
-    if (ui.an.level !== 'all' && a.level !== ui.an.level) continue;
+    if (ui.an.level !== 'all' && s.level !== ui.an.level) continue;
+    if (ui.an.cls !== 'all' && s.cls !== ui.an.cls) continue;
     for (const qid of a.qids) {
       const q = Q(qid); if (!q) continue;
       const v = b.answers[qid]?.value, ok = isRight(q, v);
-      const s = qs[qid] ||= {q, n:0, w:0, vals:{}, who:new Set()};
-      s.n++; if (!ok) { s.w++; s.vals[normVal(v)] = (s.vals[normVal(v)] || 0) + 1; s.who.add(b.sid); }
+      const x = qs[qid] ||= {q, n:0, w:0, vals:{}, who:new Set()};
+      x.n++; if (!ok) { x.w++; x.vals[normVal(v)] = (x.vals[normVal(v)] || 0) + 1; x.who.add(b.sid); }
       const t = topics[q.topic] ||= {n:0, w:0}; t.n++; if (!ok) t.w++;
       const p = (per[b.sid] ||= {}); const pt = p[q.topic] ||= {n:0, w:0}; pt.n++; if (!ok) pt.w++;
     }
@@ -1095,26 +1324,27 @@ function tAnalysis(){
   const studs = SG().filter(s => d.per[s.id]);
   const filters = `<div class="row between">
     <div class="row" style="gap:6px">${[['3','3 ngày'],['7','7 ngày'],['all','Tất cả']].map(([v, l]) => `<button class="fchip" data-act="an-range" data-v="${v}" aria-pressed="${ui.an.range === v}">${l}</button>`).join('')}</div>
-    <div class="row" style="gap:6px"><button class="fchip" data-act="an-level" data-v="all" aria-pressed="${ui.an.level === 'all'}">Cả lớp</button>${LEVELS.map(l => `<button class="fchip" data-act="an-level" data-v="${l}" aria-pressed="${ui.an.level === l}">${l}</button>`).join('')}</div></div>`;
+    <div class="row" style="gap:6px"><button class="fchip" data-act="an-cls" data-v="all" aria-pressed="${ui.an.cls === 'all'}">Cả khối</button>${classesOf(ui.grade).map(c => `<button class="fchip" data-act="an-cls" data-v="${c.id}" aria-pressed="${ui.an.cls === c.id}">${esc(c.name)}</button>`).join('')}</div>
+    <div class="row" style="gap:6px"><button class="fchip" data-act="an-level" data-v="all" aria-pressed="${ui.an.level === 'all'}">Mọi trình độ</button>${LEVELS.map(l => `<button class="fchip" data-act="an-level" data-v="${l}" aria-pressed="${ui.an.level === l}">${l}</button>`).join('')}</div></div>`;
   const kp = `<div class="grid g4">
     <div class="card kpi"><div class="ico" style="background:var(--primary-soft);color:var(--primary)">${ic('list')}</div><div><div class="t">Lượt trả lời</div><div class="v">${total}</div></div></div>
     <div class="card kpi">${ring(total ? 1 - wrong / total : 0, 58, 7, 'var(--success)', total ? pct(1 - wrong / total) : '–')}<div><div class="t">Tỉ lệ đúng</div><div class="s">${wrong} lượt sai</div></div></div>
     <div class="card kpi"><div class="ico" style="background:var(--danger-soft);color:var(--danger)">${ic('alert')}</div><div><div class="t">Câu có người sai</div><div class="v">${d.qs.filter(s => s.w).length}<small>/${d.qs.length}</small></div></div></div>
     <div class="card kpi"><div class="ico" style="background:var(--warn-soft);color:var(--warn)">${ic('users')}</div><div><div class="t">Học sinh có bài</div><div class="v">${studs.length}</div></div></div></div>`;
-  const tp = `<div class="card"><div class="card-h"><div><h2>Tỉ lệ sai theo chuyên đề</h2><p>Chuyên đề nào lớp đang hổng nhiều nhất</p></div></div><div class="card-b">
-    ${TOPICS.filter(t => d.topics[t]).sort((x, y) => d.topics[y].w / d.topics[y].n - d.topics[x].w / d.topics[x].n).map(t => { const r = d.topics[t].w / d.topics[t].n; return `<div class="hbar"><span>${t}</span><div class="tr"><i style="width:${r * 100}%;background:var(${TOPIC_VAR[t]})"></i></div><span class="v">${pct(r)}</span></div>`; }).join('') || '<div class="emptyst">Chưa có bài làm trong khoảng này.</div>'}
+  const tp = `<div class="card"><div class="card-h"><div><h2>Tỉ lệ sai theo chuyên đề</h2><p>Chuyên đề nào đang hổng nhiều nhất</p></div></div><div class="card-b">
+    ${TOPICS.filter(t => d.topics[t]).sort((x, y) => d.topics[y].w / d.topics[y].n - d.topics[x].w / d.topics[x].n).map(t => { const r = d.topics[t].w / d.topics[t].n; return `<div class="hbar"><span>${esc(t)}</span><div class="tr"><i style="width:${r * 100}%;background:var(${tvar(t)})"></i></div><span class="v">${pct(r)}</span></div>`; }).join('') || '<div class="emptyst">Chưa có bài làm trong khoảng này.</div>'}
   </div></div>`;
   const heat = `<div class="card"><div class="card-h"><div><h2>Bản đồ năng lực</h2><p>Tỉ lệ làm đúng của từng học sinh theo chuyên đề</p></div></div><div class="card-b" style="padding-inline:8px">
-    <div class="tbl"><table class="heat"><thead><tr><th>Học sinh</th>${TOPICS.map(t => `<th style="text-align:center">${t}</th>`).join('')}</tr></thead><tbody>
-    ${studs.map(s => `<tr><td><div class="person">${avatar(s, 'sm')}<b>${esc(s.name)}</b></div></td>${TOPICS.map(t => { const p = d.per[s.id][t]; if (!p) return '<td><span class="cell na">–</span></td>'; const r = 1 - p.w / p.n; return `<td><span class="cell ${r >= 0.8 ? 'hi' : r >= 0.5 ? 'md' : 'lo'}">${pct(r)}<small>${p.n - p.w}/${p.n} câu</small></span></td>`; }).join('')}</tr>`).join('')}
+    <div class="tbl"><table class="heat"><thead><tr><th>Học sinh</th>${TOPICS.map(t => `<th style="text-align:center">${esc(t)}</th>`).join('')}</tr></thead><tbody>
+    ${studs.map(s => `<tr><td><div class="person">${avatar(s, 'sm')}<b>${esc(s.name)}</b><span class="small muted">${esc(clsName(s.cls))}</span></div></td>${TOPICS.map(t => { const p = d.per[s.id][t]; if (!p) return '<td><span class="cell na">–</span></td>'; const r = 1 - p.w / p.n; return `<td><span class="cell ${r >= 0.8 ? 'hi' : r >= 0.5 ? 'md' : 'lo'}">${pct(r)}<small>${p.n - p.w}/${p.n} câu</small></span></td>`; }).join('')}</tr>`).join('')}
     </tbody></table></div>
     <div class="legend" style="padding:0 12px"><span><i style="background:var(--success-soft);box-shadow:inset 0 0 0 1px var(--success)"></i>Vững (≥ 80%)</span><span><i style="background:var(--warn-soft);box-shadow:inset 0 0 0 1px var(--warn)"></i>Chưa chắc (50–79%)</span><span><i style="background:var(--danger-soft);box-shadow:inset 0 0 0 1px var(--danger)"></i>Cần ôn (&lt; 50%)</span></div>
   </div></div>`;
   const hq = `<div class="card"><div class="card-h"><div><h2>Câu sai nhiều nhất</h2><p>Kèm đáp án sai phổ biến để biết học sinh hiểu nhầm ở đâu</p></div>
-    ${ui.an.level !== 'all' && hard.length ? `<button class="btn sm" data-act="reassign">${ic('retry','sm')} Giao lại ${Math.min(4, hard.length)} câu này</button>` : '<span class="small muted">Chọn một nhóm để giao lại các câu này</span>'}</div><div class="card-b">
+    ${hard.length ? `<button class="btn sm" data-act="reassign">${ic('retry','sm')} Giao lại ${Math.min(4, hard.length)} câu này</button>` : ''}</div><div class="card-b">
     ${hard.length ? hard.map((s, i) => { const top = Object.entries(s.vals).sort((x, y) => y[1] - x[1])[0]; const r = s.w / s.n; return `<div class="qr">
       <div class="h"><span class="qn">${i + 1}</span><span class="qt">${esc(s.q.text)}${qImg(s.q, 'sm')}${tfList(s.q)}</span><span class="chip bad num">${pct(r)} sai</span></div>
-      <div class="row small" style="gap:8px">${topicChip(s.q.topic)}<span class="chip">${s.q.level}</span><span class="muted">${s.w}/${s.n} lượt sai</span></div>
+      <div class="row small" style="gap:6px">${topicChip(s.q.topic)}${lvChips(s.q)}<span class="muted">${s.w}/${s.n} lượt sai</span></div>
       <div class="ansl"><span>Đáp án đúng: <span class="r">${esc(showVal(s.q.answer))}</span></span>${top ? `<span>Sai phổ biến: <span class="w" style="text-decoration:none">${esc(showVal(top[0]))}</span> (${top[1]} lần)</span>` : ''}</div>
       ${s.q.ww ? `<div class="work bad">Cách làm sai hay gặp: ${esc(s.q.ww)}</div>` : ''}
       <div class="row" style="gap:6px"><span class="small muted">Học sinh sai:</span>${[...s.who].map(id => STU(id)).filter(Boolean).map(x => `<span class="chip">${esc(x.name)}</span>`).join('')}</div>
@@ -1130,18 +1360,19 @@ function sHome(st){
     const b = subFor(a.id, st.id), sc = b && scoreOf(b);
     const wrongIds = b ? a.qids.filter(qid => !isRight(Q(qid), b.answers[qid]?.value) && !S.fixed[st.id]?.[qid]) : [];
     return `<div class="card today" style="${tcv(a.topic)}">
-      <div class="band" data-g="${TOPIC_GLYPH[a.topic] || '∑'}"><div class="k">${ic('cal','sm')} Bài hôm nay · ${a.topic}</div><h2>${esc(a.title)}</h2>
+      <div class="band" data-g="${esc(glyph(a.topic))}"><div class="k">${ic('cal','sm')} Bài hôm nay · ${esc(a.topic)}</div><h2>${esc(a.title)}</h2>
         <div class="meta"><span>${ic('list','sm')} ${a.qids.length} câu</span><span>${ic('clock','sm')} khoảng ${a.qids.length * 3} phút</span><span>${ic('alert','sm')} Nộp trước 23:59 hôm nay</span></div></div>
+      ${(a.docs || []).length ? `<div class="card-b" style="padding-bottom:0"><div class="fl">Tài liệu thầy cô gửi kèm<div class="docs">${a.docs.map(d => docChip(d)).join('')}</div></div></div>` : ''}
       <div class="tb">${b ? `${ring(sc.c / sc.t, 72, 8, sc.c === sc.t ? 'var(--success)' : 'var(--warn)', `${sc.c}/${sc.t}`)}
           <div class="grow"><h3>${sc.c === sc.t ? 'Xuất sắc, em đúng hết!' : `Em đúng ${sc.c}/${sc.t} câu · ${dec(sc.ten)} điểm`}</h3><p class="small muted">Đã nộp lúc ${b.at.slice(11)}${wrongIds.length ? ` · còn ${wrongIds.length} câu cần sửa` : ''}</p></div>
           <div class="row">${wrongIds.length ? `<button class="btn" data-act="retry" data-v="${wrongIds.join(',')}">${ic('retry','sm')} Sửa ${wrongIds.length} câu sai</button>` : ''}<button class="btn sec" data-act="review" data-v="${a.id}">${ui.review[a.id] ? 'Ẩn bài làm' : 'Xem lại bài'}</button></div>`
         : `<div class="grow"><h3>Sẵn sàng chưa?</h3><p class="small muted">Làm từng câu, có đáp án và lời giải ngay sau mỗi câu.</p></div><button class="btn cta lg" data-act="start" data-v="${a.id}">${ic('play','fill sm')} Bắt đầu làm bài</button>`}</div>
       ${b && ui.review[a.id] ? `<div class="card-b" style="border-top:1px solid var(--line);padding-top:18px">${subDetail(b, false)}</div>` : ''}
     </div>`;
-  }).join('') : `<div class="card"><div class="emptyst"><div class="ib">${ic('cal')}</div><b style="color:var(--ink)">Hôm nay chưa có bài</b>Thầy cô chưa giao bài cho nhóm của em. Trong lúc chờ, em ôn lại Sổ lỗi sai nhé.</div></div>`;
+  }).join('') : `<div class="card"><div class="emptyst"><div class="ib">${ic('cal')}</div><b style="color:var(--ink)">Hôm nay chưa có bài</b>Thầy cô chưa giao bài cho lớp của em. Em có thể tự luyện ở mục Chuyên đề.<button class="btn soft sm" data-act="tab" data-v="topics">${ic('folder','sm')} Mở chuyên đề</button></div></div>`;
 
   const days = new Set(subsOf(st.id).map(b => A(b.aid).date));
-  const had = new Set(S.assignments.filter(a => a.grade === st.grade && a.level === st.level).map(a => a.date));
+  const had = new Set(S.assignments.filter(a => sees(a, st)).map(a => a.date));
   const streakCard = `<div class="card"><div class="card-b" style="padding-top:20px">
     <div class="streak"><div class="flame">${ic('flame','fill lg')}</div><div><div class="bignum">${streak} ngày</div><div class="small muted">chuỗi làm bài liên tiếp</div></div></div>
     <div class="week">${last7().map(d => { const ok = days.has(d), miss = !ok && d < TODAY && had.has(d); return `<div class="d"><span class="c ${ok ? 'ok' : miss ? 'miss' : ''} ${d === TODAY ? 'now' : ''}" title="${fmtDate(d)}">${ok ? ic('check','sm') : miss ? ic('x','sm') : ''}</span>${wdOf(d)}</div>`; }).join('')}</div>
@@ -1151,12 +1382,51 @@ function sHome(st){
     <div class="row" style="gap:16px">${ring(ms.length ? (ms.length - open.length) / ms.length : 0, 64, 7, 'var(--success)', `${ms.length - open.length}/${ms.length}`)}<div style="flex:1"><div><b>${open.length ? `Còn ${open.length} câu cần làm lại` : 'Em đã sửa hết lỗi sai'}</b></div><div class="small muted">Làm đúng lại thì câu đó được tính là đã sửa</div></div></div>
     ${open.length ? `<button class="btn soft" data-act="retry" data-v="${open.map(m => m.q.id).join(',')}">${ic('retry','sm')} Luyện lại ${open.length} câu</button>` : ''}
   </div></div>`;
+  return `<div class="split"><div style="display:flex;flex-direction:column;gap:20px;min-width:0">${todayCards}${masteryCard(st)}</div><div style="display:flex;flex-direction:column;gap:20px;min-width:0">${streakCard}${mcard}</div></div>`;
+}
+function masteryOf(st){
   const per = {};
   for (const b of subsOf(st.id)) { const a = A(b.aid); for (const qid of a.qids) { const q = Q(qid); if (!q) continue; const p = per[q.topic] ||= {n:0, c:0}; p.n++; if (isRight(q, b.answers[qid]?.value) || S.fixed[st.id]?.[qid]) p.c++; } }
-  const mastery = `<div class="card"><div class="card-h"><div><h2>Mức thành thạo</h2><p>Tính cả các câu em đã sửa lại đúng</p></div></div><div class="card-b">
-    ${TOPICS.map(t => { const p = per[t]; const r = p ? p.c / p.n : 0; return `<div class="hbar"><span class="row" style="gap:8px;flex-wrap:nowrap"><span class="chip topic" style="${tcv(t)};padding:0;width:8px;height:8px"></span>${t}</span><div class="tr"><i style="width:${r * 100}%;background:var(${TOPIC_VAR[t]})"></i></div><span class="v">${p ? pct(r) : '–'}</span></div>`; }).join('')}
+  for (const [t, p] of Object.entries(S.practice[st.id] || {})) { const x = per[t] ||= {n:0, c:0}; x.n += p.n; x.c += p.c; }
+  return per;
+}
+function masteryCard(st){
+  const per = masteryOf(st);
+  return `<div class="card"><div class="card-h"><div><h2>Mức thành thạo</h2><p>Gồm bài được giao, câu đã sửa lại đúng và các lượt tự luyện</p></div></div><div class="card-b">
+    ${TOPICS.map(t => { const p = per[t]; const r = p && p.n ? p.c / p.n : 0; return `<div class="hbar"><span class="row" style="gap:8px;flex-wrap:nowrap"><span class="chip topic" style="${tcv(t)};padding:0;width:8px;height:8px"></span>${esc(t)}</span><div class="tr"><i style="width:${r * 100}%;background:var(${tvar(t)})"></i></div><span class="v">${p && p.n ? pct(r) : '–'}</span></div>`; }).join('')}
   </div></div>`;
-  return `<div class="split"><div style="display:flex;flex-direction:column;gap:20px;min-width:0">${todayCards}${mastery}</div><div style="display:flex;flex-direction:column;gap:20px;min-width:0">${streakCard}${mcard}</div></div>`;
+}
+// trang chuyên đề: các thư mục giáo viên tạo; học sinh tự chọn luyện, không bắt buộc
+function sTopics(st){
+  const tops = topicsOf(st.grade);
+  if (ui.stTopic) {
+    const t = tops.find(x => x.name === ui.stTopic);
+    if (!t) { ui.stTopic = null; return sTopics(st); }
+    const qs = S.bank.filter(q => q.grade === st.grade && q.topic === t.name);
+    const lv = ui.prLevel || st.level, cnt = l => qs.filter(q => l === 'all' || q.levels.includes(l)).length;
+    const p = S.practice[st.id]?.[t.name];
+    return `<div class="row"><button class="btn ghost sm" data-act="st-back" style="padding-left:0">${ic('back','sm')} Tất cả chuyên đề</button></div>
+      <div class="card today" style="${tcv(t.name)}"><div class="band" data-g="${esc(glyph(t.name))}"><div class="k">${ic('folder','sm')} Chuyên đề · Toán ${st.grade}</div><h2>${esc(t.name)}</h2>
+        <div class="meta"><span>${ic('list','sm')} ${qs.length} câu hỏi</span><span>${ic('file','sm')} ${t.docs.length} tài liệu</span>${p ? `<span>${ic('check','sm')} đã tự luyện ${p.n} câu, đúng ${pct(p.c / p.n)}</span>` : ''}</div></div></div>
+      <div class="split even">
+        <div class="card"><div class="card-h"><div><h2>Tự luyện</h2><p>Không tính điểm, không giới hạn số lần. Câu sai sẽ vào Sổ lỗi sai để em làm lại.</p></div></div><div class="card-b">
+          <div class="fl">Độ khó<div class="cbxs">${[...LEVELS, 'all'].map(l => `<button class="fchip" data-act="pr-level" data-v="${l}" aria-pressed="${lv === l}">${l === 'all' ? 'Trộn tất cả' : l} <span class="muted">(${cnt(l)})</span></button>`).join('')}</div></div>
+          <div class="row">${[5, 10].map(n => `<button class="btn ${n === 5 ? 'cta' : 'sec'}" data-act="practice" data-v="${n}" ${cnt(lv) ? '' : 'disabled'}>${ic('play','fill sm')} Luyện ${n} câu</button>`).join('')}</div>
+          ${cnt(lv) ? '' : '<p class="small muted">Chuyên đề này chưa có câu hỏi ở độ khó này. Chọn độ khó khác nhé.</p>'}
+        </div></div>
+        <div class="card"><div class="card-h"><div><h2>Tài liệu</h2><p>Thầy cô tải lên cho chuyên đề này</p></div></div><div class="card-b">
+          ${t.docs.length ? `<div class="docs">${t.docs.map(d => docChip(d)).join('')}</div>` : '<div class="emptyst" style="padding:12px">Chưa có tài liệu nào.</div>'}
+        </div></div>
+      </div>`;
+  }
+  const per = masteryOf(st);
+  return `<div class="card"><div class="card-b" style="padding-top:18px"><p>Các chuyên đề thầy cô đã tạo cho Toán ${st.grade}. Em chọn chuyên đề muốn ôn, đọc tài liệu và tự luyện bao nhiêu câu tùy thích.</p></div></div>
+    <div class="grid g3">${tops.map(t => {
+      const nq = S.bank.filter(q => q.grade === st.grade && q.topic === t.name).length, p = per[t.name], r = p && p.n ? p.c / p.n : null;
+      return `<button class="card course tcard" style="${tcv(t.name)}" data-act="st-topic" data-v="${esc(t.name)}"><div class="band" data-g="${esc(glyph(t.name))}"><span>${ic('folder','sm')} Thư mục</span><b>${esc(t.name)}</b></div>
+        <div class="cb"><div class="row small" style="gap:6px"><span class="chip">${nq} câu hỏi</span><span class="chip">${t.docs.length} tài liệu</span></div>
+          <div class="row between small"><span class="muted">Mức thành thạo</span><b>${r == null ? 'Chưa luyện' : pct(r)}</b></div><div class="prog"><i style="width:${(r || 0) * 100}%"></i></div></div></button>`;
+    }).join('') || '<div class="card"><div class="emptyst">Thầy cô chưa tạo chuyên đề nào.</div></div>'}</div>`;
 }
 function sMistakes(st){
   const ms = mistakes(st.id), open = ms.filter(m => !m.fixed), done = ms.filter(m => m.fixed);
@@ -1165,16 +1435,17 @@ function sMistakes(st){
     ${ring(ms.length ? done.length / ms.length : 0, 76, 8, 'var(--success)', pct(done.length / ms.length))}
     <div style="flex:1;min-width:200px"><h2>${open.length ? `Còn ${open.length} câu cần làm lại` : 'Em đã sửa hết lỗi sai!'}</h2><p class="small muted">Đã sửa ${done.length}/${ms.length} câu. Làm lại đúng một câu thì câu đó được đánh dấu đã sửa.</p></div>
     ${open.length ? `<button class="btn cta lg" data-act="retry" data-v="${open.map(m => m.q.id).join(',')}">${ic('play','fill sm')} Luyện lại tất cả</button>` : ''}</div></div></div>`;
-  const groups = TOPICS.map(t => [t, open.filter(m => m.q.topic === t)]).filter(([, l]) => l.length);
+  const tnames = [...new Set(TOPICS.concat(open.map(m => m.q.topic)))];
+  const groups = tnames.map(t => [t, open.filter(m => m.q.topic === t)]).filter(([, l]) => l.length);
   const body = groups.map(([t, l]) => `<div class="card"><div class="card-h"><div class="row" style="gap:10px">${topicChip(t)}<span class="small muted">${l.length} câu</span></div></div><div class="card-b" style="padding-top:8px"><div class="list">
-    ${l.map(m => `<div class="li"><div class="grow"><div class="qt">${esc(m.q.text)}${qImg(m.q, 'sm')}${tfList(m.q)}</div><div class="ansl" style="margin-top:4px"><span>Lần trước: <span class="w">${esc(showVal(m.value))}</span></span><span class="muted">sai ngày ${fmtDate(m.date)}</span></div></div><button class="btn sec sm" data-act="retry" data-v="${m.q.id}">${ic('retry','sm')} Làm lại</button></div>`).join('')}
+    ${l.map(m => `<div class="li"><div class="grow"><div class="qt">${esc(m.q.text)}${qImg(m.q, 'sm')}${tfList(m.q)}</div><div class="ansl" style="margin-top:4px"><span>Lần trước: <span class="w">${esc(showVal(m.value))}</span></span><span class="muted">${m.practice ? 'tự luyện' : 'sai'} ngày ${fmtDate(m.date)}</span></div></div><button class="btn sec sm" data-act="retry" data-v="${m.q.id}">${ic('retry','sm')} Làm lại</button></div>`).join('')}
   </div></div></div>`).join('');
   const fixed = done.length ? `<details class="sub"><summary><div class="grow"><b>Các câu đã sửa (${done.length})</b></div>${ic('chev','chev')}</summary><div class="body"><div class="list">${done.map(m => `<div class="li"><span class="chip ok">${ic('check','sm')}</span><div class="grow"><div class="qt">${esc(m.q.text)}</div></div>${topicChip(m.q.topic)}</div>`).join('')}</div></div></details>` : '';
   return head + body + fixed;
 }
 function sHistory(st){
   const subs = subsOf(st.id), avg = mean(subs.map(b => scoreOf(b).ten));
-  const missed = S.assignments.filter(a => a.grade === st.grade && a.level === st.level && a.date < TODAY && !subFor(a.id, st.id)).length;
+  const missed = S.assignments.filter(a => sees(a, st) && a.date < TODAY && !subFor(a.id, st.id)).length;
   return `<div class="grid g4">
     <div class="card kpi"><div class="ico" style="background:var(--primary-soft);color:var(--primary)">${ic('list')}</div><div><div class="t">Bài đã nộp</div><div class="v">${subs.length}</div></div></div>
     <div class="card kpi"><div class="ico" style="background:var(--success-soft);color:var(--success)">${ic('trophy')}</div><div><div class="t">Điểm trung bình</div><div class="v">${avg == null ? '–' : dec(avg)}<small>/10</small></div></div></div>
@@ -1184,9 +1455,15 @@ function sHistory(st){
 }
 
 // ---------- màn làm bài ----------
-function startPlayer(mode, qids, aid){
-  ui.player = {mode, aid, qids, i:0, answers:{}, works:{}, checked:false, res:[], exit:false, done:false};
+function startPlayer(mode, qids, aid, extra = {}){
+  ui.player = {mode, aid, qids, i:0, answers:{}, works:{}, checked:false, res:[], exit:false, done:false, ...extra};
   render();
+}
+function startPractice(n){
+  const st = STU(ui.sid), lv = ui.prLevel || st.level;
+  const pool = S.bank.filter(q => q.grade === st.grade && q.topic === ui.stTopic && (lv === 'all' || q.levels.includes(lv)));
+  if (!pool.length) return;
+  startPlayer('practice', shuffle(pool).slice(0, n).map(q => q.id), null, {topic:ui.stTopic, n});
 }
 function renderPlayer(){
   const el = $('#player'), p = ui.player;
@@ -1198,14 +1475,15 @@ function renderPlayer(){
   const head = `<div class="ph"><button class="iconbtn" data-act="p-close" aria-label="Thoát">${ic('x')}</button>${bar}<span class="num small" style="font-weight:700">${Math.min(p.i + 1, n)}/${n}</span></div>`;
   if (p.done) {
     const c = p.res.filter(Boolean).length;
-    el.innerHTML = head + `<div class="pc"><div class="endc">
-      ${ring(c / n, 132, 12, c === n ? 'var(--success)' : 'var(--warn)', `<span style="font-size:28px">${c}/${n}</span>`)}
-      ${p.mode === 'assign'
-        ? `<h2>${c === n ? 'Tuyệt vời, đúng hết!' : 'Đã nộp bài!'}</h2><p class="muted">Em làm đúng ${c}/${n} câu, được ${dec(c / n * 10)} điểm.${c < n ? ` ${n - c} câu sai đã vào Sổ lỗi sai để em làm lại.` : ''} Chuỗi ngày của em giờ là ${streakOf(ui.sid)} ngày.</p>
-           <div class="row">${c < n ? `<button class="btn lg" data-act="p-retry-now">${ic('retry','sm')} Sửa ngay ${n - c} câu sai</button>` : ''}<button class="btn sec lg" data-act="p-finish">Về trang chủ</button></div>`
-        : `<h2>${c === n ? 'Em đã sửa hết!' : `Đã sửa ${c}/${n} câu`}</h2><p class="muted">${c === n ? 'Các câu này đã được đánh dấu là đã sửa.' : 'Những câu chưa đúng vẫn nằm trong Sổ lỗi sai. Đọc kỹ lời giải rồi thử lại sau nhé.'}</p>
-           <div class="row"><button class="btn lg" data-act="p-finish">Xong</button></div>`}
-    </div></div>`;
+    const msg = p.mode === 'assign'
+      ? `<h2>${c === n ? 'Tuyệt vời, đúng hết!' : 'Đã nộp bài!'}</h2><p class="muted">Em làm đúng ${c}/${n} câu, được ${dec(c / n * 10)} điểm.${c < n ? ` ${n - c} câu sai đã vào Sổ lỗi sai để em làm lại.` : ''} Chuỗi ngày của em giờ là ${streakOf(ui.sid)} ngày.</p>
+         <div class="row">${c < n ? `<button class="btn lg" data-act="p-retry-now">${ic('retry','sm')} Sửa ngay ${n - c} câu sai</button>` : ''}<button class="btn sec lg" data-act="p-finish">Về trang chủ</button></div>`
+      : p.mode === 'practice'
+      ? `<h2>${c === n ? 'Đúng hết, giỏi lắm!' : `Em đúng ${c}/${n} câu`}</h2><p class="muted">Lượt tự luyện chuyên đề ${esc(p.topic)}.${c < n ? ` ${n - c} câu sai đã vào Sổ lỗi sai.` : ''} Muốn luyện thêm thì bấm Luyện tiếp.</p>
+         <div class="row"><button class="btn cta lg" data-act="p-again">${ic('retry','sm')} Luyện tiếp ${p.n} câu</button><button class="btn sec lg" data-act="p-finish">Về chuyên đề</button></div>`
+      : `<h2>${c === n ? 'Em đã sửa hết!' : `Đã sửa ${c}/${n} câu`}</h2><p class="muted">${c === n ? 'Các câu này đã được đánh dấu là đã sửa.' : 'Những câu chưa đúng vẫn nằm trong Sổ lỗi sai. Đọc kỹ lời giải rồi thử lại sau nhé.'}</p>
+         <div class="row"><button class="btn lg" data-act="p-finish">Xong</button></div>`;
+    el.innerHTML = head + `<div class="pc"><div class="endc">${ring(c / n, 132, 12, c === n ? 'var(--success)' : 'var(--warn)', `<span style="font-size:28px">${c}/${n}</span>`)}${msg}</div></div>`;
     return;
   }
   const qid = p.qids[p.i], q = Q(qid), val = p.answers[qid] ?? '', ok = p.checked && isRight(q, val);
@@ -1215,8 +1493,9 @@ function renderPlayer(){
     : q.type === 'mc'
     ? `<div class="choices">${q.options.map((o, j) => { let cls = ''; if (p.checked) { if (o === q.answer) cls = 'ok'; else if (o === val) cls = 'bad'; } return `<button class="choice ${cls}" data-act="p-pick" data-v="${j}" aria-pressed="${o === val}" ${p.checked ? 'disabled' : ''}><span class="k">${'ABCD'[j]}</span>${esc(o)}</button>`; }).join('')}</div>`
     : `<div><input type="text" class="ansbox ${st}" id="p-input" value="${esc(val)}" placeholder="Nhập đáp số" autocomplete="off" ${p.checked ? 'disabled' : ''}><div class="hint" style="margin-top:8px">Có thể nhập số nguyên, số thập phân (2,5) hoặc phân số (5/6).</div></div>`;
+  const label = p.mode === 'assign' ? esc(A(p.aid)?.title || '') : p.mode === 'practice' ? 'Tự luyện · ' + esc(p.topic) : 'Luyện lại lỗi sai';
   const body = `<div class="pc"><div class="pin">
-    <div class="row">${topicChip(q.topic)}<span class="small muted">${p.mode === 'assign' ? esc(A(p.aid)?.title || '') : 'Luyện lại lỗi sai'}</span></div>
+    <div class="row">${topicChip(q.topic)}<span class="small muted">${label}</span></div>
     <div class="qbig">${esc(q.text)}</div>${qImg(q, 'big')}${input}
     ${p.mode === 'assign' ? `<details class="wk" ${p.works[qid] ? 'open' : ''}><summary>Ghi cách làm (không bắt buộc)</summary><textarea id="p-work" rows="3" placeholder="Viết các bước em làm để thầy cô xem em sai ở đâu" ${p.checked ? 'disabled' : ''}>${esc(p.works[qid] || '')}</textarea></details>` : ''}
   </div></div>`;
@@ -1224,8 +1503,8 @@ function renderPlayer(){
   const foot = p.checked
     ? `<div class="pf ${st}"><div class="pfi"><div class="fb"><span class="bi">${ic(ok ? 'check' : 'x', 'lg')}</span><div><h3>${ok ? ['Chính xác!', 'Đúng rồi!', 'Làm tốt lắm!'][p.i % 3] : 'Chưa đúng'}</h3>${ok ? '' : q.type === 'tf' ? `<p>Em đúng ${[...q.answer].filter((c, j) => c === val[j]).length}/4 ý. Xem đáp án từng ý ở trên.</p>` : `<p>Đáp án đúng: <b>${esc(showVal(q.answer))}</b></p>`}${!ok && q.explain ? `<p>${esc(q.explain)}</p>` : ''}</div></div>
         <button class="btn lg" data-act="p-next" id="p-next">${last ? (p.mode === 'assign' ? 'Nộp bài' : 'Xem kết quả') : 'Tiếp tục'}</button></div></div>`
-    : `<div class="pf"><div class="pfi"><span class="small muted">${p.mode === 'assign' ? 'Mỗi câu chỉ được trả lời một lần' : 'Làm đúng thì câu này được tính là đã sửa'}</span><button class="btn cta lg" data-act="p-check" id="p-check" ${answered(q, val) ? '' : 'disabled'}>Kiểm tra</button></div></div>`;
-  const dlg = p.exit ? `<div class="scrim"><div class="dialog"><h3>Thoát khỏi bài?</h3><p class="muted">${p.mode === 'assign' ? 'Bài chưa được nộp, câu trả lời của em sẽ không được lưu.' : 'Những câu em đã làm đúng vẫn được tính là đã sửa.'}</p><div class="row" style="justify-content:flex-end"><button class="btn sec" data-act="p-stay">Làm tiếp</button><button class="btn" style="background:var(--danger);color:#fff" data-act="p-quit">Thoát</button></div></div></div>` : '';
+    : `<div class="pf"><div class="pfi"><span class="small muted">${p.mode === 'assign' ? 'Mỗi câu chỉ được trả lời một lần' : p.mode === 'practice' ? 'Tự luyện không tính điểm' : 'Làm đúng thì câu này được tính là đã sửa'}</span><button class="btn cta lg" data-act="p-check" id="p-check" ${answered(q, val) ? '' : 'disabled'}>Kiểm tra</button></div></div>`;
+  const dlg = p.exit ? `<div class="scrim"><div class="dialog"><h3>Thoát khỏi bài?</h3><p class="muted">${p.mode === 'assign' ? 'Bài chưa được nộp, câu trả lời của em sẽ không được lưu.' : 'Những câu em đã làm vẫn được ghi lại.'}</p><div class="row" style="justify-content:flex-end"><button class="btn sec" data-act="p-stay">Làm tiếp</button><button class="btn" style="background:var(--danger);color:#fff" data-act="p-quit">Thoát</button></div></div></div>` : '';
   el.innerHTML = head + body + foot + dlg;
   if (!p.checked && !p.exit) { const inp = $('#p-input'); if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); } }
   else if (p.checked) $('#p-next')?.focus();
@@ -1237,6 +1516,11 @@ function pCheck(){
   const ok = isRight(q, p.answers[qid]);
   p.res.push(ok);
   if (p.mode === 'retry' && ok) { (S.fixed[ui.sid] ||= {})[qid] = true; save(); }
+  if (p.mode === 'practice') {
+    const r = ((S.practice[ui.sid] ||= {})[q.topic] ||= {n:0, c:0}); r.n++; if (ok) r.c++;
+    if (!ok) { (S.pwrong[ui.sid] ||= {})[qid] = {value:String(p.answers[qid]).trim(), date:TODAY}; if (S.fixed[ui.sid]) delete S.fixed[ui.sid][qid]; }
+    save();
+  }
   render();
 }
 function pNext(){
@@ -1251,7 +1535,7 @@ function pNext(){
   p.done = true; render();
 }
 
-// ---------- đăng nhập & tài khoản ----------
+// ---------- đăng nhập, lớp & tài khoản ----------
 function loginHtml(){
   const s0 = S.students[0];
   return `<div class="board">
@@ -1267,7 +1551,7 @@ function loginHtml(){
     <button class="btn cta lg" type="submit">Đăng nhập</button>
     <div class="demo"><span class="small muted">Vào nhanh bằng tài khoản dùng thử (dữ liệu mẫu)</span>
       <button type="button" class="btn sec" data-act="demo-login" data-v="teacher">${ic('users','sm')}<span>Giáo viên</span><span class="cred">${esc(S.teacher.user)} / ${esc(S.teacher.pass)}</span></button>
-      ${s0 ? `<button type="button" class="btn sec" data-act="demo-login" data-v="${s0.id}">${ic('book','sm')}<span>Học sinh ${esc(firstName(s0))}</span><span class="cred">${esc(s0.user)} / ${esc(s0.pass)}</span></button>` : ''}
+      ${s0 ? `<button type="button" class="btn sec" data-act="demo-login" data-v="${s0.id}">${ic('book','sm')}<span>Học sinh ${esc(firstName(s0))} (${esc(clsName(s0.cls))})</span><span class="cred">${esc(s0.user)} / ${esc(s0.pass)}</span></button>` : ''}
     </div>
   </form></div>`;
 }
@@ -1277,38 +1561,43 @@ function doLogin(){
   if (u === S.teacher.user && pw === S.teacher.pass) setAuth({role:'teacher'});
   else if (st) setAuth({role:'student', sid:st.id});
   else { ui.loginErr = 'Sai tên đăng nhập hoặc mật khẩu. Kiểm tra lại hoặc hỏi giáo viên.'; render(); $('#lg-user').value = u; return; }
-  ui.loginErr = null; ui.tab = {teacher:'today', student:'today'}; render(); window.scrollTo(0, 0);
+  ui.loginErr = null; ui.tab = {teacher:'today', student:'today'}; ui.stTopic = null; render(); window.scrollTo(0, 0);
 }
 function genPass(){ const a = 'abcdefghjkmnpqrstuvwxyz23456789'; let x = ''; for (let i = 0; i < 6; i++) x += a[Math.floor(Math.random() * a.length)]; return x; }
 function nextUser(){ const n = S.students.reduce((m, s) => Math.max(m, Number(String(s.user).replace(/\D/g, '')) || 0), 0) + 1; return 'hs' + String(n).padStart(2, '0'); }
-function addStudents(names, level){ const out = []; for (const nm of names) { const x = {id:'s' + S.n++, grade:ui.grade, name:nm, level, user:nextUser(), pass:genPass()}; S.students.push(x); out.push(x); } save(); return out; }
+function addStudents(names, level, clsId){ const cl = CL(clsId), out = []; for (const nm of names) { const x = {id:'s' + S.n++, grade:cl.grade, cls:cl.id, name:nm, level, user:nextUser(), pass:genPass()}; S.students.push(x); out.push(x); } save(); return out; }
 function copyAccounts(list){
   const url = location.href.split('#')[0];
-  const text = `Trang luyện toán: ${url}\n` + list.map(s => `${s.name} (lớp ${s.grade}) | Tên đăng nhập: ${s.user} | Mật khẩu: ${s.pass}`).join('\n');
+  const text = `Trang luyện toán: ${url}\n` + list.map(s => `${s.name} (lớp ${clsName(s.cls)}) | Tên đăng nhập: ${s.user} | Mật khẩu: ${s.pass}`).join('\n');
   try { navigator.clipboard.writeText(text).then(() => toast(list.length > 1 ? `Đã sao chép ${list.length} tài khoản.` : 'Đã sao chép tài khoản.'), () => toast('Trình duyệt chặn sao chép, hãy bôi đen và copy thủ công.')); }
   catch (e) { toast('Trình duyệt chặn sao chép, hãy bôi đen và copy thủ công.'); }
 }
 function tAccounts(){
   const last = s => { const b = subsOf(s.id)[0]; return b ? fmtDate(A(b.aid).date) : 'Chưa làm bài'; };
   const lvOpts = sel => LEVELS.map(l => `<option ${l === sel ? 'selected' : ''}>${l}</option>`).join('');
+  const cls = classesOf(ui.grade);
+  const clsOpts = sel => cls.map(c => `<option value="${c.id}" ${c.id === sel ? 'selected' : ''}>${esc(c.name)}</option>`).join('');
+  const allClsOpts = sel => GRADES.map(g => `<optgroup label="Khối ${g}">${classesOf(g).map(c => `<option value="${c.id}" ${c.id === sel ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</optgroup>`).join('');
   const m = ui.accMsg;
-  const msg = !m ? '' : !m.ok ? `<div class="note bad">${ic('alert','sm')}<span>${esc(m.text)}</span></div>`
-    : m.list ? `<div class="note ok">${ic('check','sm')}<span>Đã tạo ${m.list.length} tài khoản: ${m.list.map(x => `<b>${esc(x.name)}</b> (${esc(x.user)} / ${esc(x.pass)})`).join(', ')}</span></div>`
-    : `<div class="note ok">${ic('check','sm')}<span>${esc(m.text)}</span></div>`;
-  return `${msg}<div class="split even">
-    <div class="card"><div class="card-h"><div><h2>Thêm một học sinh</h2><p>Vào khối ${ui.grade}. Tên đăng nhập và mật khẩu được tạo tự động</p></div></div><div class="card-b">
-      <label class="f">Họ và tên<input type="text" id="acc-name" placeholder="vd: Nguyễn Văn Bình"></label>
-      <label class="f">Nhóm trình độ<select id="acc-level">${lvOpts('Khá')}</select></label>
-      <div><button class="btn" data-act="acc-add">${ic('plus','sm')} Tạo tài khoản</button></div></div></div>
-    <div class="card"><div class="card-h"><div><h2>Thêm cả lớp</h2><p>Dán danh sách từ Excel, mỗi dòng một họ tên</p></div></div><div class="card-b">
-      <label class="f">Danh sách học sinh<textarea id="acc-bulk" rows="4" placeholder="Trần Thị Mai&#10;Lê Văn Nam&#10;Phan Hoài Thương"></textarea></label>
-      <div class="row between" style="align-items:flex-end"><label class="f" style="flex:1;max-width:220px">Nhóm trình độ<select id="acc-bulk-level">${lvOpts('Khá')}</select></label><button class="btn sec" data-act="acc-bulk">${ic('users','sm')} Tạo tất cả</button></div></div></div>
-  </div>
-  <div class="card"><div class="card-h"><div><h2>Tài khoản khối ${ui.grade} <span class="chip pri num">${SG().length}</span></h2><p>Mỗi em một tài khoản riêng. Gửi tên đăng nhập và mật khẩu cho từng em.</p></div><button class="btn soft sm" data-act="acc-copy" data-v="all">${ic('list','sm')} Sao chép cả danh sách</button></div>
+  const msg = !m ? '' : m.list ? note({ok:true, html:`Đã tạo ${m.list.length} tài khoản: ${m.list.map(x => `<b>${esc(x.name)}</b> (${esc(x.user)} / ${esc(x.pass)})`).join(', ')}`}) : note(m);
+  const classCard = `<div class="card"><div class="card-h"><div><h2>Lớp học khối ${ui.grade}</h2><p>Tạo lớp để giao bài theo lớp. Đổi lớp của học sinh ngay trong bảng bên dưới.</p></div></div><div class="card-b">
+      <div class="clist">${cls.map(c => { const n = S.students.filter(s => s.cls === c.id).length; return `<div class="crow"><input type="text" id="cl-name-${c.id}" value="${esc(c.name)}" aria-label="Tên lớp"><span class="chip">${n} học sinh</span><button class="btn sec sm" data-act="cl-rename" data-v="${c.id}">${ic('save','sm')} Lưu</button><button class="btn danger sm ${ui.armed === 'cl-' + c.id ? 'armed' : ''}" data-act="cl-del" data-v="${c.id}" aria-label="Xoá lớp ${esc(c.name)}">${ui.armed === 'cl-' + c.id ? 'Bấm lần nữa' : ic('trash','sm')}</button></div>`; }).join('') || '<span class="small muted">Khối này chưa có lớp.</span>'}</div>
+      <div class="row" style="align-items:flex-end"><label class="f" style="flex:1;min-width:160px">Tên lớp mới<input type="text" id="cl-new" placeholder="vd: ${ui.grade}A3"></label><button class="btn" data-act="cl-add">${ic('plus','sm')} Thêm lớp</button></div>
+    </div></div>`;
+  const addCard = cls.length ? `<div class="card"><div class="card-h"><div><h2>Thêm học sinh</h2><p>Tên đăng nhập và mật khẩu được tạo tự động</p></div></div><div class="card-b">
+      <div class="fgrid"><label class="f">Lớp<select id="acc-cls">${clsOpts(cls[0].id)}</select></label><label class="f">Nhóm trình độ<select id="acc-level">${lvOpts('Khá')}</select></label></div>
+      <label class="f">Một học sinh<input type="text" id="acc-name" placeholder="vd: Nguyễn Văn Bình"></label>
+      <div><button class="btn" data-act="acc-add">${ic('plus','sm')} Tạo tài khoản</button></div>
+      <label class="f">Hoặc dán cả lớp từ Excel, mỗi dòng một họ tên<textarea id="acc-bulk" rows="3" placeholder="Trần Thị Mai&#10;Lê Văn Nam&#10;Phan Hoài Thương"></textarea></label>
+      <div><button class="btn sec" data-act="acc-bulk">${ic('users','sm')} Tạo tất cả</button></div>
+    </div></div>` : `<div class="card"><div class="emptyst">Tạo ít nhất một lớp trước khi thêm học sinh.</div></div>`;
+  return `${msg}<div class="split even">${classCard}${addCard}</div>
+  <div class="card"><div class="card-h"><div><h2>Tài khoản khối ${ui.grade} <span class="chip pri num">${SG().length}</span></h2><p>Mỗi em một tài khoản riêng. Học sinh chỉ thấy bài giao cho lớp và trình độ của mình.</p></div><button class="btn soft sm" data-act="acc-copy" data-v="all">${ic('list','sm')} Sao chép cả danh sách</button></div>
     <div class="card-b" style="padding-inline:8px"><div class="tbl"><table>
-      <thead><tr><th>Học sinh</th><th>Nhóm</th><th>Tên đăng nhập</th><th>Mật khẩu</th><th>Làm bài gần nhất</th><th></th></tr></thead>
+      <thead><tr><th>Học sinh</th><th>Lớp</th><th>Nhóm</th><th>Tên đăng nhập</th><th>Mật khẩu</th><th>Làm bài gần nhất</th><th></th></tr></thead>
       <tbody>${SG().map(s => `<tr>
         <td><div class="person">${avatar(s)}<b>${esc(s.name)}</b></div></td>
+        <td><select data-act="set-cls" data-v="${s.id}" id="acc-cl-${s.id}" aria-label="Lớp của ${esc(s.name)}">${allClsOpts(s.cls)}</select></td>
         <td><select data-act="set-level" data-v="${s.id}" id="acc-lv-${s.id}" aria-label="Nhóm của ${esc(s.name)}">${lvOpts(s.level)}</select></td>
         <td><span class="cred">${esc(s.user)}</span></td><td><span class="cred">${esc(s.pass)}</span></td>
         <td class="small muted">${last(s)}</td>
@@ -1319,25 +1608,28 @@ function tAccounts(){
 }
 
 // ---------- sự kiện ----------
+const ARMABLE = ['del-a', 'reset', 'acc-del', 'tp-del', 'cl-del'];
 document.addEventListener('click', e => {
-  const el = e.target.closest('[data-act]'); if (!el || el.tagName === 'SELECT' || el.disabled) return;
+  const el = e.target.closest('[data-act]'); if (!el || el.tagName === 'SELECT' || el.tagName === 'INPUT' || el.disabled) return;
   const act = el.dataset.act, v = el.dataset.v;
-  if (act !== 'del-a' && act !== 'reset' && act !== 'acc-del') ui.armed = null;
+  if (!ARMABLE.includes(act)) ui.armed = null;
   const p = ui.player;
+  const arm = key => { if (ui.armed !== key) { ui.armed = key; render(); return false; } ui.armed = null; return true; };
   switch (act) {
-    case 'role': ui.role = v; saveUi(); go(ui.tab[v]); break;
     case 'tab': go(v); break;
-    case 'grade': if (Number(v) !== ui.grade) { if (ui.tab.teacher === 'compose') syncCompose(); ui.grade = Number(v); ui.compose = null; ui.bankTopic = 'all'; ui.tSid = null; ui.an.level = 'all'; ui.accMsg = null; render(); } break;
+    case 'grade': if (Number(v) !== ui.grade) { if (ui.tab.teacher === 'compose') syncCompose(); ui.grade = Number(v); ui.compose = null; ui.bankTopic = 'all'; ui.tSid = null; ui.an.level = 'all'; ui.an.cls = 'all'; ui.accMsg = null; ui.tpMsg = null; render(); } break;
     case 'view-student': if (v) { ui.tSid = v; go('work'); } break;
     case 'pick-work': ui.tSid = v; render(); break;
-    case 'compose-for': ui.compose = newCompose(v); go('compose'); break;
-    case 'c-level': syncCompose(); ui.compose.level = v; ui.compose.msg = null; render(); break;
+    case 'compose-for': ui.compose = null; go('compose'); break;
     case 'c-add': syncCompose(); ui.compose.qids.push(v); ui.compose.msg = null; render(); break;
     case 'c-rm': syncCompose(); ui.compose.qids = ui.compose.qids.filter(x => x !== v); render(); break;
-    case 'c-newq': syncCompose(); ui.compose.newQ = {type:'num', text:'', answer:'', options:['','','',''], correct:0, statements:['','','',''], tfans:['Đ','Đ','Đ','Đ'], explain:''}; ui.compose.msg = null; render(); break;
+    case 'c-clear': syncCompose(); ui.compose.qids = []; render(); break;
+    case 'c-gen': genExam(); break;
+    case 'c-newq': syncCompose(); ui.compose.newQ = {type:'mc', text:'', answer:'', options:['','','',''], correct:0, statements:['','','',''], tfans:['Đ','Đ','Đ','Đ'], explain:'', levels:[...(ui.compose.levels.length ? ui.compose.levels : LEVELS)]}; ui.compose.msg = null; render(); break;
     case 'c-cancelq': syncCompose(); ui.compose.newQ = null; render(); break;
     case 'c-saveq': saveNewQ(); break;
     case 'c-rmimg': syncCompose(); delete ui.compose.newQ.img; render(); break;
+    case 'c-rmdoc': syncCompose(); ui.compose.docs = ui.compose.docs.filter(d => d.id !== v); render(); break;
     case 'ins': {
       const f = $('#' + (ui.lastField || 'nq-text')) || $('#nq-text'); if (!f) break;
       const a = f.selectionStart ?? f.value.length, b = f.selectionEnd ?? a, before = f.value.slice(0, a);
@@ -1348,49 +1640,104 @@ document.addEventListener('click', e => {
     case 'c-save': saveCompose(); break;
     case 'bank-topic': syncCompose(); ui.bankTopic = v; render(); break;
     case 'del-a':
-      if (ui.armed !== v) { ui.armed = v; render(); return; }
+      if (!arm(v)) return;
       S.assignments = S.assignments.filter(a => a.id !== v); S.submissions = S.submissions.filter(b => b.aid !== v);
-      ui.armed = null; save(); render(); toast('Đã xoá bài.'); break;
+      save(); render(); toast('Đã xoá bài.'); break;
     case 'an-range': ui.an.range = v; render(); break;
     case 'an-level': ui.an.level = v; render(); break;
+    case 'an-cls': ui.an.cls = v; render(); break;
     case 'reassign': {
       const ids = analysisData().qs.filter(s => s.w > 0).sort((x, y) => y.w / y.n - x.w / x.n || y.w - x.w).slice(0, 4).map(s => s.q.id);
-      ui.compose = {...newCompose(ui.an.level), date:addDays(TODAY, 1), title:'Ôn lại các câu hay sai', qids:ids, topic:Q(ids[0])?.topic || TOPICS[0]};
+      ui.compose = {...newCompose(), date:addDays(TODAY, 1), title:'Ôn lại các câu hay sai', qids:ids, topic:Q(ids[0])?.topic || TOPICS[0],
+        levels:ui.an.level === 'all' ? [...LEVELS] : [ui.an.level], classes:ui.an.cls === 'all' ? classesOf(ui.grade).map(c => c.id) : [ui.an.cls]};
       go('compose'); break;
     }
+    // chuyên đề & tài liệu
+    case 'tp-add': {
+      const name = $('#tp-new').value.trim();
+      if (!name) { ui.tpMsg = {ok:false, text:'Nhập tên chuyên đề.'}; render(); break; }
+      if (topicsOf(ui.grade).some(t => t.name === name)) { ui.tpMsg = {ok:false, text:`Khối ${ui.grade} đã có chuyên đề "${name}".`}; render(); break; }
+      S.topics.push({id:'tp' + S.n++, grade:ui.grade, name, docs:[]}); save(); ui.tpMsg = {ok:true, text:`Đã thêm chuyên đề "${name}". Học sinh khối ${ui.grade} sẽ thấy thư mục này.`}; render(); break;
+    }
+    case 'tp-rename': renameTopic(v); break;
+    case 'tp-del': {
+      const t = S.topics.find(x => x.id === v), nq = S.bank.filter(q => q.grade === t.grade && q.topic === t.name).length;
+      if (nq) { ui.armed = null; ui.tpMsg = {ok:false, text:`Chuyên đề "${t.name}" còn ${nq} câu hỏi nên chưa xoá được. Bản demo chỉ cho xoá chuyên đề trống để không mất câu hỏi.`}; render(); break; }
+      if (!arm('tp-' + v)) return;
+      S.topics = S.topics.filter(x => x.id !== v); save(); ui.tpMsg = {ok:true, text:`Đã xoá chuyên đề "${t.name}".`}; render(); break;
+    }
+    case 'tp-rmdoc': for (const t of S.topics) t.docs = t.docs.filter(d => d.id !== v); save(); render(); toast('Đã xoá tài liệu.'); break;
+    case 'open-doc': ui.viewer = v; renderViewer(); break;
+    case 'close-doc': ui.viewer = null; renderViewer(); break;
+    // lớp
+    case 'cl-add': {
+      const name = $('#cl-new').value.trim();
+      if (!name) { ui.accMsg = {ok:false, text:'Nhập tên lớp.'}; render(); break; }
+      if (S.classes.some(c => c.name.toLowerCase() === name.toLowerCase())) { ui.accMsg = {ok:false, text:`Đã có lớp ${name}.`}; render(); break; }
+      S.classes.push({id:'c' + S.n++, grade:ui.grade, name}); save(); ui.accMsg = {ok:true, text:`Đã thêm lớp ${name}. Thêm học sinh vào lớp ở ô bên cạnh hoặc đổi lớp trong bảng.`}; render(); break;
+    }
+    case 'cl-rename': {
+      const c = CL(v), name = $('#cl-name-' + v).value.trim();
+      if (!name || name === c.name) break;
+      if (S.classes.some(x => x.id !== v && x.name.toLowerCase() === name.toLowerCase())) { ui.accMsg = {ok:false, text:`Đã có lớp ${name}.`}; render(); break; }
+      const old = c.name; c.name = name; save(); ui.accMsg = {ok:true, text:`Đã đổi lớp ${old} thành ${name}.`}; render(); break;
+    }
+    case 'cl-del': {
+      const c = CL(v), n = S.students.filter(s => s.cls === v).length;
+      if (n) { ui.armed = null; ui.accMsg = {ok:false, text:`Lớp ${c.name} còn ${n} học sinh. Chuyển các em sang lớp khác trước khi xoá.`}; render(); break; }
+      if (!arm('cl-' + v)) return;
+      S.classes = S.classes.filter(x => x.id !== v); S.assignments.forEach(a => a.classes = (a.classes || []).filter(x => x !== v)); save(); ui.accMsg = {ok:true, text:`Đã xoá lớp ${c.name}.`}; render(); break;
+    }
+    // học sinh tự học
+    case 'st-topic': ui.stTopic = v; ui.prLevel = null; render(); window.scrollTo(0, 0); break;
+    case 'st-back': ui.stTopic = null; render(); window.scrollTo(0, 0); break;
+    case 'pr-level': ui.prLevel = v; render(); break;
+    case 'practice': startPractice(Number(v)); break;
     case 'review': ui.review[v] = !ui.review[v]; render(); break;
     case 'start': { const a = A(v); if (a && !subFor(a.id, ui.sid)) startPlayer('assign', [...a.qids], a.id); break; }
     case 'retry': startPlayer('retry', v.split(',').filter(id => Q(id)), null); break;
     case 'p-pick': if (p && !p.checked) { const q = Q(p.qids[p.i]); p.answers[q.id] = q.options[Number(v)]; render(); } break;
     case 'p-check': pCheck(); break;
     case 'p-tf': if (p && !p.checked) { const qid = p.qids[p.i], a = (p.answers[qid] || '____').split(''); a[Number(v[0])] = v.slice(1); p.answers[qid] = a.join(''); render(); } break;
-    case 'logout': setAuth(null); ui.player = null; ui.loginErr = null; ui.compose = null; ui.review = {}; render(); window.scrollTo(0, 0); break;
-    case 'demo-login': setAuth(v === 'teacher' ? {role:'teacher'} : {role:'student', sid:v}); ui.tab = {teacher:'today', student:'today'}; render(); window.scrollTo(0, 0); break;
-    case 'acc-add': { const n = $('#acc-name').value.trim(); if (!n) { ui.accMsg = {ok:false, text:'Nhập họ tên học sinh.'}; render(); break; } const made = addStudents([n], $('#acc-level').value); ui.accMsg = {ok:true, list:made}; render(); break; }
-    case 'acc-bulk': { const names = $('#acc-bulk').value.split(/\n/).map(x => x.trim()).filter(Boolean); if (!names.length) { ui.accMsg = {ok:false, text:'Dán danh sách họ tên, mỗi dòng một em.'}; render(); break; } const made = addStudents(names, $('#acc-bulk-level').value); ui.accMsg = {ok:true, list:made}; render(); break; }
-    case 'acc-reset': { const x = STU(v); x.pass = genPass(); save(); ui.accMsg = {ok:true, text:`Đã đổi mật khẩu cho ${x.name}: ${x.pass}`}; render(); break; }
-    case 'acc-del':
-      if (ui.armed !== 'del-' + v) { ui.armed = 'del-' + v; render(); return; }
-      { const x = STU(v); S.students = S.students.filter(s => s.id !== v); S.submissions = S.submissions.filter(b => b.sid !== v); delete S.fixed[v]; if (ui.tSid === v) ui.tSid = null; ui.armed = null; save(); render(); toast('Đã xoá tài khoản ' + x.name + '.'); }
-      break;
-    case 'acc-copy': copyAccounts(v === 'all' ? SG() : [STU(v)]); break;
     case 'p-next': pNext(); break;
     case 'p-close': if (p.done) { ui.player = null; render(); } else { p.exit = true; render(); } break;
     case 'p-stay': p.exit = false; render(); break;
     case 'p-quit': ui.player = null; render(); break;
     case 'p-finish': ui.player = null; render(); window.scrollTo(0, 0); break;
+    case 'p-again': ui.player = null; startPractice(p.n); break;
     case 'p-retry-now': { const ids = p.qids.filter((_, i) => !p.res[i]); startPlayer('retry', ids, null); break; }
+    // đăng nhập & tài khoản
+    case 'logout': setAuth(null); ui.player = null; ui.viewer = null; ui.loginErr = null; ui.compose = null; ui.review = {}; ui.stTopic = null; render(); window.scrollTo(0, 0); break;
+    case 'demo-login': setAuth(v === 'teacher' ? {role:'teacher'} : {role:'student', sid:v}); ui.tab = {teacher:'today', student:'today'}; ui.stTopic = null; render(); window.scrollTo(0, 0); break;
+    case 'acc-add': { const n = $('#acc-name').value.trim(); if (!n) { ui.accMsg = {ok:false, text:'Nhập họ tên học sinh.'}; render(); break; } ui.accMsg = {ok:true, list:addStudents([n], $('#acc-level').value, $('#acc-cls').value)}; render(); break; }
+    case 'acc-bulk': { const names = $('#acc-bulk').value.split(/\n/).map(x => x.trim()).filter(Boolean); if (!names.length) { ui.accMsg = {ok:false, text:'Dán danh sách họ tên, mỗi dòng một em.'}; render(); break; } ui.accMsg = {ok:true, list:addStudents(names, $('#acc-level').value, $('#acc-cls').value)}; render(); break; }
+    case 'acc-reset': { const x = STU(v); x.pass = genPass(); save(); ui.accMsg = {ok:true, text:`Đã đổi mật khẩu cho ${x.name}: ${x.pass}`}; render(); break; }
+    case 'acc-del': {
+      if (!arm('del-' + v)) return;
+      const x = STU(v); S.students = S.students.filter(s => s.id !== v); S.submissions = S.submissions.filter(b => b.sid !== v); delete S.fixed[v]; delete S.practice[v]; delete S.pwrong[v]; if (ui.tSid === v) ui.tSid = null; save(); render(); toast('Đã xoá tài khoản ' + x.name + '.'); break;
+    }
+    case 'acc-copy': copyAccounts(v === 'all' ? SG() : [STU(v)]); break;
     case 'reset':
       if (ui.armed !== 'reset') { ui.armed = 'reset'; el.textContent = 'Bấm lần nữa để đặt lại'; return; }
-      S = seed(); save(); ui.armed = null; ui.compose = null; ui.player = null; ui.review = {}; ui.accMsg = null; if (AUTH && AUTH.role === 'student' && !STU(AUTH.sid)) setAuth(null); el.textContent = 'Đặt lại dữ liệu mẫu'; render(); toast('Đã đặt lại dữ liệu mẫu.'); break;
+      S = seed(); save(); ui.armed = null; ui.compose = null; ui.player = null; ui.viewer = null; ui.review = {}; ui.accMsg = null; ui.tpMsg = null; ui.stTopic = null; if (AUTH && AUTH.role === 'student' && !STU(AUTH.sid)) setAuth(null); el.textContent = 'Đặt lại dữ liệu mẫu'; render(); toast('Đã đặt lại dữ liệu mẫu.'); break;
   }
 });
 document.addEventListener('change', e => {
   const t = e.target;
-  if (t.matches('[data-pick]')) { ui.sid = t.value; ui.review = {}; saveUi(); render(); }
-  else if (t.dataset.act === 'set-level') { STU(t.dataset.v).level = t.value; save(); render(); toast('Đã chuyển sang nhóm ' + t.value + '.'); }
+  if (t.dataset.act === 'set-level') { STU(t.dataset.v).level = t.value; save(); render(); toast('Đã chuyển sang nhóm ' + t.value + '.'); }
+  else if (t.dataset.act === 'set-cls') { const s = STU(t.dataset.v), c = CL(t.value); s.cls = c.id; s.grade = c.grade; save(); render(); toast(`Đã chuyển ${s.name} sang lớp ${c.name}.`); }
   else if (t.dataset.act === 'c-refresh') { syncCompose(); render(); }
   else if (t.id === 'nq-img' && t.files && t.files[0]) { syncCompose(); compressImage(t.files[0]).then(d => { ui.compose.newQ.img = d; render(); }, () => toast('Không đọc được ảnh này, thử ảnh khác.')); }
+  else if (t.id === 'c-doc' && t.files && t.files.length) { syncCompose(); uploadDocs([...t.files], ui.compose.docs).then(() => render()); }
+  else if (t.classList.contains('tp-file') && t.files && t.files.length) {
+    const tp = S.topics.find(x => x.id === t.dataset.topic), files = [...t.files];
+    uploadDocs(files, tp.docs).then(added => {
+      if (!added.length) return render();
+      if (!save()) { tp.docs = tp.docs.filter(d => !added.includes(d)); ui.tpMsg = {ok:false, text:'Bộ nhớ trình duyệt đầy (bản demo giới hạn khoảng 5 MB) nên chưa lưu được tài liệu. Xoá bớt tài liệu cũ rồi thử lại.'}; }
+      else ui.tpMsg = {ok:true, text:`Đã tải ${added.length} tài liệu vào chuyên đề "${tp.name}".`};
+      render();
+    });
+  }
 });
 document.addEventListener('mousedown', e => { if (e.target.closest('.mathbar button')) e.preventDefault(); });
 document.addEventListener('focusin', e => { if (/^nq-(text|exp|ans|o\d|s\d)$/.test(e.target.id || '')) ui.lastField = e.target.id; });
@@ -1406,6 +1753,7 @@ document.addEventListener('input', e => {
   else if (e.target.id === 'p-work') p.works[qid] = e.target.value;
 });
 document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && ui.viewer) { ui.viewer = null; renderViewer(); return; }
   const p = ui.player; if (!p || p.done || p.exit) return;
   if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'BUTTON') { e.preventDefault(); p.checked ? pNext() : pCheck(); }
   else if (e.key === 'Escape') { p.exit = true; render(); }
@@ -1413,6 +1761,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('submit', e => { e.preventDefault(); if (e.target.id === 'login-form') doLogin(); });
 
 render();
+
 </script>
 </body>
 </html>
