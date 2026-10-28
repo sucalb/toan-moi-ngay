@@ -497,6 +497,8 @@ mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
 .ext{font-size:10px;font-weight:800;letter-spacing:.04em;border-radius:5px;padding:2px 6px;background:var(--danger-soft);color:var(--danger);flex:none}
 .ext.img{background:var(--primary-soft);color:var(--primary)}
 .clist{display:flex;flex-direction:column;gap:8px}
+.newtp{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px;padding:12px;border:1.5px dashed var(--board);border-radius:10px;background:var(--primary-soft)}
+button.link{border:0;background:none;padding:0;font:inherit;color:var(--primary);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
 .crow{display:flex;align-items:center;gap:8px}
 .crow input{flex:1;min-width:0}
 button.tcard{padding:0;text-align:left;font:inherit;color:inherit;cursor:pointer;width:100%}
@@ -1087,7 +1089,7 @@ function newCompose(){
 const cbx = (id, label, on, extra = '') => `<label class="cbx"><input type="checkbox" id="${id}" ${on ? 'checked' : ''} ${extra}>${label}</label>`;
 function syncCompose(){
   const c = ui.compose; if (!c || !$('#c-title')) return;
-  c.date = $('#c-date').value || TODAY; c.topic = $('#c-topic').value; c.title = $('#c-title').value;
+  c.date = $('#c-date').value || TODAY; if ($('#c-topic').value !== '__new__') c.topic = $('#c-topic').value; c.title = $('#c-title').value;
   c.classes = classesOf(ui.grade).filter(cl => $('#c-cls-' + cl.id)?.checked).map(cl => cl.id);
   c.levels = LEVELS.filter((l, i) => $('#c-lv-' + i)?.checked);
   if ($('#gen-n')) {
@@ -1116,8 +1118,10 @@ function tCompose(){
       <label class="f">Tên bài<input type="text" id="c-title" value="${esc(c.title)}" placeholder="Ví dụ: Phương trình lượng giác cơ bản"></label>
       <div class="fgrid">
         <label class="f">Ngày làm<input type="date" id="c-date" value="${c.date}"></label>
-        <label class="f">Chuyên đề chính<select id="c-topic">${TOPICS.map(t => `<option ${t === c.topic ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></label>
+        <label class="f">Chuyên đề chính<select id="c-topic">${TOPICS.map(t => `<option ${t === c.topic ? 'selected' : ''}>${esc(t)}</option>`).join('')}<option value="__new__">＋ Thêm chuyên đề mới…</option></select></label>
       </div>
+      ${c.addingTopic ? `<div class="newtp"><label class="f" style="flex:1;min-width:180px">Tên chuyên đề mới<input type="text" id="c-newtopic" placeholder="vd: Quan hệ vuông góc trong không gian"></label><button class="btn" data-act="c-addtopic">${ic('plus','sm')} Thêm</button><button class="btn ghost" data-act="c-canceltopic">Huỷ</button></div>` : ''}
+      <div class="small muted">Chuyên đề mới sẽ hiện thành thư mục bên học sinh khối ${ui.grade}. Đổi tên, xoá hoặc thêm tài liệu ở <button class="link" data-act="tab" data-v="topics">trang Chuyên đề &amp; tài liệu</button>.</div>
       <div class="fl">Giao cho lớp<div class="cbxs">${classesOf(ui.grade).map(cl => cbx('c-cls-' + cl.id, esc(cl.name), c.classes.includes(cl.id), 'data-act="c-refresh"')).join('') || '<span class="small muted">Khối này chưa có lớp. Tạo lớp ở trang Lớp &amp; tài khoản.</span>'}</div></div>
       <div class="fl">Trình độ<div class="cbxs">${LEVELS.map((l, i) => cbx('c-lv-' + i, l, c.levels.includes(l), 'data-act="c-refresh"')).join('')}</div></div>
       <div class="fl">Tài liệu đính kèm (PDF, ảnh)<div class="docs">${c.docs.map(d => docChip(d, 'c-rmdoc')).join('')}<label class="btn sec sm" style="cursor:pointer">${ic('upload','sm')} Tải tệp lên<input type="file" accept="application/pdf,image/*" id="c-doc" multiple hidden></label></div></div>
@@ -1625,6 +1629,15 @@ document.addEventListener('click', e => {
     case 'c-rm': syncCompose(); ui.compose.qids = ui.compose.qids.filter(x => x !== v); render(); break;
     case 'c-clear': syncCompose(); ui.compose.qids = []; render(); break;
     case 'c-gen': genExam(); break;
+    case 'c-addtopic': {
+      const name = $('#c-newtopic').value.trim(), c = ui.compose;
+      if (!name) { $('#c-newtopic').focus(); break; }
+      syncCompose();
+      if (topicsOf(ui.grade).some(t => t.name.toLowerCase() === name.toLowerCase())) { c.msg = {ok:false, text:`Khối ${ui.grade} đã có chuyên đề "${name}".`}; render(); break; }
+      S.topics.push({id:'tp' + S.n++, grade:ui.grade, name, docs:[]}); save();
+      c.topic = name; c.addingTopic = false; c.msg = {ok:true, text:`Đã thêm chuyên đề "${name}" và chọn làm chuyên đề chính của bài.`}; render(); break;
+    }
+    case 'c-canceltopic': syncCompose(); ui.compose.addingTopic = false; render(); break;
     case 'c-newq': syncCompose(); ui.compose.newQ = {type:'mc', text:'', answer:'', options:['','','',''], correct:0, statements:['','','',''], tfans:['Đ','Đ','Đ','Đ'], explain:'', levels:[...(ui.compose.levels.length ? ui.compose.levels : LEVELS)]}; ui.compose.msg = null; render(); break;
     case 'c-cancelq': syncCompose(); ui.compose.newQ = null; render(); break;
     case 'c-saveq': saveNewQ(); break;
@@ -1727,6 +1740,7 @@ document.addEventListener('change', e => {
   if (t.dataset.act === 'set-level') { STU(t.dataset.v).level = t.value; save(); render(); toast('Đã chuyển sang nhóm ' + t.value + '.'); }
   else if (t.dataset.act === 'set-cls') { const s = STU(t.dataset.v), c = CL(t.value); s.cls = c.id; s.grade = c.grade; save(); render(); toast(`Đã chuyển ${s.name} sang lớp ${c.name}.`); }
   else if (t.dataset.act === 'c-refresh') { syncCompose(); render(); }
+  else if (t.id === 'c-topic' && t.value === '__new__') { syncCompose(); ui.compose.addingTopic = true; render(); $('#c-newtopic')?.focus(); }
   else if (t.id === 'nq-img' && t.files && t.files[0]) { syncCompose(); compressImage(t.files[0]).then(d => { ui.compose.newQ.img = d; render(); }, () => toast('Không đọc được ảnh này, thử ảnh khác.')); }
   else if (t.id === 'c-doc' && t.files && t.files.length) { syncCompose(); uploadDocs([...t.files], ui.compose.docs).then(() => render()); }
   else if (t.classList.contains('tp-file') && t.files && t.files.length) {
@@ -1754,6 +1768,7 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && ui.viewer) { ui.viewer = null; renderViewer(); return; }
+  if (e.key === 'Enter' && e.target.id === 'c-newtopic') { e.preventDefault(); $('[data-act=c-addtopic]')?.click(); return; }
   const p = ui.player; if (!p || p.done || p.exit) return;
   if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'BUTTON') { e.preventDefault(); p.checked ? pNext() : pCheck(); }
   else if (e.key === 'Escape') { p.exit = true; render(); }
