@@ -514,6 +514,26 @@ button.tcard:focus-visible{outline:2.5px solid var(--primary);outline-offset:2px
 .viewer .vb canvas{width:min(100%,900px);height:auto;background:#fff;border-radius:4px;box-shadow:0 6px 22px rgba(0,0,0,.4)}
 .vmsg{color:rgba(255,255,255,.8);font-size:14px}
 @media (max-width:900px){.bnav button{font-size:10.5px;letter-spacing:-.01em}.bnav{padding-left:max(4px,env(safe-area-inset-left,0px));padding-right:max(4px,env(safe-area-inset-right,0px))}}
+
+/* dropdown cùng giao diện */
+.dd-native{position:absolute!important;opacity:0;pointer-events:none;width:1px!important;height:1px;overflow:hidden;padding:0!important;border:0!important}
+.dd-btn{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-width:0;font:500 14.5px var(--f-body);letter-spacing:0;text-transform:none;color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:8px;padding:9px 12px;cursor:pointer;text-align:left;transition:border-color .12s,box-shadow .12s}
+.dd-btn:hover{border-color:var(--board)}
+.dd-btn[aria-expanded="true"]{border-color:var(--board);box-shadow:0 0 0 3px var(--primary-soft)}
+.dd-btn .dd-v{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dd-btn .dd-ch{transform:rotate(90deg);color:var(--muted);transition:transform .15s}
+.dd-btn[aria-expanded="true"] .dd-ch{transform:rotate(-90deg);color:var(--board)}
+.dd-btn.sm{width:auto;padding:5px 9px 5px 11px;font-size:13px;gap:6px;background:var(--surface-2);border-color:transparent}
+.dd-btn.sm:hover{border-color:var(--line-2)}
+#ddpop{position:fixed;z-index:70;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 34px rgba(23,37,29,.18),0 2px 6px rgba(23,37,29,.06);padding:6px;max-height:300px;overflow:auto;display:flex;flex-direction:column;gap:2px;max-width:calc(100vw - 16px)}
+.dd-grp{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:8px 10px 3px}
+.dd-opt{display:flex;align-items:center;gap:8px;border:0;background:transparent;border-radius:8px;padding:8px 12px 8px 8px;font:500 14px var(--f-body);color:var(--ink);cursor:pointer;text-align:left;white-space:nowrap;flex:none}
+.dd-opt:hover,.dd-opt.kb{background:var(--surface-2)}
+.dd-opt:focus-visible{outline:2px solid var(--board);outline-offset:-2px}
+.dd-opt .dd-ck{visibility:hidden;color:var(--board)}
+.dd-opt.on{background:var(--primary-soft);color:var(--board);font-weight:700}
+.dd-opt.on .dd-ck{visibility:visible}
+.dd-opt.add{color:var(--board);font-weight:700;margin-top:4px;box-shadow:0 -1px 0 var(--line)}
 </style>
 <script>
 window.MathJax = {tex:{inlineMath:[['$','$']]}, svg:{fontCache:'global'}, options:{skipHtmlTags:['script','noscript','style','textarea','pre','code','input']},
@@ -543,6 +563,7 @@ window.MathJax = {tex:{inlineMath:[['$','$']]}, svg:{fontCache:'global'}, option
 </div>
 <div class="login" id="login" hidden></div>
 <div class="viewer" id="viewer" hidden></div>
+<div id="ddpop" role="listbox" hidden></div>
 <div class="player" id="player" hidden></div>
 <div class="toast" id="toast" hidden></div>
 
@@ -926,6 +947,7 @@ let AUTH = null;
 try { AUTH = JSON.parse(localStorage.getItem(KEY + '-auth')); } catch (e) {}
 function setAuth(a){ AUTH = a; try { a ? localStorage.setItem(KEY + '-auth', JSON.stringify(a)) : localStorage.removeItem(KEY + '-auth'); } catch (e) {} }
 function render(){
+  ddClose();
   if (AUTH && AUTH.role === 'student' && !STU(AUTH.sid)) setAuth(null);
   const lg = $('#login');
   if (!AUTH) { $('.app').hidden = true; lg.hidden = false; lg.innerHTML = loginHtml(); ui.player = null; renderPlayer(); renderViewer(); typesetAll(); return; }
@@ -957,10 +979,72 @@ function render(){
 
   const views = T ? {today:tHome, compose:tCompose, topics:tTopics, work:tWork, analysis:tAnalysis, accounts:tAccounts} : {today:sHome, topics:sTopics, mistakes:sMistakes, history:sHistory};
   $('#main').innerHTML = views[cur](st);
+  enhanceSelects();
   renderPlayer();
   renderViewer();
   typesetAll();
 }
+
+// ---------- ô chọn (dropdown) cùng giao diện với trang ----------
+// giữ <select> gốc (ẩn) để mọi xử lý change cũ chạy như cũ; nút và danh sách là phần nhìn thấy
+const selText = sel => sel.options[sel.selectedIndex]?.text || '';
+function enhanceSelects(){
+  document.querySelectorAll('#main select:not([data-enh])').forEach(sel => {
+    sel.dataset.enh = '1'; sel.classList.add('dd-native'); sel.tabIndex = -1; sel.setAttribute('aria-hidden', 'true');
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'dd-btn' + (sel.closest('td') ? ' sm' : ''); b.dataset.act = 'dd';
+    b.setAttribute('aria-haspopup', 'listbox'); b.setAttribute('aria-expanded', 'false');
+    const lab = sel.getAttribute('aria-label') || sel.closest('label')?.firstChild?.textContent?.trim();
+    if (lab) b.dataset.label = lab;
+    b.innerHTML = `<span class="dd-v"></span>${ic('chev', 'sm dd-ch')}`;
+    sel.after(b); ddSync(sel);
+  });
+}
+function ddSync(sel){
+  const b = sel.nextElementSibling; if (!b?.classList.contains('dd-btn')) return;
+  b.querySelector('.dd-v').textContent = selText(sel);
+  b.setAttribute('aria-label', (b.dataset.label ? b.dataset.label + ': ' : '') + selText(sel));
+}
+let ddOpen = null;
+const optHtml = (o, i, sel) => `<button type="button" class="dd-opt ${i === sel.selectedIndex ? 'on' : ''} ${o.value === '__new__' ? 'add' : ''}" role="option" aria-selected="${i === sel.selectedIndex}" data-act="dd-opt" data-v="${i}" ${o.disabled ? 'disabled' : ''}>${o.value === '__new__' ? ic('plus', 'sm') : ic('check', 'sm dd-ck')}<span>${esc(o.text.replace(/^＋\s*/, ''))}</span></button>`;
+function ddShow(btn){
+  const sel = btn.previousElementSibling; if (!sel || sel.tagName !== 'SELECT') return;
+  if (ddOpen && ddOpen.btn === btn) { ddClose(); return; }
+  ddClose();
+  const pop = $('#ddpop'); let html = '', i = 0;
+  for (const node of sel.children) {
+    if (node.tagName === 'OPTGROUP') { html += `<div class="dd-grp">${esc(node.label)}</div>`; for (const o of node.children) html += optHtml(o, i++, sel); }
+    else html += optHtml(node, i++, sel);
+  }
+  pop.innerHTML = html; pop.hidden = false;
+  const r = btn.getBoundingClientRect(), w = Math.max(r.width, 190);
+  pop.style.minWidth = w + 'px';
+  pop.style.left = Math.max(8, Math.min(r.left, innerWidth - pop.offsetWidth - 8)) + 'px';
+  const h = pop.offsetHeight, below = innerHeight - r.bottom;
+  pop.style.top = (below >= h + 12 || below >= r.top ? r.bottom + 6 : Math.max(8, r.top - h - 6)) + 'px';
+  btn.setAttribute('aria-expanded', 'true');
+  ddOpen = {sel, btn, idx:sel.selectedIndex};
+  ddFocus(sel.selectedIndex < 0 ? 0 : sel.selectedIndex);
+}
+function ddFocus(i){
+  const opts = [...document.querySelectorAll('#ddpop .dd-opt')]; if (!opts.length) return;
+  i = Math.max(0, Math.min(opts.length - 1, i)); ddOpen.idx = i;
+  opts.forEach((o, j) => o.classList.toggle('kb', j === i)); opts[i].focus();
+}
+function ddPick(i){
+  if (!ddOpen) return;
+  const {sel, btn} = ddOpen; ddClose();
+  if (sel.selectedIndex !== i) { sel.selectedIndex = i; ddSync(sel); sel.dispatchEvent(new Event('change', {bubbles:true})); }
+  if (document.contains(btn)) btn.focus({preventScroll:true});
+}
+function ddClose(){
+  if (!ddOpen) return;
+  ddOpen.btn.setAttribute('aria-expanded', 'false'); ddOpen = null;
+  const pop = $('#ddpop'); pop.hidden = true; pop.innerHTML = '';
+}
+document.addEventListener('mousedown', e => { if (ddOpen && !e.target.closest('#ddpop, .dd-btn')) ddClose(); });
+document.addEventListener('scroll', e => { if (ddOpen && !(e.target instanceof Element && e.target.closest('#ddpop'))) ddClose(); }, true);
+window.addEventListener('resize', () => ddClose());
 
 // ---------- xem tài liệu (ảnh, PDF) ----------
 let pdfReady = null;
@@ -1184,6 +1268,7 @@ function saveNewQ(){
   syncCompose();
   const c = ui.compose, q = c.newQ;
   const fail = t => { c.msg = {ok:false, text:t}; render(); };
+  if (!c.topic) return fail('Khối này chưa có chuyên đề. Chọn "Thêm chuyên đề mới" ở ô Chuyên đề chính trước khi soạn câu.');
   if (!q.levels.length) return fail('Tick ít nhất một trình độ cho câu hỏi mới.');
   if (!q.text.trim()) return fail('Câu hỏi mới chưa có đề bài.');
   if (q.type === 'num' && isNaN(parseNum(q.answer))) return fail('Đáp số phải là số, ví dụ 5, -3, 2,5 hoặc 5/6.');
@@ -1614,12 +1699,17 @@ function tAccounts(){
 // ---------- sự kiện ----------
 const ARMABLE = ['del-a', 'reset', 'acc-del', 'tp-del', 'cl-del'];
 document.addEventListener('click', e => {
+  // bấm vào chữ tiêu đề của ô chọn thì mở danh sách
+  const lb = e.target.closest('label');
+  if (lb && !e.target.closest('.dd-btn, input, textarea') && lb.querySelector(':scope > .dd-btn')) { e.preventDefault(); ddShow(lb.querySelector(':scope > .dd-btn')); return; }
   const el = e.target.closest('[data-act]'); if (!el || el.tagName === 'SELECT' || el.tagName === 'INPUT' || el.disabled) return;
   const act = el.dataset.act, v = el.dataset.v;
   if (!ARMABLE.includes(act)) ui.armed = null;
   const p = ui.player;
   const arm = key => { if (ui.armed !== key) { ui.armed = key; render(); return false; } ui.armed = null; return true; };
   switch (act) {
+    case 'dd': ddShow(el); break;
+    case 'dd-opt': ddPick(Number(v)); break;
     case 'tab': go(v); break;
     case 'grade': if (Number(v) !== ui.grade) { if (ui.tab.teacher === 'compose') syncCompose(); ui.grade = Number(v); ui.compose = null; ui.bankTopic = 'all'; ui.tSid = null; ui.an.level = 'all'; ui.an.cls = 'all'; ui.accMsg = null; ui.tpMsg = null; render(); } break;
     case 'view-student': if (v) { ui.tSid = v; go('work'); } break;
@@ -1767,6 +1857,17 @@ document.addEventListener('input', e => {
   else if (e.target.id === 'p-work') p.works[qid] = e.target.value;
 });
 document.addEventListener('keydown', e => {
+  if (ddOpen) {
+    const n = document.querySelectorAll('#ddpop .dd-opt').length;
+    if (e.key === 'ArrowDown') { e.preventDefault(); ddFocus((ddOpen.idx + 1) % n); return; }
+    if (e.key === 'ArrowUp') { e.preventDefault(); ddFocus((ddOpen.idx - 1 + n) % n); return; }
+    if (e.key === 'Home') { e.preventDefault(); ddFocus(0); return; }
+    if (e.key === 'End') { e.preventDefault(); ddFocus(n - 1); return; }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ddPick(ddOpen.idx); return; }
+    if (e.key === 'Escape') { e.preventDefault(); const b = ddOpen.btn; ddClose(); b.focus(); return; }
+    if (e.key === 'Tab') { ddClose(); return; }
+  }
+  if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && e.target.classList?.contains('dd-btn')) { e.preventDefault(); ddShow(e.target); return; }
   if (e.key === 'Escape' && ui.viewer) { ui.viewer = null; renderViewer(); return; }
   if (e.key === 'Enter' && e.target.id === 'c-newtopic') { e.preventDefault(); $('[data-act=c-addtopic]')?.click(); return; }
   const p = ui.player; if (!p || p.done || p.exit) return;
